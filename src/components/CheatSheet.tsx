@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cheatSheetData } from '@/data/cheatSheetData';
@@ -8,7 +7,7 @@ export const CheatSheet: React.FC = () => {
 
   const generatePDF = () => {
     // Track PDF generation event
-    if (typeof gtag !== 'undefined') {
+    if (typeof window !== 'undefined' && 'gtag' in window) {
       gtag('event', 'file_download', {
         file_name: 'cheat_sheet.pdf',
         file_extension: 'pdf',

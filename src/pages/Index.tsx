@@ -19,7 +19,7 @@ const Index = () => {
     console.log('Lead captured:', data);
     
     // Track GA4 and Meta events
-    if (typeof gtag !== 'undefined') {
+    if (typeof window !== 'undefined' && 'gtag' in window) {
       gtag('event', 'generate_lead', {
         currency: 'USD',
         value: 0,

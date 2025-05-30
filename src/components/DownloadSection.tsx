@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 export const DownloadSection: React.FC = () => {
   const handleDownload = () => {
     // Track download event
-    if (typeof gtag !== 'undefined') {
+    if (typeof window !== 'undefined' && 'gtag' in window) {
       gtag('event', 'file_download', {
         file_name: 'waterproofing_guide.pdf',
         file_extension: 'pdf',
