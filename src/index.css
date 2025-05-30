@@ -146,6 +146,24 @@
     }
   }
 
+  /* Blur box styles */
+  .blur-box {
+    position: relative;
+    backdrop-filter: blur(6px);
+    opacity: 0.85;
+  }
+
+  .lock-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
   /* Print styles */
   @media print {
     .no-print {
@@ -170,6 +188,7 @@
 /* Smooth scrolling for anchor links */
 html {
   scroll-behavior: smooth;
+  scroll-margin-top: 96px;
 }
 
 /* Ensure tables are accessible on mobile */
@@ -177,6 +196,21 @@ html {
   .table-responsive {
     overflow-x: auto;
     border-bottom: 2px solid #FFD700;
+  }
+  
+  /* Mobile card padding adjustments */
+  @media (min-width: 320px) and (max-width: 479px) {
+    .mobile-card {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+  }
+  
+  @media (min-width: 480px) and (max-width: 767px) {
+    .mobile-card {
+      padding-left: 32px;
+      padding-right: 32px;
+    }
   }
 }
 

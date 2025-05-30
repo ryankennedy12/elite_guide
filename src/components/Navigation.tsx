@@ -1,79 +1,100 @@
 
 import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Menu, X } from 'lucide-react';
 
-export const Navigation: React.FC = () => {
+const Navigation: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // Check if user has unlocked content
+  const isUnlocked = localStorage.getItem('elite12_unlocked') === 'true';
 
   const navItems = [
-    { label: 'Elite 12 Questions', href: '#elite-questions' },
-    { label: 'Cheat Sheet', href: '#cheat-sheet' },
-    { label: 'Prep Checklist', href: '#prep-checklist' },
-    { label: 'Glossary', href: '#glossary' },
-    { label: 'Download PDF', href: '#download' },
+    { label: 'Home', href: '/', id: 'home' },
+    { label: 'Elite 12 Questions', href: '/elite-12', id: 'elite-12' },
+    { label: 'Quick Reference', href: '/cheat-sheet', id: 'cheat-sheet' },
+    { label: 'Prep Checklist', href: '/prep-checklist', id: 'prep-checklist' },
+    { label: 'Glossary', href: '/glossary', id: 'glossary' },
+    { label: 'Question Maker', href: '/question-maker', id: 'question-maker' },
+    { label: 'My Notes', href: '/my-notes', id: 'my-notes' },
   ];
 
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMobileMenuOpen(false);
-    }
-  };
+  const isActive = (href: string) => location.pathname === href;
+
+  // Don't show navigation on home page if not unlocked
+  if (location.pathname === '/' && !isUnlocked) {
+    return null;
+  }
 
   return (
-    <nav className="sticky top-0 bg-white border-b border-gray-200 z-40">
-      <div className="max-w-[900px] mx-auto px-6 md:px-12">
+    <nav className="sticky top-0 bg-black text-white z-50 border-b border-gray-800">
+      <div className="max-w-4xl mx-auto px-4">
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center justify-center py-4 space-x-8">
-          {navItems.map((item) => (
-            <button
-              key={item.href}
-              onClick={() => scrollToSection(item.href)}
-              className="text-black hover:text-gray-600 font-medium transition-colors duration-200 hover:border-b-2 hover:border-yellow-500 pb-1"
-            >
-              {item.label}
-            </button>
-          ))}
+        <div className="hidden md:flex items-center justify-center py-3">
+          <div className="flex space-x-8">
+            {navItems.map((item) => (
+              <Link
+                key={item.id}
+                to={item.href}
+                className={`relative px-3 py-2 text-sm font-medium transition-colors duration-200 hover:text-gray-300 ${
+                  isActive(item.href) 
+                    ? 'text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-yellow-500' 
+                    : 'text-gray-300'
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* Mobile Navigation */}
-        <div className="md:hidden py-4">
+        <div className="md:hidden flex items-center justify-between py-3">
+          <span className="text-sm font-medium">Elite 12 Guide</span>
           <Button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="bg-black text-white px-4 py-2"
-            aria-label="Toggle navigation menu"
+            variant="ghost"
+            size="sm"
+            className="text-white hover:bg-gray-800"
           >
-            ☰ Menu
+            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </Button>
         </div>
       </div>
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden">
-          <div className="bg-black text-white h-full w-full">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-8">
-                <h3 className="text-xl font-semibold">Navigation</h3>
-                <button
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-white text-2xl"
-                  aria-label="Close menu"
-                >
-                  ✕
-                </button>
-              </div>
-              
-              <div className="space-y-6">
+        <div className="fixed inset-0 bg-black bg-opacity-95 z-50 md:hidden">
+          <div className="flex flex-col h-full">
+            <div className="flex items-center justify-between p-4 border-b border-gray-800">
+              <span className="text-lg font-semibold">Navigation</span>
+              <Button
+                onClick={() => setIsMobileMenuOpen(false)}
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-gray-800"
+              >
+                <X size={20} />
+              </Button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="space-y-2">
                 {navItems.map((item) => (
-                  <button
-                    key={item.href}
-                    onClick={() => scrollToSection(item.href)}
-                    className="block w-full text-left text-white hover:text-yellow-500 text-lg py-3 transition-colors duration-200"
+                  <Link
+                    key={item.id}
+                    to={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors duration-200 ${
+                      isActive(item.href)
+                        ? 'bg-gray-800 text-white'
+                        : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                    }`}
                   >
                     {item.label}
-                  </button>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -83,3 +104,5 @@ export const Navigation: React.FC = () => {
     </nav>
   );
 };
+
+export default Navigation;
