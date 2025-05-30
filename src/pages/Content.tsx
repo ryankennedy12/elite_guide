@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Navigation } from '@/components/Navigation';
+import Navigation from '@/components/Navigation';
 import { Elite12Questions } from '@/components/Elite12Questions';
 import { CheatSheet } from '@/components/CheatSheet';
 import { PrepChecklist } from '@/components/PrepChecklist';
