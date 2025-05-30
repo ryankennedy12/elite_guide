@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { BlurOverlay } from './BlurOverlay';
 import { cheatSheetData } from '@/data/cheatSheetData';
 
-export const CheatSheet: React.FC = () => {
+interface CheatSheetProps {
+  isUnlocked: boolean;
+  onUnlockClick: () => void;
+}
+
+export const CheatSheet: React.FC<CheatSheetProps> = ({ isUnlocked, onUnlockClick }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const generatePDF = () => {
@@ -18,8 +24,8 @@ export const CheatSheet: React.FC = () => {
     window.print();
   };
 
-  return (
-    <section id="cheat-sheet" className="mb-18 md:mb-24">
+  const CheatSheetContent = () => (
+    <div>
       <h2 className="font-inter-tight font-bold text-3xl md:text-4xl mb-8 text-center">
         Quick-Reference Cheat Sheet
       </h2>
@@ -84,6 +90,19 @@ export const CheatSheet: React.FC = () => {
           </div>
         )}
       </div>
+    </div>
+  );
+
+  return (
+    <section id="cheat-sheet" className="mb-18 md:mb-24">
+      <BlurOverlay 
+        isUnlocked={isUnlocked} 
+        onUnlockClick={onUnlockClick}
+        showTeaser={true}
+        teaserText="Quick reference table with all 12 questions..."
+      >
+        <CheatSheetContent />
+      </BlurOverlay>
     </section>
   );
 };

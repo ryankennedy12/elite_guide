@@ -1,10 +1,16 @@
 
 import React from 'react';
+import { BlurOverlay } from './BlurOverlay';
 import { prepChecklistData } from '@/data/prepChecklistData';
 
-export const PrepChecklist: React.FC = () => {
-  return (
-    <section id="prep-checklist" className="mb-18 md:mb-24">
+interface PrepChecklistProps {
+  isUnlocked: boolean;
+  onUnlockClick: () => void;
+}
+
+export const PrepChecklist: React.FC<PrepChecklistProps> = ({ isUnlocked, onUnlockClick }) => {
+  const ChecklistContent = () => (
+    <div>
       <h2 className="font-inter-tight font-bold text-3xl md:text-4xl mb-8 text-center">
         Homeowner Prep Checklist
       </h2>
@@ -37,6 +43,19 @@ export const PrepChecklist: React.FC = () => {
           <strong>Pro Tip:</strong> Set up a dedicated folder (digital or physical) to keep all photos, reports, contracts, and correspondence in one place. This will save massive headaches if anything goes wrong or you need warranty service later.
         </p>
       </div>
+    </div>
+  );
+
+  return (
+    <section id="prep-checklist" className="mb-18 md:mb-24">
+      <BlurOverlay 
+        isUnlocked={isUnlocked} 
+        onUnlockClick={onUnlockClick}
+        showTeaser={true}
+        teaserText="Three-phase checklist: Before, During, and After..."
+      >
+        <ChecklistContent />
+      </BlurOverlay>
     </section>
   );
 };

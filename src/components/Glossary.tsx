@@ -1,10 +1,16 @@
 
 import React from 'react';
+import { BlurOverlay } from './BlurOverlay';
 import { glossaryData } from '@/data/glossaryData';
 
-export const Glossary: React.FC = () => {
-  return (
-    <section id="glossary" className="mb-18 md:mb-24">
+interface GlossaryProps {
+  isUnlocked: boolean;
+  onUnlockClick: () => void;
+}
+
+export const Glossary: React.FC<GlossaryProps> = ({ isUnlocked, onUnlockClick }) => {
+  const GlossaryContent = () => (
+    <div>
       <h2 className="font-inter-tight font-bold text-3xl md:text-4xl mb-8 text-center">
         Basement Waterproofing Glossary
       </h2>
@@ -18,6 +24,19 @@ export const Glossary: React.FC = () => {
           </div>
         ))}
       </div>
+    </div>
+  );
+
+  return (
+    <section id="glossary" className="mb-18 md:mb-24">
+      <BlurOverlay 
+        isUnlocked={isUnlocked} 
+        onUnlockClick={onUnlockClick}
+        showTeaser={true}
+        teaserText="Essential terms and definitions for waterproofing..."
+      >
+        <GlossaryContent />
+      </BlurOverlay>
     </section>
   );
 };
