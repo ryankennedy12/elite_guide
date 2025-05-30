@@ -11,7 +11,7 @@ export const elite12Data = [
       "Refuses to show or explain their process, or gives a vague answer.",
       "Immediately recommends a solution before inspecting your specific problem."
     ],
-    followUp: "Ask the contractor to show you their actual diagnostic tools or a sample inspection report. Real pros use moisture meters, thermal imaging, or written checklists-if they can't provide evidence, they're guessing.",
+    followUp: "Can you walk me through a recent inspection, step by step? What specific tools and tests did you use, and can I see a sample report or photos?",
     proTip: "Ask the contractor to show you their actual diagnostic tools or a sample inspection report. Real pros use moisture meters, thermal imaging, or written checklists-if they can't provide evidence, they're guessing."
   },
   {
@@ -25,7 +25,7 @@ export const elite12Data = [
       "Blames delays or extra costs on \"unforeseen conditions\" after the fact.",
       "Seems annoyed by the question or dismisses the risk."
     ],
-    followUp: "Insist on seeing a sample \"change order\" form before signing any contract. The best companies provide written updates, photos of hidden damage, and clear options for next steps before charging extra.",
+    followUp: "If you find hidden damage, how do you document it and communicate the options? Will I get photos, a written change order, and a chance to approve or reject extra work before you continue?",
     proTip: "Insist on seeing a sample \"change order\" form before signing any contract. The best companies provide written updates, photos of hidden damage, and clear options for next steps before charging extra."
   },
   {
@@ -39,7 +39,7 @@ export const elite12Data = [
       "Can't provide a written list of brands/models or explain their choices.",
       "Won't discuss backup or secondary pumps."
     ],
-    followUp: "A trustworthy contractor will explain why your specific home needs a certain horsepower, basin size, and backup option. Ask them to show you the math-or at least their reasoning-before you commit.",
+    followUp: "Why did you recommend this specific pump and basin size for my home? Can you show me how you calculated it, or compare it to other brands/models you offer?",
     proTip: "A trustworthy contractor will explain why your specific home needs a certain horsepower, basin size, and backup option. Ask them to show you the math-or at least their reasoning-before you commit."
   },
   {
@@ -52,7 +52,7 @@ export const elite12Data = [
       "Refuses to answer in writing or consult code requirements.",
       "Has no experience with local regulations for discharge."
     ],
-    followUp: "Always check local plumbing codes or ask for written documentation. Many cities have strict rules about what can go into a sump-if your contractor shrugs this off, they're putting you at risk.",
+    followUp: "Can you provide the local plumbing code or manufacturer's documentation proving this setup is compliant? Have you ever had to resolve a code violation for a homeowner?",
     proTip: "Always check local plumbing codes or ask for written documentation. Many cities have strict rules about what can go into a sump-if your contractor shrugs this off, they're putting you at risk."
   },
   {
@@ -66,7 +66,7 @@ export const elite12Data = [
       "Blames all failures on \"homeowner neglect.\"",
       "Won't share real-world examples or lessons learned."
     ],
-    followUp: "Smart contractors will talk openly about maintenance, battery backups, and even user error. Listen for answers that show real experience, not just marketing claims.",
+    followUp: "What routine maintenance, system upgrades, or backup measures do you recommend to address these risks? Can you give me an example of a past failure and how you fixed it?",
     proTip: "Smart contractors will talk openly about maintenance, battery backups, and even user error. Listen for answers that show real experience, not just marketing claims."
   },
   {
@@ -79,7 +79,7 @@ export const elite12Data = [
       "Refuses to put delay terms in writing.",
       "Gets annoyed by questions about scheduling or communication."
     ],
-    followUp: "Ask for a written timeline and communication plan, including how you'll be notified of changes. Proactive communication is a hallmark of reputable contractors.",
+    followUp: "If there's a delay, how will I be notified, and can I see a written communication schedule or example update message you send customers?",
     proTip: "Ask for a written timeline and communication plan, including how you'll be notified of changes. Proactive communication is a hallmark of reputable contractors."
   },
   {
@@ -92,7 +92,7 @@ export const elite12Data = [
       "Blames response time on \"how busy we are.\"",
       "References warranty fine print with exclusions or hidden fees."
     ],
-    followUp: "Get the emergency number and ask for a real-life example of how quickly they responded to a previous call. Bonus: Ask if they guarantee a response window in writing.",
+    followUp: "Can you show me your actual emergency response logs or give me the direct number I would call in a true emergency? What's the longest someone's waited in the past year?",
     proTip: "Get the emergency number and ask for a real-life example of how quickly they responded to a previous call. Bonus: Ask if they guarantee a response window in writing."
   },
   {
@@ -105,7 +105,7 @@ export const elite12Data = [
       "Gets defensive or uncomfortable with the question.",
       "Provides a generic answer with no details."
     ],
-    followUp: "Great contractors have real stories of overcoming tough jobs and what they learned. If they're transparent about failures and fixes, you've likely found someone trustworthy.",
+    followUp: "What specifically went wrong on that job, how did you communicate with the homeowner, and what changes did you make in your process as a result?",
     proTip: "Great contractors have real stories of overcoming tough jobs and what they learned. If they're transparent about failures and fixes, you've likely found someone trustworthy."
   },
   {
@@ -118,7 +118,7 @@ export const elite12Data = [
       "Won't let you observe the test or provide before/after data.",
       "Relies only on visual checks, not objective measurements."
     ],
-    followUp: "Demand written verification-moisture readings, photos, or even a \"water test\" after completion. The best contractors are proud to document their success.",
+    followUp: "Can I be present for the post-install test? Will you give me written documentation or before-and-after measurements to prove the system is working?",
     proTip: "Demand written verification-moisture readings, photos, or even a \"water test\" after completion. The best contractors are proud to document their success."
   },
   {
@@ -131,7 +131,7 @@ export const elite12Data = [
       "Doesn't mention backup pumps, battery systems, or redundancy.",
       "Won't provide examples of systems that have survived major local storms."
     ],
-    followUp: "Ask about system redundancy (backup pumps, alarms, larger basins) and request examples of how their solutions have performed in recent local storms.",
+    followUp: "Have you installed this system during an actual flood or after a major storm? Do you have photos or references from jobs where your setup handled extreme conditions?",
     proTip: "Ask about system redundancy (backup pumps, alarms, larger basins) and request examples of how their solutions have performed in recent local storms."
   },
   {
@@ -144,7 +144,7 @@ export const elite12Data = [
       "Gives vague, evasive answers or gets visibly uncomfortable.",
       "Won't discuss how they fix or warranty failed work."
     ],
-    followUp: "A real pro owns their mistakes and explains what they changed to avoid repeating them. If they admit a failure and describe how they fixed it, that's a good sign.",
+    followUp: "Were there any costs to the homeowner for the redo? What's your process for standing behind your work if a major issue comes up?",
     proTip: "A real pro owns their mistakes and explains what they changed to avoid repeating them. If they admit a failure and describe how they fixed it, that's a good sign."
   },
   {
@@ -157,7 +157,7 @@ export const elite12Data = [
       "Downplays risks to air quality, especially for kids or sensitive people.",
       "Refuses to provide their written protocol or won't let you speak to a tech about it."
     ],
-    followUp: "Look for specifics like sealed work areas, negative air machines, HEPA vacuums, and protective suits. Ask to see photos of their containment setup on a previous job.",
+    followUp: "Can you show me photos of a real containment setup you've used, and can I see a written protocol or checklist your crew follows on every job?",
     proTip: "Look for specifics like sealed work areas, negative air machines, HEPA vacuums, and protective suits. Ask to see photos of their containment setup on a previous job."
   }
 ];
