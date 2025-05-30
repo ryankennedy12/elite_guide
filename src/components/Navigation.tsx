@@ -23,8 +23,8 @@ const Navigation: React.FC = () => {
 
   const isActive = (href: string) => location.pathname === href;
 
-  // Show navigation for all pages when unlocked
-  if (!isUnlocked && location.pathname !== '/') {
+  // Don't show navigation on home page if not unlocked
+  if (location.pathname === '/' && !isUnlocked) {
     return null;
   }
 
