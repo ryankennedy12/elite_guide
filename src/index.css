@@ -92,29 +92,6 @@
 }
 
 @layer utilities {
-  /* Enhanced glassmorphism and premium effects */
-  .shadow-3xl {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  }
-  
-  .backdrop-blur-xl {
-    backdrop-filter: blur(24px);
-  }
-  
-  /* Premium button hover effects */
-  .hover-glow {
-    transition: all 0.3s ease;
-  }
-  
-  .hover-glow:hover {
-    box-shadow: 0 0 30px rgba(255, 212, 0, 0.3);
-  }
-  
-  /* Staggered animation delays */
-  .delay-0 { animation-delay: 0ms; }
-  .delay-200 { animation-delay: 200ms; }
-  .delay-400 { animation-delay: 400ms; }
-  
   /* Mobile-first responsive typography */
   .responsive-text-h1 {
     font-size: clamp(1.75rem, 5vw, 3rem);
@@ -169,6 +146,24 @@
     }
   }
 
+  /* Blur box styles */
+  .blur-box {
+    position: relative;
+    backdrop-filter: blur(6px);
+    opacity: 0.85;
+  }
+
+  .lock-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
   /* Print styles */
   @media print {
     .no-print {
@@ -196,6 +191,29 @@ html {
   scroll-margin-top: 96px;
 }
 
+/* Ensure tables are accessible on mobile */
+@media (max-width: 767px) {
+  .table-responsive {
+    overflow-x: auto;
+    border-bottom: 2px solid #FFD700;
+  }
+  
+  /* Mobile card padding adjustments */
+  @media (min-width: 320px) and (max-width: 479px) {
+    .mobile-card {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+  }
+  
+  @media (min-width: 480px) and (max-width: 767px) {
+    .mobile-card {
+      padding-left: 32px;
+      padding-right: 32px;
+    }
+  }
+}
+
 /* Animation performance optimization */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -207,7 +225,7 @@ html {
   }
 }
 
-/* Enhanced backdrop blur for premium glassmorphism */
+/* Blur overlay styles */
 .backdrop-blur {
   backdrop-filter: blur(6px);
 }
