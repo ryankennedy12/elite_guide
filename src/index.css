@@ -92,50 +92,20 @@
 }
 
 @layer utilities {
-  /* Mobile-first responsive typography */
-  .responsive-text-h1 {
-    font-size: clamp(1.75rem, 5vw, 3rem);
-  }
-  
-  .responsive-text-h2 {
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
-  }
-  
-  .responsive-text-h3 {
-    font-size: clamp(1.25rem, 3vw, 2rem);
-  }
-
-  /* Focus styles with yellow accent */
-  .focus-visible {
-    @apply outline-2 outline-yellow-500 outline-offset-2;
-  }
-
-  /* Touch targets for mobile */
-  .touch-target {
-    @apply min-h-[48px] min-w-[48px];
-  }
-
-  /* Smooth animations */
+  /* Premium SaaS animations */
   .animate-fade-in {
-    animation: fadeIn 0.3s ease-out;
+    animation: fadeIn 0.6s ease-out;
   }
 
   .animate-slide-up {
-    animation: slideUp 0.3s ease-out;
+    animation: slideUp 0.4s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out;
   }
 
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes slideUp {
     from {
       opacity: 0;
       transform: translateY(20px);
@@ -146,86 +116,92 @@
     }
   }
 
-  /* Blur box styles */
-  .blur-box {
-    position: relative;
-    backdrop-filter: blur(6px);
-    opacity: 0.85;
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  .lock-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.9);
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
-  /* Print styles */
-  @media print {
-    .no-print {
-      display: none !important;
+  /* Premium glassmorphism effect */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Premium hover effects */
+  .premium-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .premium-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Focus styles with yellow accent */
+  .focus-visible {
+    @apply outline-2 outline-yellow-500 outline-offset-2;
+  }
+
+  /* Smooth scrolling for anchor links */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Animation performance optimization */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
     }
-    
-    .print-break-before {
-      page-break-before: always;
-    }
-    
-    body {
-      font-size: 12pt;
-      line-height: 1.4;
-    }
-    
-    h1, h2, h3 {
-      page-break-after: avoid;
-    }
+  }
+
+  /* Premium text gradients */
+  .text-gradient {
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Custom input focus states */
+  .premium-input:focus {
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+    border-color: #fbbf24;
   }
 }
 
-/* Smooth scrolling for anchor links */
-html {
-  scroll-behavior: smooth;
-  scroll-margin-top: 96px;
-}
-
-/* Ensure tables are accessible on mobile */
+/* Mobile-first responsive optimizations */
 @media (max-width: 767px) {
-  .table-responsive {
-    overflow-x: auto;
-    border-bottom: 2px solid #FFD700;
-  }
-  
-  /* Mobile card padding adjustments */
-  @media (min-width: 320px) and (max-width: 479px) {
-    .mobile-card {
-      padding-left: 24px;
-      padding-right: 24px;
-    }
-  }
-  
-  @media (min-width: 480px) and (max-width: 767px) {
-    .mobile-card {
-      padding-left: 32px;
-      padding-right: 32px;
-    }
+  .mobile-optimized {
+    padding: 1.5rem;
   }
 }
 
-/* Animation performance optimization */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+/* High-DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .crisp-edges {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
   }
-}
-
-/* Blur overlay styles */
-.backdrop-blur {
-  backdrop-filter: blur(6px);
 }
