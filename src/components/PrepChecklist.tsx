@@ -29,7 +29,7 @@ export const PrepChecklist: React.FC<PrepChecklistProps> = ({ isUnlocked, onUnlo
                 {section.items.map((item, itemIndex) => (
                   <li key={itemIndex} className="flex items-start gap-3">
                     <span className="text-lg mt-0.5">☐</span>
-                    <span className="text-gray-700">{item}</span>
+                    <span className="text-gray-700">{item.text}</span>
                   </li>
                 ))}
               </ul>
