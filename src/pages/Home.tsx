@@ -71,24 +71,32 @@ const Home = () => {
               </div>
             </div>
             
-            {/* Locked Preview */}
-            <div className="mb-8 relative">
-              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 relative overflow-hidden">
-                <div className="blur-sm opacity-60">
-                  <p className="text-gray-800 mb-3 font-medium">
-                    <strong>Question #1:</strong> "Can you show me your diagnostic process before giving an estimate?"
-                  </p>
-                  <p className="text-red-600 text-sm">
-                    <strong>🚩 Red Flag:</strong> "We know exactly what you need" or "It's always the same problem"
-                  </p>
+            {/* Locked Preview with Image */}
+            <div className="mb-8 relative group">
+              <div className="relative overflow-hidden rounded-xl border-2 border-gray-200 bg-gradient-to-br from-blue-50 to-purple-50 transition-all duration-300 group-hover:shadow-lg group-hover:border-yellow-300">
+                {/* Background Image */}
+                <div className="relative h-64 w-full">
+                  <img 
+                    src="/lovable-uploads/673e2590-5b67-45cc-a3d3-993323344ba4.png"
+                    alt="Preview of Elite 12 Questions guide"
+                    className="w-full h-full object-cover filter blur-sm opacity-75 transition-all duration-300 group-hover:blur-md group-hover:opacity-60"
+                  />
+                  
+                  {/* Color overlay for visual hierarchy */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-blue-500/20 via-transparent to-purple-500/10 transition-all duration-300 group-hover:from-blue-500/30 group-hover:to-purple-500/20"></div>
                 </div>
                 
                 {/* Lock overlay */}
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center">
-                  <Lock className="w-8 h-8 text-gray-600 mb-3 animate-pulse" />
-                  <p className="text-gray-700 font-medium">
-                    See all 12 questions—unlock below
-                  </p>
+                <div className="absolute inset-0 bg-white/85 backdrop-blur-sm flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-white/90">
+                  <div className="text-center transform transition-all duration-300 group-hover:scale-105">
+                    <Lock className="w-8 h-8 text-gray-600 mb-3 animate-pulse transition-colors duration-300 group-hover:text-yellow-600" />
+                    <p className="text-gray-700 font-medium mb-2">
+                      See all 12 questions—unlock below
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Preview of your waterproofing guide
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
