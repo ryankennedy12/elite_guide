@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, MessageSquare, Mail, Star, Check, X, Share, MessageCircle, BarChart3 } from 'lucide-react';
+import { Copy, MessageSquare, Mail, Star, Check, X, Share, MessageCircle, BarChart3, RotateCcw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const ShareReviewSurvey = () => {
@@ -18,10 +17,34 @@ const ShareReviewSurvey = () => {
   const [surveyAnswers, setSurveyAnswers] = useState<string[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
 
+  // Debug function to clear localStorage
+  const clearLocalStorage = () => {
+    localStorage.removeItem('ksump_reviewed');
+    localStorage.removeItem('ksump_surveyed');
+    localStorage.removeItem('ksump_any_action');
+    setHasCompletedReview(false);
+    setHasCompletedSurvey(false);
+    setSurveyStep(0);
+    setSurveyAnswers([]);
+    setHasShared(false);
+    toast({
+      title: "Reset Complete",
+      description: "All progress cleared. Popup will show in 45 seconds.",
+    });
+    console.log('LocalStorage cleared - popup should appear in 45 seconds');
+  };
+
   // Check localStorage on component mount
   useEffect(() => {
     const reviewCompleted = localStorage.getItem('ksump_reviewed') === 'true';
     const surveyCompleted = localStorage.getItem('ksump_surveyed') === 'true';
+    const anyActionCompleted = localStorage.getItem('ksump_any_action') === 'true';
+    
+    console.log('LocalStorage check:', {
+      reviewCompleted,
+      surveyCompleted,
+      anyActionCompleted
+    });
     
     setHasCompletedReview(reviewCompleted);
     setHasCompletedSurvey(surveyCompleted);
@@ -38,22 +61,36 @@ const ShareReviewSurvey = () => {
     const surveyCompleted = localStorage.getItem('ksump_surveyed') === 'true';
     const anyActionCompleted = localStorage.getItem('ksump_any_action') === 'true';
 
+    console.log('Popup trigger check:', {
+      reviewCompleted,
+      surveyCompleted,
+      anyActionCompleted,
+      shouldShowPopup: !anyActionCompleted && !reviewCompleted && !surveyCompleted
+    });
+
     // Don't show popup if any action was ever completed
     if (anyActionCompleted || reviewCompleted || surveyCompleted) {
+      console.log('Popup blocked - action already completed');
       return;
     }
 
+    console.log('Setting popup timer for 45 seconds...');
     const timer = setTimeout(() => {
+      console.log('Popup timer fired - showing popup');
       setShowPopup(true);
     }, 45000); // 45 seconds
 
-    return () => clearTimeout(timer);
+    return () => {
+      console.log('Popup timer cleared');
+      clearTimeout(timer);
+    };
   }, []);
 
   // Handle popup dismiss on scroll
   useEffect(() => {
     const handleScroll = () => {
       if (showPopup) {
+        console.log('Popup dismissed by scroll');
         setShowPopup(false);
       }
     };
@@ -65,6 +102,7 @@ const ShareReviewSurvey = () => {
   const markActionCompleted = () => {
     localStorage.setItem('ksump_any_action', 'true');
     setShowPopup(false); // Hide popup forever
+    console.log('Action completed - popup disabled forever');
   };
 
   const copyToClipboard = async () => {
@@ -169,6 +207,19 @@ const ShareReviewSurvey = () => {
 
   return (
     <div className="min-h-screen bg-white relative">
+      {/* Debug Reset Button - only show in development */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          onClick={clearLocalStorage}
+          variant="outline"
+          size="sm"
+          className="bg-red-50 border-red-200 text-red-600 hover:bg-red-100"
+        >
+          <RotateCcw className="w-4 h-4 mr-2" />
+          Reset for Testing
+        </Button>
+      </div>
+
       {/* Confetti Effect */}
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-50">

@@ -19,6 +19,7 @@ const Navigation: React.FC = () => {
     { label: 'Glossary', href: '/glossary', id: 'glossary' },
     { label: 'Question Maker', href: '/question-maker', id: 'question-maker' },
     { label: 'My Notes', href: '/my-notes', id: 'my-notes' },
+    { label: 'Share & Review', href: '/share-review-survey', id: 'share-review-survey' },
   ];
 
   const isActive = (href: string) => location.pathname === href;
