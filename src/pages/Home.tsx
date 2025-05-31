@@ -79,7 +79,7 @@ const Home = () => {
                   <img 
                     src="/lovable-uploads/673e2590-5b67-45cc-a3d3-993323344ba4.png"
                     alt="Preview of Elite 12 Questions guide"
-                    className="w-full h-full object-cover filter blur-sm opacity-75 transition-all duration-300 group-hover:blur-md group-hover:opacity-60"
+                    className="w-full h-full object-cover filter blur-[2px] opacity-85 transition-all duration-300 group-hover:blur-[3px] group-hover:opacity-70"
                   />
                   
                   {/* Color overlay for visual hierarchy */}
@@ -89,7 +89,7 @@ const Home = () => {
                 {/* Lock overlay */}
                 <div className="absolute inset-0 bg-white/85 backdrop-blur-sm flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-white/90">
                   <div className="text-center transform transition-all duration-300 group-hover:scale-105">
-                    <Lock className="w-8 h-8 text-gray-600 mb-3 animate-pulse transition-colors duration-300 group-hover:text-yellow-600" />
+                    <Lock className="w-8 h-8 text-gray-600 mb-3 transition-colors duration-300 group-hover:text-yellow-600" />
                     <p className="text-gray-700 font-medium mb-2">
                       See all 12 questions—unlock below
                     </p>
