@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { Elite12Questions } from '@/components/Elite12Questions';
-import { CheatSheet } from '@/components/CheatSheet';
+import PremiumCheatSheet from '@/components/PremiumCheatSheet';
 import { PrepChecklist } from '@/components/PrepChecklist';
 import { Glossary } from '@/components/Glossary';
 import { DownloadSection } from '@/components/DownloadSection';
@@ -42,7 +42,11 @@ const Content = () => {
           </div>
           
           <Elite12Questions isUnlocked={true} onUnlockClick={scrollToTop} />
-          <CheatSheet isUnlocked={true} onUnlockClick={scrollToTop} />
+          
+          <section id="cheat-sheet" className="mb-18 md:mb-24">
+            <PremiumCheatSheet />
+          </section>
+          
           <PrepChecklist isUnlocked={true} onUnlockClick={scrollToTop} />
           <Glossary isUnlocked={true} onUnlockClick={scrollToTop} />
           <DownloadSection isUnlocked={true} onUnlockClick={scrollToTop} />

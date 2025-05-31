@@ -205,3 +205,59 @@
     image-rendering: crisp-edges;
   }
 }
+
+/* Print Styles for Premium PDF */
+@media print {
+  @page {
+    margin: 1in;
+    size: letter;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+    color: black !important;
+    background: white !important;
+  }
+  
+  .fixed {
+    display: none !important;
+  }
+  
+  nav {
+    display: none !important;
+  }
+  
+  button {
+    display: none !important;
+  }
+  
+  .border-t-4 {
+    border-top: 4px solid #eab308 !important;
+  }
+  
+  .bg-red-100 {
+    background-color: #fee2e2 !important;
+    border-left: 4px solid #ef4444 !important;
+  }
+  
+  .bg-green-100 {
+    background-color: #dcfce7 !important;
+    border-left: 4px solid #22c55e !important;
+  }
+  
+  .text-red-700, .text-red-800 {
+    color: #b91c1c !important;
+  }
+  
+  .text-green-700, .text-green-800 {
+    color: #15803d !important;
+  }
+  
+  /* Add checkboxes for print version */
+  .print-checkbox::before {
+    content: "☐ ";
+    font-size: 14pt;
+    margin-right: 8px;
+  }
+}
