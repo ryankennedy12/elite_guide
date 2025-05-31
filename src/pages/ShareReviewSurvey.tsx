@@ -12,13 +12,37 @@ const ShareReviewSurvey = () => {
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [hasShared, setHasShared] = useState(false);
-  const [hasRated, setHasRated] = useState(false);
+  const [hasCompletedReview, setHasCompletedReview] = useState(false);
+  const [hasCompletedSurvey, setHasCompletedSurvey] = useState(false);
   const [surveyStep, setSurveyStep] = useState(0);
   const [surveyAnswers, setSurveyAnswers] = useState<string[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  // Timed popup trigger
+  // Check localStorage on component mount
   useEffect(() => {
+    const reviewCompleted = localStorage.getItem('ksump_reviewed') === 'true';
+    const surveyCompleted = localStorage.getItem('ksump_surveyed') === 'true';
+    
+    setHasCompletedReview(reviewCompleted);
+    setHasCompletedSurvey(surveyCompleted);
+
+    // If user completed survey, restore their progress
+    if (surveyCompleted) {
+      setSurveyStep(3); // Set to completed state
+    }
+  }, []);
+
+  // Timed popup trigger - only show if no actions completed
+  useEffect(() => {
+    const reviewCompleted = localStorage.getItem('ksump_reviewed') === 'true';
+    const surveyCompleted = localStorage.getItem('ksump_surveyed') === 'true';
+    const anyActionCompleted = localStorage.getItem('ksump_any_action') === 'true';
+
+    // Don't show popup if any action was ever completed
+    if (anyActionCompleted || reviewCompleted || surveyCompleted) {
+      return;
+    }
+
     const timer = setTimeout(() => {
       setShowPopup(true);
     }, 45000); // 45 seconds
@@ -38,10 +62,16 @@ const ShareReviewSurvey = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [showPopup]);
 
+  const markActionCompleted = () => {
+    localStorage.setItem('ksump_any_action', 'true');
+    setShowPopup(false); // Hide popup forever
+  };
+
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(window.location.origin + '/elite-12');
       setHasShared(true);
+      markActionCompleted();
       toast({
         title: "Link copied!",
         description: "Share it with someone who needs this guide.",
@@ -60,6 +90,7 @@ const ShareReviewSurvey = () => {
     const url = window.location.origin + '/elite-12';
     window.open(`https://wa.me/?text=${encodeURIComponent(message + ' ' + url)}`, '_blank');
     setHasShared(true);
+    markActionCompleted();
   };
 
   const shareViaSMS = () => {
@@ -67,6 +98,7 @@ const ShareReviewSurvey = () => {
     const url = window.location.origin + '/elite-12';
     window.open(`sms:?body=${encodeURIComponent(message + ' ' + url)}`, '_blank');
     setHasShared(true);
+    markActionCompleted();
   };
 
   const shareViaEmail = () => {
@@ -75,11 +107,14 @@ const ShareReviewSurvey = () => {
     const url = window.location.origin + '/elite-12';
     window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body + '\n\n' + url)}`, '_blank');
     setHasShared(true);
+    markActionCompleted();
   };
 
   const submitRating = () => {
     if (rating > 0) {
-      setHasRated(true);
+      localStorage.setItem('ksump_reviewed', 'true');
+      setHasCompletedReview(true);
+      markActionCompleted();
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
       toast({
@@ -111,6 +146,10 @@ const ShareReviewSurvey = () => {
     if (surveyStep < surveyQuestions.length - 1) {
       setSurveyStep(surveyStep + 1);
     } else {
+      localStorage.setItem('ksump_surveyed', 'true');
+      setHasCompletedSurvey(true);
+      markActionCompleted();
+      setSurveyStep(3); // Set to completed state
       toast({
         title: "Survey complete!",
         description: "You're helping every homeowner in Columbus!",
@@ -124,6 +163,9 @@ const ShareReviewSurvey = () => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
     setShowPopup(false);
   };
+
+  // Don't show popup if any action was completed
+  const shouldShowPopup = showPopup && !hasCompletedReview && !hasCompletedSurvey && localStorage.getItem('ksump_any_action') !== 'true';
 
   return (
     <div className="min-h-screen bg-white relative">
@@ -140,7 +182,7 @@ const ShareReviewSurvey = () => {
       )}
 
       {/* Timed Popup */}
-      {showPopup && (
+      {shouldShowPopup && (
         <div className="fixed inset-0 z-40 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowPopup(false)}></div>
           <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl border-2 border-yellow-400 p-8 max-w-md w-full shadow-2xl animate-fade-in">
@@ -167,22 +209,26 @@ const ShareReviewSurvey = () => {
                   <Share className="w-4 h-4 mr-2" />
                   Share Now
                 </Button>
-                <Button
-                  onClick={() => scrollToSection('review-section')}
-                  variant="outline"
-                  className="w-full border-black text-black hover:bg-gray-50"
-                >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  Leave Feedback
-                </Button>
-                <Button
-                  onClick={() => scrollToSection('survey-section')}
-                  variant="outline"
-                  className="w-full border-black text-black hover:bg-gray-50"
-                >
-                  <BarChart3 className="w-4 h-4 mr-2" />
-                  Take Survey
-                </Button>
+                {!hasCompletedReview && (
+                  <Button
+                    onClick={() => scrollToSection('review-section')}
+                    variant="outline"
+                    className="w-full border-black text-black hover:bg-gray-50"
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Leave Feedback
+                  </Button>
+                )}
+                {!hasCompletedSurvey && (
+                  <Button
+                    onClick={() => scrollToSection('survey-section')}
+                    variant="outline"
+                    className="w-full border-black text-black hover:bg-gray-50"
+                  >
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Take Survey
+                  </Button>
+                )}
                 <Button
                   onClick={() => setShowPopup(false)}
                   variant="ghost"
@@ -208,7 +254,7 @@ const ShareReviewSurvey = () => {
           </p>
         </div>
 
-        {/* Share Section */}
+        {/* Share Section - Always Available */}
         <div id="share-section" className="space-y-8">
           <div className="text-center space-y-4">
             <h2 className="text-3xl font-bold text-black">Share the Guide</h2>
@@ -272,7 +318,13 @@ const ShareReviewSurvey = () => {
             </p>
           </div>
 
-          {!hasRated ? (
+          {hasCompletedReview ? (
+            <div className="text-center p-8 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="text-4xl mb-4">✅</div>
+              <h3 className="text-xl font-bold text-gray-700 mb-2">Already completed—thank you!</h3>
+              <p className="text-gray-500">You've already shared your feedback with us.</p>
+            </div>
+          ) : (
             <div className="space-y-6">
               <div className="flex justify-center space-x-2">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -309,12 +361,6 @@ const ShareReviewSurvey = () => {
                 Your feedback is never published or sold—just used to make the next guide better for Columbus homeowners.
               </p>
             </div>
-          ) : (
-            <div className="text-center p-8 bg-yellow-50 rounded-xl border border-yellow-200">
-              <div className="text-4xl mb-4">🎉</div>
-              <h3 className="text-xl font-bold text-black mb-2">Thank you!</h3>
-              <p className="text-gray-600">Your feedback helps make the next guide even better.</p>
-            </div>
           )}
         </div>
 
@@ -327,7 +373,13 @@ const ShareReviewSurvey = () => {
             </p>
           </div>
 
-          {surveyStep < surveyQuestions.length ? (
+          {hasCompletedSurvey ? (
+            <div className="text-center p-8 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="text-4xl mb-4">✅</div>
+              <h3 className="text-xl font-bold text-gray-700 mb-2">Already completed—thank you!</h3>
+              <p className="text-gray-500">You've already helped shape what we build next.</p>
+            </div>
+          ) : surveyStep < surveyQuestions.length ? (
             <div className="space-y-6">
               {/* Progress Bar */}
               <div className="w-full bg-gray-200 rounded-full h-2">
