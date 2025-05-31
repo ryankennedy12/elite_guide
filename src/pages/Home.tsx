@@ -66,7 +66,7 @@ const Home = () => {
               
               {/* Urgency badge */}
               <div className="inline-flex items-center px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium mb-8">
-                <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2 animate-pulse"></span>
+                <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
                 LIMITED RELEASE: Free for Columbus homeowners
               </div>
             </div>
@@ -79,15 +79,15 @@ const Home = () => {
                   <img 
                     src="/lovable-uploads/673e2590-5b67-45cc-a3d3-993323344ba4.png"
                     alt="Preview of Elite 12 Questions guide"
-                    className="w-full h-full object-cover filter blur-[0.5px] opacity-90 transition-all duration-300 group-hover:blur-[1px] group-hover:opacity-80"
+                    className="w-full h-full object-cover opacity-95 transition-all duration-300 group-hover:opacity-80"
                   />
                   
                   {/* Color overlay for visual hierarchy */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-blue-500/20 via-transparent to-purple-500/10 transition-all duration-300 group-hover:from-blue-500/30 group-hover:to-purple-500/20"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-blue-500/10 via-transparent to-purple-500/5 transition-all duration-300 group-hover:from-blue-500/20 group-hover:to-purple-500/10"></div>
                 </div>
                 
                 {/* Lock overlay */}
-                <div className="absolute inset-0 bg-white/85 backdrop-blur-sm flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-white/90">
+                <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-white/70">
                   <div className="text-center transform transition-all duration-300 group-hover:scale-105">
                     <Lock className="w-8 h-8 text-gray-600 mb-3 transition-colors duration-300 group-hover:text-yellow-600" />
                     <p className="text-gray-700 font-medium mb-2">
