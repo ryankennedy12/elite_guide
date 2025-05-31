@@ -79,7 +79,7 @@ const Home = () => {
                   <img 
                     src="/lovable-uploads/673e2590-5b67-45cc-a3d3-993323344ba4.png"
                     alt="Preview of Elite 12 Questions guide"
-                    className="w-full h-full object-cover filter blur-[2px] opacity-85 transition-all duration-300 group-hover:blur-[3px] group-hover:opacity-70"
+                    className="w-full h-full object-cover filter blur-[0.5px] opacity-90 transition-all duration-300 group-hover:blur-[1px] group-hover:opacity-80"
                   />
                   
                   {/* Color overlay for visual hierarchy */}
