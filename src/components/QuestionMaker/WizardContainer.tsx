@@ -157,6 +157,7 @@ const WizardContainer: React.FC = () => {
           <Step4CustomQuestions
             customQuestions={wizardState.customQuestions}
             onCustomQuestionsChange={(questions) => updateWizardState({ customQuestions: questions })}
+            userConcern={wizardState.userConcern}
             onNext={nextStep}
             onBack={prevStep}
           />
