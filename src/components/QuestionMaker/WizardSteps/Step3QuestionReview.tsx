@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, Edit3, GripVertical } from 'lucide-react';
-import { type WizardQuestionCategory } from '@/data/wizardQuestionBank';
+import { type WizardQuestionCategory } from '@/data/wizard';
 
 interface Step3QuestionReviewProps {
   userConcern: string;
