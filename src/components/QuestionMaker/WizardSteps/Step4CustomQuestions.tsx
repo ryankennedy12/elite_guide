@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { X, Mic, Plus, Lightbulb } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-import { Input } from '@/components/ui/input';
+import { X } from 'lucide-react';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { CustomQuestionBuilder } from '../CustomQuestionBuilder';
 
 interface Step4CustomQuestionsProps {
@@ -22,60 +22,6 @@ const Step4CustomQuestions: React.FC<Step4CustomQuestionsProps> = ({
   onBack,
   userConcern
 }) => {
-  const [currentInput, setCurrentInput] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-
-  // Smart suggestions based on user concern and common scenarios
-  const getSmartSuggestions = () => {
-    const baseSuggestions = [
-      "What's your warranty process if issues return?",
-      "How do you diagnose the root cause?",
-      "What's included vs. extra in your pricing?",
-      "How do you protect my finished areas during work?",
-      "Can you provide references from similar projects?"
-    ];
-
-    if (userConcern.trim()) {
-      const concernSpecific = [
-        `How will you prevent ${userConcern} from happening again?`,
-        `What's the most common cause of ${userConcern} in homes like mine?`,
-        `How long does it typically take to fix ${userConcern}?`
-      ];
-      return [...concernSpecific, ...baseSuggestions.slice(0, 2)];
-    }
-
-    return baseSuggestions;
-  };
-
-  // Generate real-time rewrite suggestions as user types
-  const generateRewrites = (input: string): string[] => {
-    if (input.length < 10) return [];
-    
-    const rewrites: string[] = [];
-    
-    // Make it more specific
-    if (!input.includes('specific') && !input.includes('exactly')) {
-      rewrites.push(`Can you be specific about ${input.toLowerCase()}?`);
-    }
-    
-    // Make it more professional
-    if (input.includes('you guys') || input.includes('your company')) {
-      rewrites.push(input.replace(/you guys|your company/g, 'your team'));
-    }
-    
-    // Add follow-up angle
-    if (!input.includes('documentation') && (input.includes('warranty') || input.includes('guarantee'))) {
-      rewrites.push(`${input} Can you provide that in writing?`);
-    }
-
-    return rewrites.slice(0, 3);
-  };
-
-  const handleInputChange = (value: string) => {
-    setCurrentInput(value);
-    setSuggestions(generateRewrites(value));
-  };
-
   const addCustomQuestion = (question: string) => {
     onCustomQuestionsChange([...customQuestions, question]);
   };
@@ -84,21 +30,6 @@ const Step4CustomQuestions: React.FC<Step4CustomQuestionsProps> = ({
     const updated = customQuestions.filter((_, i) => i !== index);
     onCustomQuestionsChange(updated);
   };
-
-  const addQuestion = (question: string) => {
-    if (question.trim()) {
-      onCustomQuestionsChange([...customQuestions, question.trim()]);
-      setCurrentInput('');
-      setSuggestions([]);
-    }
-  };
-
-  const useSuggestion = (suggestion: string) => {
-    setCurrentInput(suggestion);
-    setSuggestions([]);
-  };
-
-  const smartSuggestions = getSmartSuggestions();
 
   return (
     <TooltipProvider>
@@ -121,7 +52,7 @@ const Step4CustomQuestions: React.FC<Step4CustomQuestionsProps> = ({
 
             {customQuestions.length > 0 && (
               <div className="space-y-4 mt-8">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 justify-center">
                   <h3 className="text-base font-medium text-gray-900">
                     Your custom questions
                   </h3>
@@ -134,12 +65,15 @@ const Step4CustomQuestions: React.FC<Step4CustomQuestionsProps> = ({
                   {customQuestions.map((question, index) => (
                     <div
                       key={index}
-                      className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border transition-colors hover:bg-gray-100"
+                      className="flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200"
                     >
+                      <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <span className="text-xs font-semibold text-green-600">{index + 1}</span>
+                      </div>
                       <span className="flex-1 text-gray-800 leading-relaxed">{question}</span>
                       <button
                         onClick={() => removeCustomQuestion(index)}
-                        className="p-1 rounded hover:bg-gray-200 text-gray-500 flex-shrink-0"
+                        className="p-1 rounded hover:bg-red-50 text-red-500 flex-shrink-0 transition-colors"
                       >
                         <X className="w-4 h-4" />
                       </button>
