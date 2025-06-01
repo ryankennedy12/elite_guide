@@ -120,5 +120,61 @@ export const customerQuestions: WizardQuestionItem[] = [
     question: 'Are there warning signs that [the issue] could indicate a bigger hidden problem?',
     proTip: 'They should mention things like shifting walls, cracks, repeated leaks, or musty odors indicating deeper issues.',
     redFlag: '"It\'s always minor," or dismisses hidden risks.'
+  },
+  {
+    id: 'customer-18',
+    category: 'Customer Experience',
+    question: 'Will your fix for [the issue] require any special care or attention if I remodel in the future?',
+    proTip: 'They\'ll discuss how to protect drains, pumps, and vapor barriers during renovations.',
+    redFlag: '"Doesn\'t matter," or ignores potential conflicts with future projects.'
+  },
+  {
+    id: 'customer-19',
+    category: 'Customer Experience',
+    question: 'If my home is older/newer, how does that change your approach to [the issue]?',
+    proTip: 'Different construction eras require different solutions—contractors should know code changes, materials, and hidden risks by age.',
+    redFlag: '"We do everything the same," or no mention of home age.'
+  },
+  {
+    id: 'customer-20',
+    category: 'Customer Experience',
+    question: 'What would you do differently if this were your own house with [the issue]?',
+    proTip: 'Listen for honest, thoughtful recommendations—sometimes more thorough, sometimes staged to save money.',
+    redFlag: '"Doesn\'t matter—it\'s your house, not mine."'
+  },
+  {
+    id: 'customer-21',
+    category: 'Customer Experience',
+    question: 'Do you ever recommend monitoring-only approaches for [the issue] before full repairs?',
+    proTip: 'Some situations benefit from monitoring first—contractors should be willing to "wait and see" if it\'s reasonable.',
+    redFlag: '"Fix it now or else," or only pushes big jobs.'
+  },
+  {
+    id: 'customer-22',
+    category: 'Customer Experience',
+    question: 'How do you ensure the fix for [the issue] won\'t create new issues elsewhere in my home?',
+    proTip: 'Explains holistic review, drainage planning, and ongoing monitoring to prevent shifting problems.',
+    redFlag: '"We just handle what\'s in the contract," or never considers side effects.'
+  },
+  {
+    id: 'customer-23',
+    category: 'Customer Experience',
+    question: 'Will fixing [the issue] affect any other home systems (HVAC, electrical, plumbing)?',
+    proTip: 'Good contractors flag any impacts (e.g., moving pipes, relocating electrical, protecting HVAC returns).',
+    redFlag: '"No impact," or "We don\'t check for that."'
+  },
+  {
+    id: 'customer-24',
+    category: 'Customer Experience',
+    question: 'What\'s your best advice for a first-time homeowner dealing with [the issue]?',
+    proTip: 'Practical advice: document everything, ask questions, get second opinions, and don\'t panic—solutions exist!',
+    redFlag: '"Just pay and let us handle it," or tries to upsell.'
+  },
+  {
+    id: 'customer-25',
+    category: 'Customer Experience',
+    question: 'What are some "DIY fails" you\'ve seen homeowners try with [the issue], and what went wrong?',
+    proTip: 'Great answers are educational—stories about wrong sealants, poor drainage work, or improper demo, with advice for DIYers.',
+    redFlag: '"Don\'t ever try DIY," or only uses horror stories to scare you.'
   }
 ];

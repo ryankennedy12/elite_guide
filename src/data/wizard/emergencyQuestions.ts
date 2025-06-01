@@ -5,141 +5,197 @@ export const emergencyQuestions: WizardQuestionItem[] = [
   {
     id: 'emergency-1',
     category: 'Emergency / Backup',
-    question: 'What\'s the best time of year to address [the issue] for effectiveness or savings?',
-    proTip: 'They should know seasonal considerations—dry weather for exterior work, off-season pricing, or weather-related urgency.',
-    redFlag: '"Doesn\'t matter when," or no awareness of seasonal factors.'
+    question: 'Have you seen similar issues with [the issue] in nearby homes or the neighborhood?',
+    proTip: 'The best contractors know local patterns—"Yes, this subdivision has a high water table," or "These streets often have poor drainage."',
+    redFlag: '"No idea," or "We only look at your house."'
   },
   {
     id: 'emergency-2',
     category: 'Emergency / Backup',
-    question: 'Are there seasonal warning signs I should watch for regarding [the issue]?',
-    proTip: 'Watch after heavy rain, rapid snowmelt, or freeze/thaw cycles—look for leaks, cracks, or sump cycling.',
-    redFlag: '"Doesn\'t matter what season," or "No warning signs."'
+    question: 'How do external factors (street drainage, sewers, neighboring properties) affect the risk of [the issue] at my house?',
+    proTip: 'They should assess neighborhood drainage, elevation, and even city stormwater management in their diagnosis.',
+    redFlag: '"Other properties don\'t matter," or only focuses on your basement.'
   },
   {
     id: 'emergency-3',
     category: 'Emergency / Backup',
-    question: 'If my home is older/newer, how does that change your approach to [the issue]?',
-    proTip: 'Different construction eras require different solutions—contractors should know code changes, materials, and hidden risks by age.',
-    redFlag: '"We do everything the same," or no mention of home age.'
+    question: 'Can I prevent [the issue] by coordinating with neighbors or HOA?',
+    proTip: 'Yes—sometimes group grading projects or shared drainage improvements are more effective (and cheaper).',
+    redFlag: '"No need to talk to neighbors," or dismisses collective solutions.'
   },
   {
     id: 'emergency-4',
     category: 'Emergency / Backup',
-    question: 'What would you do differently if this were your own house with [the issue]?',
-    proTip: 'They should be willing to share what they\'d do for their own family—often revealing their true quality standards.',
-    redFlag: '"Same thing we\'re proposing," or different standards for their own home.'
+    question: 'Are there city or community resources for learning about [the issue]?',
+    proTip: 'Contractors should recommend city websites, floodplain maps, or local homeownership workshops.',
+    redFlag: '"Never heard of any," or withholds info to seem indispensable.'
   },
   {
     id: 'emergency-5',
     category: 'Emergency / Backup',
-    question: 'Do you ever recommend monitoring-only approaches for [the issue] before full repairs?',
-    proTip: 'Some situations benefit from monitoring first—contractors should be willing to "wait and see" if it\'s reasonable.',
-    redFlag: '"Fix it now or else," or only pushes big jobs.'
+    question: 'What do insurance companies in Columbus look for regarding claims related to [the issue]?',
+    proTip: 'Look for answers like "Documentation of repairs, proof of maintenance, and compliance with code," and an offer to help you prepare.',
+    redFlag: '"Insurance never pays," or discourages you from making claims.'
   },
   {
     id: 'emergency-6',
     category: 'Emergency / Backup',
-    question: 'How do you ensure the fix for [the issue] won\'t create new issues elsewhere in my home?',
-    proTip: 'Explains holistic review, drainage planning, and ongoing monitoring to prevent shifting problems.',
-    redFlag: '"We just handle what\'s in the contract," or never considers side effects.'
+    question: 'Are there public records I can check to see if my house or neighbors have a history of [the issue]?',
+    proTip: 'Yes—city or county databases, or ask for building permit histories and past code violations.',
+    redFlag: '"There\'s no way to check," or discourages research.'
   },
   {
     id: 'emergency-7',
     category: 'Emergency / Backup',
-    question: 'Will fixing [the issue] affect any other home systems (HVAC, electrical, plumbing)?',
-    proTip: 'Good contractors flag any impacts (e.g., moving pipes, relocating electrical, protecting HVAC returns).',
-    redFlag: '"No impact," or "We don\'t check for that."'
+    question: 'How does your company handle community-wide problems with [the issue]?',
+    proTip: 'They may reference past projects fixing whole blocks, working with HOAs, or hosting informational sessions.',
+    redFlag: '"We don\'t do big jobs," or "Everyone\'s on their own."'
   },
   {
     id: 'emergency-8',
     category: 'Emergency / Backup',
-    question: 'What\'s your best advice for a first-time homeowner dealing with [the issue]?',
-    proTip: 'They should offer practical, educational advice that empowers you as a homeowner.',
-    redFlag: '"Just hire us," or no educational value in their response.'
+    question: 'Have you ever consulted for an entire block or subdivision with [the issue] issues?',
+    proTip: 'Good contractors will share stories, showing breadth of experience and ability to tackle systemic problems.',
+    redFlag: '"We only do one house at a time," or acts clueless about big-picture risk.'
   },
   {
     id: 'emergency-9',
     category: 'Emergency / Backup',
-    question: 'What are some "DIY fails" you\'ve seen homeowners try with [the issue], and what went wrong?',
-    proTip: 'Educational stories about common mistakes help you understand the complexity and avoid pitfalls.',
-    redFlag: '"Homeowners shouldn\'t try anything," or mocks DIY attempts without explanation.'
+    question: 'Are there local grants or funding programs for homeowners affected by [the issue]?',
+    proTip: 'Savvy pros know about (or will help research) city, state, or FEMA grants for waterproofing or flood prevention.',
+    redFlag: '"Never heard of any," or "You\'re on your own."'
   },
   {
     id: 'emergency-10',
     category: 'Emergency / Backup',
-    question: 'How will weather or climate change in Columbus affect the risk of [the issue] over the next decade?',
-    proTip: 'Forward-thinking contractors consider changing weather patterns and design systems accordingly.',
-    redFlag: '"Climate doesn\'t matter," or no long-term thinking.'
+    question: 'Is there a way to pool resources with neighbors for preventative work related to [the issue]?',
+    proTip: 'Yes—group discounts, shared contractors, or HOA projects often save money.',
+    redFlag: '"No point in doing that," or "It\'s not possible."'
   },
   {
     id: 'emergency-11',
-    category: 'Emergency / Backup',
-    question: 'Are there smart home products or sensors you recommend to alert me about [the issue]?',
-    proTip: 'They should know about water sensors, WiFi alarms, humidity monitors, and sump pump alerts.',
-    redFlag: '"Technology is unnecessary," or unfamiliar with modern monitoring.'
-  },
-  {
-    id: 'emergency-12',
-    category: 'Emergency / Backup',
-    question: 'How can I tell if my neighbors have had issues with [the issue]?',
-    proTip: 'They might suggest checking city records, talking to neighbors, or looking for visual signs.',
-    redFlag: '"Doesn\'t matter," or no awareness of neighborhood patterns.'
-  },
-  {
-    id: 'emergency-13',
-    category: 'Emergency / Backup',
-    question: 'Are there neighborhood or subdivision trends regarding [the issue] I should know about?',
-    proTip: 'Local contractors should know area-specific issues—soil types, construction era problems, or drainage patterns.',
-    redFlag: '"Every house is different," without any neighborhood knowledge.'
-  },
-  {
-    id: 'emergency-14',
-    category: 'Emergency / Backup',
-    question: 'Can you provide a yearly maintenance schedule/checklist related to [the issue]?',
-    proTip: 'Good contractors provide maintenance guides to help you protect your investment.',
-    redFlag: '"No maintenance needed," or tries to keep you dependent on service calls.'
-  },
-  {
-    id: 'emergency-15',
-    category: 'Emergency / Backup',
-    question: 'How can I budget for potential future repairs or upgrades related to [the issue]?',
-    proTip: 'They should help you understand long-term costs and plan for future needs.',
-    redFlag: '"You won\'t need anything else," or avoids discussing future costs.'
-  },
-  {
-    id: 'emergency-16',
-    category: 'Emergency / Backup',
-    question: 'What insurance riders or coverage should I consider to protect against [the issue]?',
-    proTip: 'Knowledgeable contractors understand insurance and can suggest relevant coverage options.',
-    redFlag: '"Insurance doesn\'t cover this," or no insurance knowledge.'
-  },
-  {
-    id: 'emergency-17',
-    category: 'Emergency / Backup',
-    question: 'Have you seen similar issues with [the issue] in nearby homes or the neighborhood?',
-    proTip: 'Local experience matters—they should know area patterns and common issues.',
-    redFlag: '"Every house is unique," without any neighborhood awareness.'
-  },
-  {
-    id: 'emergency-18',
     category: 'Emergency / Backup',
     question: 'Do local utility or water companies ever get involved with repairs for [the issue]?',
     proTip: 'Sometimes—especially for main line issues, sump discharge, or water table management.',
     redFlag: '"Never," or "That\'s not their job."'
   },
   {
+    id: 'emergency-12',
+    category: 'Emergency / Backup',
+    question: 'What public works or infrastructure projects could change the risk of [the issue] here?',
+    proTip: 'Contractors may reference upcoming sewer upgrades, roadwork, or city stormwater plans.',
+    redFlag: '"Nothing the city does affects your house," or "We don\'t track that."'
+  },
+  {
+    id: 'emergency-13',
+    category: 'Emergency / Backup',
+    question: 'Will your team coordinate with city inspectors or utility companies if required for [the issue]?',
+    proTip: 'Yes—good contractors will schedule, meet, and communicate directly.',
+    redFlag: '"That\'s your job," or "We avoid dealing with officials."'
+  },
+  {
+    id: 'emergency-14',
+    category: 'Emergency / Backup',
+    question: 'Are there upcoming construction projects near me that could worsen [the issue]?',
+    proTip: 'Great contractors may know about major developments, road projects, or drainage changes and will flag them for you.',
+    redFlag: '"No idea," or "Construction doesn\'t affect your basement."'
+  },
+  {
+    id: 'emergency-15',
+    category: 'Emergency / Backup',
+    question: 'Can I get on a neighborhood alert system for issues related to [the issue] (like floods, water main breaks)?',
+    proTip: 'Many cities offer opt-in alerts—good contractors can point you to them or suggest HOA communication channels.',
+    redFlag: '"Never heard of that," or dismisses the need for alerts.'
+  },
+  {
+    id: 'emergency-16',
+    category: 'Emergency / Backup',
+    question: 'Do you provide group rates or discounts for neighbors who all address [the issue] together?',
+    proTip: 'Yes—contractors often incentivize group work to maximize efficiency.',
+    redFlag: '"No discounts," or "Everyone pays the same, no matter what."'
+  },
+  {
+    id: 'emergency-17',
+    category: 'Emergency / Backup',
+    question: 'If my neighbor\'s yard floods, could that impact [the issue] at my house?',
+    proTip: 'Definitely—drainage and grading often connect homes; expect specific advice if you\'re downhill.',
+    redFlag: '"No impact from neighbors," or refuses to discuss shared risk.'
+  },
+  {
+    id: 'emergency-18',
+    category: 'Emergency / Backup',
+    question: 'Are there differences in [the issue] risk between new and historic Columbus neighborhoods?',
+    proTip: 'Yes—old neighborhoods may have stone foundations and clay pipes, new ones might have settling soils or undersized drains.',
+    redFlag: '"All neighborhoods are the same," or acts ignorant of local construction trends.'
+  },
+  {
     id: 'emergency-19',
     category: 'Emergency / Backup',
-    question: 'Can I prevent [the issue] by coordinating with neighbors or HOA?',
-    proTip: 'Sometimes neighborhood solutions (drainage, grading) are more effective than individual fixes.',
-    redFlag: '"That\'s not our job," or no interest in community solutions.'
+    question: 'Can you provide local statistics or data on [the issue] incidents?',
+    proTip: 'Good companies can point to city flood reports, code violation stats, or their own job data (without privacy breaches).',
+    redFlag: '"No data available," or claims, "It never happens here."'
   },
   {
     id: 'emergency-20',
     category: 'Emergency / Backup',
-    question: 'Are there city or community resources for learning about [the issue]?',
-    proTip: 'Good contractors know local resources—city departments, educational programs, or community workshops.',
-    redFlag: '"No idea," or only refers to their own services.'
+    question: 'If city ordinances change, will that affect how [the issue] is fixed or regulated?',
+    proTip: 'Yes—contractors should stay updated, flag upcoming changes, and be ready to adapt your project if laws shift.',
+    redFlag: '"City rules never change," or refuses to discuss compliance.'
+  },
+  {
+    id: 'emergency-21',
+    category: 'Emergency / Backup',
+    question: 'Is there anything I can do now to future-proof my home against [the issue] coming back?',
+    proTip: 'Listen for actionable advice—grading, gutter upgrades, sump alarms, or periodic inspections.',
+    redFlag: '"You don\'t need to worry about it," or offers no suggestions.'
+  },
+  {
+    id: 'emergency-22',
+    category: 'Emergency / Backup',
+    question: 'What maintenance or monitoring do you recommend after the fix for [the issue]?',
+    proTip: 'Answers should include a realistic maintenance plan—annual checkups, cleaning drains, testing pumps, and signs to watch for.',
+    redFlag: '"No maintenance needed ever," or tries to upsell unneeded services.'
+  },
+  {
+    id: 'emergency-23',
+    category: 'Emergency / Backup',
+    question: 'How do I spot early warning signs that [the issue] might return?',
+    proTip: 'Look for specific symptoms: musty odors, damp walls, efflorescence, or short cycling on pumps.',
+    redFlag: '"You\'ll know if it\'s bad," or no advice on prevention.'
+  },
+  {
+    id: 'emergency-24',
+    category: 'Emergency / Backup',
+    question: 'Can you provide a yearly maintenance schedule/checklist related to [the issue]?',
+    proTip: 'Yes—clear, actionable lists for the homeowner to follow.',
+    redFlag: '"No, just call us if there\'s a problem."'
+  },
+  {
+    id: 'emergency-25',
+    category: 'Emergency / Backup',
+    question: 'How does your company stay on the cutting edge of solutions for [the issue]?',
+    proTip: 'Attending trade shows, manufacturer training, adopting new tech, and constant process updates.',
+    redFlag: '"We just do what works," or "No need to change."'
+  },
+  {
+    id: 'emergency-26',
+    category: 'Emergency / Backup',
+    question: 'If new technology comes out to address [the issue], do you offer upgrades or trade-ins?',
+    proTip: 'Flexible contractors will update systems, offer add-ons, or give discounts for new tech.',
+    redFlag: '"No upgrades," or locks you into old systems.'
+  },
+  {
+    id: 'emergency-27',
+    category: 'Emergency / Backup',
+    question: 'How can I tell if my neighbors have had issues with [the issue]?',
+    proTip: 'Check city records, talk to neighbors, or ask for local reference cases.',
+    redFlag: '"It doesn\'t matter," or "We never look at other houses."'
+  },
+  {
+    id: 'emergency-28',
+    category: 'Emergency / Backup',
+    question: 'Are there neighborhood or subdivision trends regarding [the issue] I should know about?',
+    proTip: 'Good contractors know local patterns—like certain subdivisions with high water tables or known drainage problems.',
+    redFlag: '"Everywhere\'s the same," or no local knowledge.'
   }
 ];
