@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,7 +14,7 @@ import {
   Users, 
   Zap 
 } from 'lucide-react';
-import { wizardQuestionCategories, categoryDescriptions, type WizardQuestionCategory } from '@/data/wizardQuestionBank';
+import { wizardQuestionCategories, categoryDescriptions, type WizardQuestionCategory } from '@/data/wizard';
 
 interface Step2CategorySelectionProps {
   selectedCategories: WizardQuestionCategory[];

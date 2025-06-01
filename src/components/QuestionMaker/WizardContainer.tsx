@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,7 @@ import Step2CategorySelection from './WizardSteps/Step2CategorySelection';
 import Step3QuestionReview from './WizardSteps/Step3QuestionReview';
 import Step4CustomQuestions from './WizardSteps/Step4CustomQuestions';
 import Step5ExportPlan from './WizardSteps/Step5ExportPlan';
-import { type WizardQuestionCategory } from '@/data/wizardQuestionBank';
+import { type WizardQuestionCategory } from '@/data/wizard';
 
 export interface WizardState {
   currentStep: number;
