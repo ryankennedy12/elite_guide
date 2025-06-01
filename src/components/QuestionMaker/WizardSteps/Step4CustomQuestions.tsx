@@ -1,42 +1,33 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Plus, X } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { X } from 'lucide-react';
+import { CustomQuestionBuilder } from '../CustomQuestionBuilder';
 
 interface Step4CustomQuestionsProps {
   customQuestions: string[];
   onCustomQuestionsChange: (questions: string[]) => void;
   onNext: () => void;
   onBack: () => void;
+  userConcern: string;
 }
 
 const Step4CustomQuestions: React.FC<Step4CustomQuestionsProps> = ({
   customQuestions,
   onCustomQuestionsChange,
   onNext,
-  onBack
+  onBack,
+  userConcern
 }) => {
-  const [newQuestion, setNewQuestion] = useState('');
-
-  const addCustomQuestion = () => {
-    if (newQuestion.trim()) {
-      onCustomQuestionsChange([...customQuestions, newQuestion.trim()]);
-      setNewQuestion('');
-    }
+  const addCustomQuestion = (question: string) => {
+    onCustomQuestionsChange([...customQuestions, question]);
   };
 
   const removeCustomQuestion = (index: number) => {
     const updated = customQuestions.filter((_, i) => i !== index);
     onCustomQuestionsChange(updated);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      addCustomQuestion();
-    }
   };
 
   return (
@@ -52,62 +43,47 @@ const Step4CustomQuestions: React.FC<Step4CustomQuestionsProps> = ({
       
       <CardContent className="space-y-6">
         <div className="max-w-2xl mx-auto">
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="new-question" className="text-base font-medium">
-                Add a custom question
-              </Label>
-              <div className="flex gap-2 mt-2">
-                <Input
-                  id="new-question"
-                  value={newQuestion}
-                  onChange={(e) => setNewQuestion(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="e.g. How do you handle working around my finished basement?"
-                  className="flex-1 text-base p-4 h-auto"
-                />
-                <Button
-                  onClick={addCustomQuestion}
-                  disabled={!newQuestion.trim()}
-                  className="bg-black text-white hover:bg-gray-800"
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
-              <p className="text-sm text-gray-500 mt-2">
-                Think about your specific situation, timeline, or concerns that are unique to your home.
-              </p>
-            </div>
+          <CustomQuestionBuilder
+            onAddQuestion={addCustomQuestion}
+            userConcern={userConcern}
+          />
 
-            {customQuestions.length > 0 && (
+          {customQuestions.length > 0 && (
+            <div className="space-y-4 mt-8">
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-medium text-gray-900">
+                  Your custom questions
+                </h3>
+                <Badge variant="secondary">
+                  {customQuestions.length}
+                </Badge>
+              </div>
+              
               <div className="space-y-3">
-                <Label className="text-base font-medium">
-                  Your custom questions ({customQuestions.length})
-                </Label>
                 {customQuestions.map((question, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border"
+                    className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border transition-colors hover:bg-gray-100"
                   >
-                    <span className="flex-1 text-gray-800">{question}</span>
+                    <span className="flex-1 text-gray-800 leading-relaxed">{question}</span>
                     <button
                       onClick={() => removeCustomQuestion(index)}
-                      className="p-1 rounded hover:bg-gray-200 text-gray-500"
+                      className="p-1 rounded hover:bg-gray-200 text-gray-500 flex-shrink-0"
                     >
                       <X className="w-4 h-4" />
                     </button>
                   </div>
                 ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
-        <div className="text-center pt-6">
+        <div className="text-center pt-6 border-t">
           <p className="text-sm text-gray-500 mb-4">
             {customQuestions.length === 0 
               ? "No custom questions yet—that's okay! You can always add more later."
-              : `${customQuestions.length} custom question${customQuestions.length !== 1 ? 's' : ''} added`
+              : `${customQuestions.length} custom question${customQuestions.length !== 1 ? 's' : ''} added to your plan`
             }
           </p>
           <div className="flex justify-center gap-3">
