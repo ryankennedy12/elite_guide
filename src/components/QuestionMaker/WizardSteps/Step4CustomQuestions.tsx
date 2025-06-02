@@ -70,15 +70,15 @@ const Step4CustomQuestions: React.FC<Step4CustomQuestionsProps> = ({
           <div className="max-w-2xl mx-auto">
             {/* Need Inspiration Section */}
             <div className="mb-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-3">Need Inspiration?</h3>
-              <div className="grid gap-2">
+              <h3 className="text-lg font-medium text-gray-900 mb-3">Need inspiration? Try these:</h3>
+              <div className="flex flex-wrap gap-2 mb-4">
                 {inspirationQuestions.map((question, index) => (
                   <button
                     key={index}
                     onClick={() => handleInspirationClick(question)}
-                    className="w-full p-3 text-left bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors duration-200 text-sm text-blue-800"
+                    className="inline-block px-3 py-2 text-sm bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-full transition-colors duration-200 text-blue-800 hover:text-blue-900"
                   >
-                    {question}
+                    {question.length > 40 ? question.substring(0, 37) + '...' : question}
                   </button>
                 ))}
               </div>
@@ -94,15 +94,18 @@ const Step4CustomQuestions: React.FC<Step4CustomQuestionsProps> = ({
                   value={currentQuestion}
                   onChange={(e) => setCurrentQuestion(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Think about your specific situation, timeline, or unique concerns..."
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[100px] resize-none"
+                  placeholder="Think about specific issues, timelines, or risks unique to your home..."
+                  className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[120px] resize-none"
                 />
+                <p className="text-sm text-gray-500 mt-2">
+                  Think about specific issues, timelines, or risks unique to your home.
+                </p>
               </div>
               
               <Button
                 onClick={() => addCustomQuestion(currentQuestion)}
                 disabled={!currentQuestion.trim()}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
                 size="lg"
               >
                 Add Question
@@ -116,7 +119,7 @@ const Step4CustomQuestions: React.FC<Step4CustomQuestionsProps> = ({
                   <h3 className="text-base font-medium text-gray-900">
                     Your custom questions
                   </h3>
-                  <Badge variant="secondary">
+                  <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-300">
                     {customQuestions.length}
                   </Badge>
                 </div>
@@ -125,7 +128,7 @@ const Step4CustomQuestions: React.FC<Step4CustomQuestionsProps> = ({
                   {customQuestions.map((question, index) => (
                     <div
                       key={index}
-                      className="flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
+                      className="flex items-start gap-3 p-4 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
                     >
                       <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                         <span className="text-xs font-semibold text-green-600">{index + 1}</span>
@@ -151,7 +154,7 @@ const Step4CustomQuestions: React.FC<Step4CustomQuestionsProps> = ({
                 : `${customQuestions.length} custom question${customQuestions.length !== 1 ? 's' : ''} added to your plan`
               }
             </p>
-            <div className="flex justify-center gap-3">
+            <div className="flex justify-center gap-3 flex-wrap">
               <Button
                 onClick={onBack}
                 variant="outline"
