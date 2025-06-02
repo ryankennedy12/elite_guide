@@ -1,30 +1,15 @@
-
 import React from 'react';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { suggestionChips } from '@/data/wizard';
 
 interface Step1ConcernInputProps {
   userConcern: string;
   onConcernChange: (concern: string) => void;
   onNext: () => void;
 }
-
-const scenarioOptions = [
-  "Basement flooding",
-  "Strange odors", 
-  "Finished basement",
-  "Flooded before",
-  "Cracks in walls",
-  "Musty crawl space", 
-  "Sump-pump failure",
-  "High radon",
-  "Efflorescence",
-  "Bowing walls",
-  "Humidity issues",
-  "Standing water"
-];
 
 const Step1ConcernInput: React.FC<Step1ConcernInputProps> = ({
   userConcern,
@@ -63,19 +48,19 @@ const Step1ConcernInput: React.FC<Step1ConcernInputProps> = ({
           </p>
         </div>
         
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <Label className="text-base font-medium mb-3 block">
             Or pick from these common scenarios
           </Label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {scenarioOptions.map((scenario) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {suggestionChips.map((suggestion) => (
               <Button
-                key={scenario}
-                onClick={() => handleSuggestionClick(scenario)}
+                key={suggestion}
+                onClick={() => handleSuggestionClick(suggestion)}
                 variant="outline"
-                className="h-auto py-3 px-4 text-sm text-center whitespace-normal hover:bg-blue-50 hover:border-blue-500 transition-colors"
+                className="h-auto py-3 px-4 text-sm text-left whitespace-normal hover:bg-yellow-50 hover:border-yellow-500"
               >
-                {scenario}
+                {suggestion}
               </Button>
             ))}
           </div>

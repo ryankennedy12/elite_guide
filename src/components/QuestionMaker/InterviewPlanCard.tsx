@@ -4,13 +4,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
+  GripVertical, 
   Star, 
   Circle,
   Trash2, 
   ChevronDown, 
-  ChevronUp,
-  ArrowUp,
-  ArrowDown
+  ChevronUp 
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 
@@ -29,10 +28,6 @@ interface InterviewPlanCardProps {
   index: number;
   onPriorityChange: (priority: QuestionPriority) => void;
   onDelete: () => void;
-  onMoveUp?: () => void;
-  onMoveDown?: () => void;
-  canMoveUp?: boolean;
-  canMoveDown?: boolean;
   isDragging?: boolean;
   dragHandleProps?: any;
 }
@@ -42,10 +37,6 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
   index,
   onPriorityChange,
   onDelete,
-  onMoveUp,
-  onMoveDown,
-  canMoveUp = false,
-  canMoveDown = false,
   isDragging = false,
   dragHandleProps
 }) => {
@@ -54,11 +45,11 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
   const getPriorityColor = (priority?: QuestionPriority) => {
     switch (priority) {
       case 'must-ask':
-        return 'px-2 py-1 text-xs font-medium bg-orange-50 text-orange-700 border border-orange-200 rounded-md';
+        return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'maybe':
-        return 'px-2 py-1 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 rounded-md';
+        return 'bg-blue-100 text-blue-800 border-blue-200';
       default:
-        return 'px-2 py-1 text-xs font-medium bg-gray-50 text-gray-600 border border-gray-200 rounded-md';
+        return 'bg-gray-100 text-gray-600 border-gray-200';
     }
   };
 
@@ -80,41 +71,9 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
       } ${question.priority === 'remove' ? 'opacity-50' : 'bg-white border-gray-200'}`}>
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            {/* Order Controls */}
-            <div className="flex flex-col gap-1 flex-shrink-0">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    onClick={onMoveUp}
-                    disabled={!canMoveUp}
-                    size="sm"
-                    variant="ghost"
-                    className="p-1 h-6 w-6 text-gray-400 hover:text-gray-600 disabled:opacity-30"
-                  >
-                    <ArrowUp className="w-3 h-3" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Move up</p>
-                </TooltipContent>
-              </Tooltip>
-              
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    onClick={onMoveDown}
-                    disabled={!canMoveDown}
-                    size="sm"
-                    variant="ghost"
-                    className="p-1 h-6 w-6 text-gray-400 hover:text-gray-600 disabled:opacity-30"
-                  >
-                    <ArrowDown className="w-3 h-3" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Move down</p>
-                </TooltipContent>
-              </Tooltip>
+            {/* Drag Handle */}
+            <div {...dragHandleProps} className="cursor-grab hover:cursor-grabbing p-2 rounded hover:bg-gray-100 transition-colors">
+              <GripVertical className="w-5 h-5 text-gray-400" />
             </div>
             
             {/* Question Number */}
@@ -130,7 +89,7 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
               <div className="flex items-center gap-2 mb-3 flex-wrap">
                 <Badge 
                   variant="outline" 
-                  className={`px-2 py-1 text-xs font-medium rounded-md max-w-full overflow-hidden text-ellipsis whitespace-nowrap ${
+                  className={`text-xs ${
                     question.type === 'starred' 
                       ? 'bg-blue-50 text-blue-700 border-blue-200' 
                       : 'bg-green-50 text-green-700 border-green-200'
@@ -140,10 +99,7 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                 </Badge>
                 
                 {question.category && (
-                  <Badge 
-                    variant="outline" 
-                    className="px-2 py-1 text-xs font-medium bg-gray-50 text-gray-600 border-gray-200 rounded-md max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
-                  >
+                  <Badge variant="outline" className="text-xs bg-gray-50 text-gray-600 border-gray-200">
                     {question.category}
                   </Badge>
                 )}
@@ -174,7 +130,7 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
               
               {/* Collapsible Details */}
               {showDetails && (question.proTip || question.redFlag) && (
-                <div className="space-y-2 mt-3 p-3 bg-gray-50 rounded-lg border w-[92%] mx-auto">
+                <div className="space-y-2 mt-3 p-3 bg-gray-50 rounded-lg border">
                   {question.proTip && (
                     <div>
                       <div className="text-xs font-semibold text-green-700 mb-1">💡 PRO TIP</div>
