@@ -8,16 +8,34 @@ interface ProfessionalPreviewProps {
   printMode?: boolean;
 }
 
+interface QuestionItem {
+  id: string;
+  text: string;
+  type?: string;
+  category?: string;
+  priority?: string;
+  proTip?: string;
+  redFlag?: string;
+}
+
 export const ProfessionalPreview: React.FC<ProfessionalPreviewProps> = ({
   wizardState,
   printMode = false
 }) => {
-  const groupedQuestions = wizardState.customQuestions.reduce((acc, question, index) => {
-    const category = question.category || 'Custom Questions';
+  const questions = Array.isArray(wizardState.customQuestions) 
+    ? wizardState.customQuestions 
+    : [];
+
+  const groupedQuestions = questions.reduce((acc, question, index) => {
+    const questionItem = typeof question === 'string' 
+      ? { id: `q-${index}`, text: question, category: 'Custom Questions' }
+      : question as QuestionItem;
+    
+    const category = questionItem.category || 'Custom Questions';
     if (!acc[category]) {
       acc[category] = [];
     }
-    acc[category].push({ ...question, index });
+    acc[category].push({ ...questionItem, index });
     return acc;
   }, {} as Record<string, any[]>);
 

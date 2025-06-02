@@ -16,6 +16,16 @@ interface Step5ExportPlanProps {
   onStartOver: () => void;
 }
 
+interface QuestionItem {
+  id: string;
+  text: string;
+  type: 'starred' | 'custom';
+  category?: string;
+  priority: QuestionPriority;
+  proTip?: string;
+  redFlag?: string;
+}
+
 const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
   wizardState,
   onBack,
@@ -23,17 +33,35 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
 }) => {
   const { toast } = useToast();
   const [showPreview, setShowPreview] = useState(false);
-  const [questions, setQuestions] = useState(() => {
+  const [questions, setQuestions] = useState<QuestionItem[]>(() => {
     // Initialize questions from wizard state
-    return wizardState.customQuestions.map((q, index) => ({
-      id: q.id || `question-${index}`,
-      text: q.text,
-      type: q.type || 'custom' as 'starred' | 'custom',
-      category: q.category,
-      priority: (q.priority || 'maybe') as QuestionPriority,
-      proTip: q.proTip,
-      redFlag: q.redFlag
-    }));
+    const customQuestions = Array.isArray(wizardState.customQuestions) 
+      ? wizardState.customQuestions 
+      : [];
+    
+    return customQuestions.map((q, index) => {
+      if (typeof q === 'string') {
+        return {
+          id: `question-${index}`,
+          text: q,
+          type: 'custom' as const,
+          category: 'Custom Questions',
+          priority: 'maybe' as QuestionPriority,
+          proTip: undefined,
+          redFlag: undefined
+        };
+      }
+      
+      return {
+        id: q.id || `question-${index}`,
+        text: q.text || q,
+        type: (q.type || 'custom') as 'starred' | 'custom',
+        category: q.category,
+        priority: (q.priority || 'maybe') as QuestionPriority,
+        proTip: q.proTip,
+        redFlag: q.redFlag
+      };
+    });
   });
 
   const handlePriorityChange = (questionId: string, priority: QuestionPriority) => {
@@ -201,15 +229,7 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
             <ProfessionalPreview 
               wizardState={{
                 ...wizardState,
-                customQuestions: questions.map(q => ({
-                  id: q.id,
-                  text: q.text,
-                  type: q.type,
-                  category: q.category,
-                  priority: q.priority,
-                  proTip: q.proTip,
-                  redFlag: q.redFlag
-                }))
+                customQuestions: questions
               }}
               printMode={false}
             />
@@ -229,13 +249,13 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
           Organize your questions, set priorities, and create your professional interview plan.
         </p>
         <div className="flex items-center justify-center gap-4 mt-4">
-          <Badge variant="secondary" className="px-2 py-1 text-xs font-medium bg-orange-50 text-orange-700 border border-orange-200 rounded-md">
+          <Badge variant="secondary" className="px-3 py-1 text-sm bg-orange-50 text-orange-700 border border-orange-200">
             {mustAskCount} Must Ask
           </Badge>
-          <Badge variant="secondary" className="px-2 py-1 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 rounded-md">
+          <Badge variant="secondary" className="px-3 py-1 text-sm bg-blue-50 text-blue-700 border border-blue-200">
             {maybeCount} Maybe
           </Badge>
-          <Badge variant="outline" className="px-2 py-1 text-xs font-medium bg-gray-50 text-gray-600 border border-gray-200 rounded-md">
+          <Badge variant="outline" className="px-3 py-1 text-sm bg-gray-50 text-gray-600 border border-gray-200">
             {totalQuestions} Total Questions
           </Badge>
         </div>
@@ -339,10 +359,10 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="flex gap-2">
-                  <Badge variant="secondary" className="px-2 py-1 text-xs font-medium bg-orange-50 text-orange-700 border border-orange-200 rounded-md">
+                  <Badge variant="secondary" className="px-3 py-1 text-sm bg-orange-50 text-orange-700 border border-orange-200">
                     {mustAskCount} Must Ask
                   </Badge>
-                  <Badge variant="secondary" className="px-2 py-1 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 rounded-md">
+                  <Badge variant="secondary" className="px-3 py-1 text-sm bg-blue-50 text-blue-700 border border-blue-200">
                     {maybeCount} Maybe
                   </Badge>
                 </div>
