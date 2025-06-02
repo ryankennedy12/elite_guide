@@ -53,9 +53,9 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
       }
     });
     
-    // Add custom questions (handle both string and object formats)
-    wizardState.customQuestions.forEach((question, index) => {
-      const questionText = typeof question === 'string' ? question : question.text || question;
+    // Add custom questions with proper type handling
+    wizardState.customQuestions.forEach((question: string | { text: string }, index: number) => {
+      const questionText = typeof question === 'string' ? question : question.text;
       questions.push({
         id: `custom-${index}`,
         text: questionText,
