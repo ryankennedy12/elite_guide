@@ -4,7 +4,7 @@ import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { RotateCcw, ArrowUpDown } from 'lucide-react';
+import { RotateCcw, ArrowUpDown, Eye } from 'lucide-react';
 import { type WizardState } from '../WizardContainer';
 import { wizardQuestionBank } from '@/data/wizard';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -47,7 +47,7 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
           text: question.question.replace(/\[.*?\]/g, wizardState.userConcern || 'the issue'),
           type: 'starred',
           category: question.category,
-          priority: 'maybe', // Default to maybe
+          priority: 'maybe',
           proTip: question.proTip,
           redFlag: question.redFlag
         });
@@ -60,7 +60,7 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
         id: `custom-${index}`,
         text: question,
         type: 'custom',
-        priority: 'maybe' // Default to maybe
+        priority: 'maybe'
       });
     });
     
@@ -74,12 +74,10 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
   const totalQuestions = organizedQuestions.filter(q => q.priority !== 'remove').length;
 
   const handleAutoOrganize = () => {
-    // Smart organize: Must Ask first, then Maybe, grouped by logical flow
     const mustAsk = organizedQuestions.filter(q => q.priority === 'must-ask');
     const maybe = organizedQuestions.filter(q => q.priority === 'maybe');
     const removed = organizedQuestions.filter(q => q.priority === 'remove');
     
-    // Sort by category priority (diagnostics first, cost last)
     const categoryOrder = ['Diagnostic / Investigation', 'System Selection', 'Timeline / Project Management', 'Health / Safety / Air Quality', 'Compliance / Code', 'Cost & Value', 'Warranty / Contract'];
     
     const sortByCategory = (a: OrganizedQuestion, b: OrganizedQuestion) => {
@@ -120,13 +118,26 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
     });
   };
 
+  const handleMoveUp = (index: number) => {
+    if (index === 0) return;
+    const updated = [...organizedQuestions];
+    [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
+    setOrganizedQuestions(updated);
+  };
+
+  const handleMoveDown = (index: number) => {
+    if (index === organizedQuestions.length - 1) return;
+    const updated = [...organizedQuestions];
+    [updated[index], updated[index + 1]] = [updated[index + 1], updated[index]];
+    setOrganizedQuestions(updated);
+  };
+
   const handleDownloadPDF = () => {
     toast({
       title: "Downloading PDF...",
       description: "Your interview plan will download shortly.",
       duration: 3000,
     });
-    // TODO: Implement actual PDF generation
   };
 
   const handleShare = () => {
@@ -186,54 +197,134 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
                     <p className="text-sm text-blue-800 mb-3">
                       Organize questions for maximum effectiveness: diagnostics first, process/timeline middle, cost and contracts last.
                     </p>
-                    <Button
-                      onClick={handleAutoOrganize}
-                      variant="outline"
-                      size="sm"
-                      className="bg-white border-blue-200 text-blue-700 hover:bg-blue-50"
-                    >
-                      <ArrowUpDown className="w-4 h-4 mr-2" />
-                      Auto-Organize
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={handleAutoOrganize}
+                        variant="outline"
+                        size="sm"
+                        className="bg-white border-blue-200 text-blue-700 hover:bg-blue-50"
+                      >
+                        <ArrowUpDown className="w-4 h-4 mr-2" />
+                        Auto-Organize
+                      </Button>
+                      <Button
+                        onClick={() => setShowPreview(!showPreview)}
+                        variant="outline"
+                        size="sm"
+                        className="bg-white border-blue-200 text-blue-700 hover:bg-blue-50"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        {showPreview ? 'Edit View' : 'Preview Sheet'}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {showPreview ? (
-              /* PDF Preview Mode */
-              <Card className="bg-white shadow-lg border-2 border-gray-200">
-                <div className="p-8 space-y-6">
-                  <div className="text-center border-b pb-4">
-                    <h1 className="text-2xl font-bold text-black">Contractor Interview Plan</h1>
+              /* Professional Interview Sheet Preview */
+              <Card className="bg-white shadow-lg border-2 border-gray-200 max-w-4xl mx-auto">
+                <div className="p-8 space-y-6 print:p-4">
+                  {/* Header */}
+                  <div className="text-center border-b-2 border-gray-300 pb-6">
+                    <div className="bg-black text-white px-6 py-3 rounded-lg inline-block mb-4">
+                      <h1 className="text-xl font-bold">ELITE 12 GUIDE</h1>
+                      <p className="text-sm opacity-90">Professional Interview Plan</p>
+                    </div>
                     {wizardState.userConcern && (
-                      <p className="text-gray-600 mt-2">Focus: {wizardState.userConcern}</p>
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
+                        <p className="text-gray-800 font-medium">Project Focus: {wizardState.userConcern}</p>
+                      </div>
                     )}
-                    <p className="text-sm text-gray-500 mt-1">
-                      Generated on {new Date().toLocaleDateString()}
+                    <p className="text-sm text-gray-500 mt-3">
+                      Generated on {new Date().toLocaleDateString()} • {totalQuestions} Questions
                     </p>
                   </div>
                   
-                  <div className="space-y-4">
-                    {visibleQuestions.map((question, index) => (
-                      <div key={question.id} className="flex gap-3">
-                        <span className="text-gray-500 font-medium flex-shrink-0">
-                          {index + 1}.
-                        </span>
-                        <div>
-                          <p className="text-gray-800 leading-relaxed">{question.text}</p>
-                          {question.priority === 'must-ask' && (
-                            <span className="text-xs text-orange-600 font-medium">★ MUST ASK</span>
-                          )}
+                  {/* Questions by Priority */}
+                  <div className="space-y-6">
+                    {/* Must Ask Questions */}
+                    {mustAskCount > 0 && (
+                      <div>
+                        <div className="bg-orange-100 border border-orange-300 rounded-lg p-3 mb-4">
+                          <h2 className="text-lg font-bold text-orange-800 flex items-center gap-2">
+                            ⭐ MUST ASK QUESTIONS ({mustAskCount})
+                          </h2>
+                          <p className="text-sm text-orange-700 mt-1">Ask these questions to every contractor</p>
+                        </div>
+                        <div className="space-y-3">
+                          {visibleQuestions
+                            .filter(q => q.priority === 'must-ask')
+                            .map((question, index) => (
+                            <div key={question.id} className="flex gap-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
+                              <span className="text-orange-600 font-bold flex-shrink-0 text-lg">
+                                {index + 1}.
+                              </span>
+                              <div className="flex-1">
+                                <p className="text-gray-800 leading-relaxed font-medium">{question.text}</p>
+                                {question.category && (
+                                  <span className="text-xs text-orange-600 font-medium mt-1 inline-block">
+                                    {question.category}
+                                  </span>
+                                )}
+                                <div className="mt-2 border-t border-orange-200 pt-2">
+                                  <p className="text-xs text-gray-600">Contractor's Answer:</p>
+                                  <div className="h-8 border-b border-gray-300 mt-1"></div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    ))}
+                    )}
+
+                    {/* Maybe Questions */}
+                    {maybeCount > 0 && (
+                      <div>
+                        <div className="bg-blue-100 border border-blue-300 rounded-lg p-3 mb-4">
+                          <h2 className="text-lg font-bold text-blue-800 flex items-center gap-2">
+                            💭 ADDITIONAL QUESTIONS ({maybeCount})
+                          </h2>
+                          <p className="text-sm text-blue-700 mt-1">Ask if time permits or specific concerns arise</p>
+                        </div>
+                        <div className="space-y-3">
+                          {visibleQuestions
+                            .filter(q => q.priority === 'maybe')
+                            .map((question, index) => (
+                            <div key={question.id} className="flex gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                              <span className="text-blue-600 font-bold flex-shrink-0 text-lg">
+                                {mustAskCount + index + 1}.
+                              </span>
+                              <div className="flex-1">
+                                <p className="text-gray-800 leading-relaxed font-medium">{question.text}</p>
+                                {question.category && (
+                                  <span className="text-xs text-blue-600 font-medium mt-1 inline-block">
+                                    {question.category}
+                                  </span>
+                                )}
+                                <div className="mt-2 border-t border-blue-200 pt-2">
+                                  <p className="text-xs text-gray-600">Contractor's Answer:</p>
+                                  <div className="h-8 border-b border-gray-300 mt-1"></div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   
-                  <div className="border-t pt-4 text-center">
-                    <p className="text-sm text-gray-600 italic">
-                      "Great contractors appreciate prepared homeowners. Don't hesitate to ask these questions!"
-                    </p>
+                  {/* Footer */}
+                  <div className="border-t-2 border-gray-300 pt-6 text-center">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <p className="text-sm text-gray-700 italic font-medium">
+                        "Great contractors appreciate prepared homeowners. Don't hesitate to ask these questions!"
+                      </p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        For more contractor interview resources, visit Elite12Guide.com
+                      </p>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -251,11 +342,15 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
                         key={question.id}
                         question={question}
                         index={index}
+                        isFirst={index === 0}
+                        isLast={index === organizedQuestions.filter(q => q.priority !== 'remove').length - 1}
                         onPriorityChange={(priority) => handlePriorityChange(
                           organizedQuestions.findIndex(q => q.id === question.id), 
                           priority
                         )}
                         onDelete={() => handleDelete(organizedQuestions.findIndex(q => q.id === question.id))}
+                        onMoveUp={() => handleMoveUp(organizedQuestions.findIndex(q => q.id === question.id))}
+                        onMoveDown={() => handleMoveDown(organizedQuestions.findIndex(q => q.id === question.id))}
                       />
                     ))}
                   </div>

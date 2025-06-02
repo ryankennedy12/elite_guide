@@ -151,7 +151,10 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
                       </h3>
                       
                       <div className="flex items-center gap-2 mb-3">
-                        <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                        <Badge 
+                          variant="outline" 
+                          className="text-xs bg-blue-50 text-blue-700 border-blue-200 px-2 py-1 font-medium"
+                        >
                           {question.category}
                         </Badge>
                       </div>
@@ -161,17 +164,17 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
                         <summary className="cursor-pointer text-sm text-blue-600 hover:text-blue-700 font-medium">
                           View Pro Tips & Red Flags
                         </summary>
-                        <div className="mt-2 space-y-2 p-3 bg-gray-50 rounded border">
+                        <div className="mt-3 w-[90%] mx-auto space-y-3 p-4 bg-gray-50 rounded-lg border">
                           {question.proTip && (
-                            <div>
-                              <div className="text-xs font-semibold text-green-700 mb-1">💡 PRO TIP</div>
-                              <p className="text-sm text-gray-700">{question.proTip}</p>
+                            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                              <div className="text-xs font-semibold text-green-700 mb-2">💡 PRO TIP</div>
+                              <p className="text-sm text-gray-700 leading-relaxed">{question.proTip}</p>
                             </div>
                           )}
                           {question.redFlag && (
-                            <div>
-                              <div className="text-xs font-semibold text-red-700 mb-1">🚩 RED FLAG</div>
-                              <p className="text-sm text-gray-700">{question.redFlag}</p>
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                              <div className="text-xs font-semibold text-red-700 mb-2">🚩 RED FLAG</div>
+                              <p className="text-sm text-gray-700 leading-relaxed">{question.redFlag}</p>
                             </div>
                           )}
                         </div>
