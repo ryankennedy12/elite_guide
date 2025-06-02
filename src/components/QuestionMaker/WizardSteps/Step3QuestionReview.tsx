@@ -123,33 +123,46 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
               {displayedQuestions.map((question, index) => (
                 <div
                   key={question.id}
-                  className={`w-full p-4 rounded-lg border-2 transition-all duration-200 ${
+                  className={`w-full p-4 rounded-lg border transition-all duration-200 ${
                     starredQuestions.has(question.id) 
                       ? 'border-green-300 bg-green-50' 
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   } animate-fade-in`}
                 >
-                  {/* Fixed layout with proper alignment */}
-                  <div className="flex items-start justify-between gap-4 w-full">
-                    {/* Add Button - Fixed width */}
-                    <div className="flex-shrink-0">
+                  <div className="flex items-start gap-4">
+                    {/* Left side action buttons */}
+                    <div className="flex flex-col gap-2 flex-shrink-0">
                       <Button
                         onClick={() => handleAddQuestion(question.id)}
                         disabled={starredQuestions.has(question.id)}
                         size="sm"
-                        className={`min-w-[80px] ${
+                        variant="ghost"
+                        className={`w-8 h-8 p-0 rounded-full ${
                           starredQuestions.has(question.id)
                             ? 'bg-green-600 text-white'
-                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-blue-100 hover:text-blue-600'
                         }`}
                       >
-                        {starredQuestions.has(question.id) ? '✓ Added' : <><Plus className="w-4 h-4 mr-1" />Add</>}
+                        {starredQuestions.has(question.id) ? (
+                          <span className="text-xs">✓</span>
+                        ) : (
+                          <Plus className="w-4 h-4" />
+                        )}
+                      </Button>
+                      
+                      <Button
+                        onClick={() => handleQuestionRefresh(question.id)}
+                        variant="ghost"
+                        size="sm"
+                        className="w-8 h-8 p-0 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      >
+                        <RefreshCw className="w-4 h-4" />
                       </Button>
                     </div>
 
-                    {/* Question Content - Flexible width */}
+                    {/* Question content - takes up remaining space */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-gray-900 mb-3 leading-relaxed break-words">
+                      <h3 className="font-medium text-gray-900 mb-3 leading-relaxed">
                         {replaceUserConcern(question.question)}
                       </h3>
                       
@@ -163,47 +176,30 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
                         </Badge>
                       </div>
 
-                      {/* Pro Tips & Red Flags - Collapsible */}
+                      {/* Pro Tips & Red Flags - Collapsible with clean styling */}
                       <details className="group">
                         <summary className="cursor-pointer text-sm text-blue-600 hover:text-blue-700 font-medium">
                           View Pro Tips & Red Flags
                         </summary>
-                        <div className="mt-3 w-full">
-                          <div className="w-full p-4 bg-gray-50 rounded-lg border shadow-sm">
-                            <div className="space-y-4 w-full">
-                              {question.proTip && (
-                                <div className="w-full">
-                                  <div className="text-xs font-semibold text-green-700 mb-2">💡 PRO TIP</div>
-                                  <p className="text-sm text-gray-700 leading-relaxed break-words">
-                                    {question.proTip}
-                                  </p>
-                                </div>
-                              )}
-                              {question.redFlag && (
-                                <div className="w-full">
-                                  <div className="text-xs font-semibold text-red-700 mb-2">🚩 RED FLAG</div>
-                                  <p className="text-sm text-gray-700 leading-relaxed break-words">
-                                    {question.redFlag}
-                                  </p>
-                                </div>
-                              )}
+                        <div className="mt-3 space-y-3">
+                          {question.proTip && (
+                            <div>
+                              <div className="text-xs font-semibold text-green-700 mb-1">💡 PRO TIP</div>
+                              <p className="text-sm text-gray-700 leading-relaxed">
+                                {question.proTip}
+                              </p>
                             </div>
-                          </div>
+                          )}
+                          {question.redFlag && (
+                            <div>
+                              <div className="text-xs font-semibold text-red-700 mb-1">🚩 RED FLAG</div>
+                              <p className="text-sm text-gray-700 leading-relaxed">
+                                {question.redFlag}
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </details>
-                    </div>
-
-                    {/* Refresh Button - Fixed width */}
-                    <div className="flex-shrink-0">
-                      <Button
-                        onClick={() => handleQuestionRefresh(question.id)}
-                        variant="ghost"
-                        size="sm"
-                        className="w-10 h-10 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
-                        title="Get a different question"
-                      >
-                        <RefreshCw className="w-4 h-4" />
-                      </Button>
                     </div>
                   </div>
                 </div>
