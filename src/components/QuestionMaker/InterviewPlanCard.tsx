@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -121,15 +120,14 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
             </div>
             
             {/* Question Content */}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 w-full">
               <p className="text-gray-800 leading-relaxed font-medium mb-3">{question.text}</p>
               
-              {/* Fixed pill tags - proper wrapping and no overflow */}
-              <div className="flex flex-wrap gap-2 mb-3 w-full">
+              {/* Category pills with proper wrapping */}
+              <div className="w-full mb-3 space-y-2">
                 <Badge 
                   variant="outline" 
-                  className="text-xs font-semibold px-3 py-1 rounded-full bg-[#E9F0FF] text-[#0056D2] border-[#0056D2]/20 whitespace-normal break-words min-h-[26px] flex items-center"
-                  style={{ wordBreak: 'break-word', hyphens: 'auto' }}
+                  className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[#E9F0FF] text-[#0056D2] border-[#0056D2]/20 inline-block max-w-full break-words whitespace-normal leading-normal"
                 >
                   {question.type === 'starred' ? 'Pre-built' : 'Custom'}
                 </Badge>
@@ -137,8 +135,7 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                 {question.category && (
                   <Badge 
                     variant="outline" 
-                    className="text-xs font-semibold px-3 py-1 rounded-full bg-[#E9F0FF] text-[#0056D2] border-[#0056D2]/20 whitespace-normal break-words min-h-[26px] flex items-center"
-                    style={{ wordBreak: 'break-word', hyphens: 'auto' }}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[#E9F0FF] text-[#0056D2] border-[#0056D2]/20 inline-block max-w-full break-words whitespace-normal leading-normal ml-2"
                   >
                     {question.category}
                   </Badge>
@@ -147,8 +144,7 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                 {question.priority && question.priority !== 'remove' && (
                   <Badge 
                     variant="outline" 
-                    className={`text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1 ${getPriorityColor(question.priority)} whitespace-normal break-words min-h-[26px]`}
-                    style={{ wordBreak: 'break-word', hyphens: 'auto' }}
+                    className={`text-xs font-semibold px-3 py-1.5 rounded-full inline-flex items-center gap-1 ${getPriorityColor(question.priority)} max-w-full break-words whitespace-normal leading-normal ml-2`}
                   >
                     {getPriorityIcon(question.priority)}
                     <span>{question.priority === 'must-ask' ? 'Must Ask' : 'Maybe'}</span>
@@ -169,23 +165,29 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                 </Button>
               )}
               
-              {/* Fixed Pro Tip and Red Flag - full width display */}
+              {/* Full width Pro Tip and Red Flag display */}
               {showDetails && (question.proTip || question.redFlag) && (
-                <div className="mt-3 w-full">
-                  <div className="w-full p-4 bg-gray-50 rounded-lg border shadow-sm">
-                    <div className="space-y-4 w-full">
+                <div className="mt-4 w-full">
+                  <div className="w-full p-6 bg-gray-50 rounded-lg border shadow-sm">
+                    <div className="space-y-6 w-full max-w-none">
                       {question.proTip && (
                         <div className="w-full">
-                          <div className="text-xs font-semibold text-green-700 mb-2">💡 PRO TIP</div>
-                          <p className="text-sm text-gray-700 leading-relaxed max-w-none break-words">
+                          <div className="text-sm font-semibold text-green-700 mb-3 flex items-center gap-2">
+                            <span>💡</span>
+                            <span>PRO TIP</span>
+                          </div>
+                          <p className="text-sm text-gray-700 leading-relaxed w-full max-w-none break-words">
                             {question.proTip}
                           </p>
                         </div>
                       )}
                       {question.redFlag && (
                         <div className="w-full">
-                          <div className="text-xs font-semibold text-red-700 mb-2">🚩 RED FLAG</div>
-                          <p className="text-sm text-gray-700 leading-relaxed max-w-none break-words">
+                          <div className="text-sm font-semibold text-red-700 mb-3 flex items-center gap-2">
+                            <span>🚩</span>
+                            <span>RED FLAG</span>
+                          </div>
+                          <p className="text-sm text-gray-700 leading-relaxed w-full max-w-none break-words">
                             {question.redFlag}
                           </p>
                         </div>
@@ -196,7 +198,7 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
               )}
             </div>
             
-            {/* Priority and Action Buttons */}
+            {/* Action Buttons */}
             <div className="flex flex-col gap-1 flex-shrink-0">
               {/* Must Ask Button */}
               <Tooltip>
