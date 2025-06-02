@@ -16,7 +16,11 @@ const Home = () => {
   useEffect(() => {
     // Check if user has already unlocked content
     const unlocked = localStorage.getItem('elite12_unlocked');
-    if (unlocked === 'true') {
+    
+    // In development mode (localhost), bypass the opt-in gate
+    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    if (unlocked === 'true' || isDevelopment) {
       navigate('/elite-12');
     }
   }, [navigate]);
@@ -134,7 +138,7 @@ const Home = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="w-full h-12 text-center border-gray-300 focus:border-yellow-500 focus:ring-yellow-500/20 rounded-xl text-lg placeholder:text-gray-400"
+                    className="w-full h-12 text-center border-gray-300 focus:border-gray-400 focus:ring-0 focus:outline-none rounded-xl text-lg placeholder:text-gray-400"
                     placeholder="Your full name"
                   />
                 </div>
@@ -147,7 +151,7 @@ const Home = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full h-12 text-center border-gray-300 focus:border-yellow-500 focus:ring-yellow-500/20 rounded-xl text-lg placeholder:text-gray-400"
+                    className="w-full h-12 text-center border-gray-300 focus:border-gray-400 focus:ring-0 focus:outline-none rounded-xl text-lg placeholder:text-gray-400"
                     placeholder="your.email@example.com"
                   />
                 </div>
@@ -179,7 +183,7 @@ const Home = () => {
               <Button
                 type="submit"
                 disabled={!isFormValid}
-                className="w-full h-12 bg-gray-900 text-white hover:bg-gray-800 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-base tracking-wide hover:shadow-lg transform hover:-translate-y-0.5"
+                className="w-full h-12 bg-gray-900 text-white hover:bg-gray-800 focus:ring-0 focus:outline-none font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-base tracking-wide hover:shadow-lg transform hover:-translate-y-0.5"
               >
                 UNLOCK MY GUIDE NOW
               </Button>

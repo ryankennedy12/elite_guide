@@ -12,14 +12,12 @@ const Navigation: React.FC = () => {
   const isUnlocked = localStorage.getItem('elite12_unlocked') === 'true';
 
   const navItems = [
-    { label: 'Home', href: '/', id: 'home' },
     { label: 'Elite 12 Questions', href: '/elite-12', id: 'elite-12' },
     { label: 'Quick Reference', href: '/cheat-sheet', id: 'cheat-sheet' },
     { label: 'Prep Checklist', href: '/prep-checklist', id: 'prep-checklist' },
     { label: 'Glossary', href: '/glossary', id: 'glossary' },
     { label: 'Question Maker', href: '/question-maker', id: 'question-maker' },
     { label: 'My Notes', href: '/my-notes', id: 'my-notes' },
-    { label: 'Share & Review', href: '/share-review-survey', id: 'share-review-survey' },
   ];
 
   const isActive = (href: string) => location.pathname === href;
@@ -58,7 +56,7 @@ const Navigation: React.FC = () => {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             variant="ghost"
             size="sm"
-            className="text-white hover:bg-gray-800"
+            className="text-white hover:bg-gray-800 focus:ring-0 focus:outline-none"
           >
             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </Button>
@@ -75,7 +73,7 @@ const Navigation: React.FC = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-gray-800"
+                className="text-white hover:bg-gray-800 focus:ring-0 focus:outline-none"
               >
                 <X size={20} />
               </Button>

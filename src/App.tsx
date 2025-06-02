@@ -11,7 +11,6 @@ import PrepChecklist from "./pages/PrepChecklist";
 import Glossary from "./pages/Glossary";
 import QuestionMaker from "./pages/QuestionMaker";
 import MyNotes from "./pages/MyNotes";
-import ShareReviewSurvey from "./pages/ShareReviewSurvey";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,7 +29,6 @@ const App = () => (
           <Route path="/glossary" element={<Glossary />} />
           <Route path="/question-maker" element={<QuestionMaker />} />
           <Route path="/my-notes" element={<MyNotes />} />
-          <Route path="/share-review-survey" element={<ShareReviewSurvey />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
