@@ -3,20 +3,22 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Save, Download, Plus, Trash2 } from 'lucide-react';
-
-interface NotesData {
-  notes: string[];
-  generatedQuestions?: string[];
-}
+import { Save, Download, FileText } from 'lucide-react';
+import { Note, NotesData } from '@/types/notes';
+import NoteCard from '@/components/Notes/NoteCard';
+import AddNoteForm from '@/components/Notes/AddNoteForm';
+import NotesFilters from '@/components/Notes/NotesFilters';
+import { useToast } from '@/hooks/use-toast';
 
 const MyNotes = () => {
   const navigate = useNavigate();
-  const [notes, setNotes] = useState<string[]>(['', '', '', '', '']);
+  const { toast } = useToast();
+  const [notes, setNotes] = useState<Note[]>([]);
   const [generatedQuestions, setGeneratedQuestions] = useState<string[]>([]);
+  const [contractors, setContractors] = useState<string[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
+  const [selectedType, setSelectedType] = useState('all');
+  const [selectedContractor, setSelectedContractor] = useState('all');
 
   useEffect(() => {
     // Check if user has unlocked content
@@ -28,94 +30,197 @@ const MyNotes = () => {
     // Load saved notes
     const savedNotes = localStorage.getItem('customNotes');
     if (savedNotes) {
-      const data: NotesData = JSON.parse(savedNotes);
-      if (data.notes) {
-        setNotes(data.notes.length >= 5 ? data.notes : [...data.notes, ...Array(5 - data.notes.length).fill('')]);
-      }
-      if (data.generatedQuestions) {
-        setGeneratedQuestions(data.generatedQuestions);
+      try {
+        const data: NotesData = JSON.parse(savedNotes);
+        if (data.notes) {
+          // Convert old format to new format if needed
+          const convertedNotes = data.notes.map((note: any) => {
+            if (typeof note === 'string') {
+              return {
+                id: Date.now().toString() + Math.random(),
+                content: note,
+                type: 'custom-question' as const,
+                timestamp: new Date(),
+                followUpNotes: []
+              };
+            }
+            return {
+              ...note,
+              timestamp: new Date(note.timestamp || Date.now())
+            };
+          });
+          setNotes(convertedNotes);
+        }
+        if (data.generatedQuestions) {
+          setGeneratedQuestions(data.generatedQuestions);
+        }
+        if (data.contractors) {
+          setContractors(data.contractors);
+        }
+      } catch (error) {
+        console.error('Error loading notes:', error);
       }
     }
   }, [navigate]);
 
-  const handleNoteChange = (index: number, value: string) => {
-    const newNotes = [...notes];
-    newNotes[index] = value;
-    setNotes(newNotes);
+  // Update contractors list when notes change
+  useEffect(() => {
+    const uniqueContractors = Array.from(
+      new Set(notes.map(note => note.contractorName).filter(Boolean))
+    ) as string[];
+    setContractors(uniqueContractors);
+  }, [notes]);
+
+  const addNote = (noteData: Omit<Note, 'id' | 'timestamp'>) => {
+    const newNote: Note = {
+      ...noteData,
+      id: Date.now().toString() + Math.random(),
+      timestamp: new Date()
+    };
+    setNotes([newNote, ...notes]);
     setHasChanges(true);
+    
+    toast({
+      title: "Note added",
+      description: "Your note has been saved to your journal.",
+      duration: 2000,
+    });
   };
 
-  const addNote = () => {
-    setNotes([...notes, '']);
+  const updateNote = (updatedNote: Note) => {
+    setNotes(notes.map(note => note.id === updatedNote.id ? updatedNote : note));
     setHasChanges(true);
+    
+    toast({
+      title: "Note updated",
+      description: "Your changes have been saved.",
+      duration: 2000,
+    });
   };
 
-  const removeNote = (index: number) => {
-    if (notes.length > 1) {
-      const newNotes = notes.filter((_, i) => i !== index);
-      setNotes(newNotes);
-      setHasChanges(true);
-    }
+  const deleteNote = (noteId: string) => {
+    setNotes(notes.filter(note => note.id !== noteId));
+    setHasChanges(true);
+    
+    toast({
+      title: "Note deleted",
+      description: "The note has been removed from your journal.",
+      duration: 2000,
+    });
   };
 
   const saveNotes = () => {
     const data: NotesData = {
-      notes: notes.filter(note => note.trim() !== ''),
-      generatedQuestions
+      notes,
+      generatedQuestions,
+      contractors
     };
     localStorage.setItem('customNotes', JSON.stringify(data));
     setHasChanges(false);
 
+    toast({
+      title: "Notes saved",
+      description: "All your notes have been saved successfully.",
+      duration: 2000,
+    });
+
     // Track analytics
     if (typeof window !== 'undefined' && 'gtag' in window) {
       (window as any).gtag('event', 'notes_saved', {
-        notes_count: data.notes.length,
+        notes_count: notes.length,
       });
     }
   };
 
   const exportNotes = () => {
-    const allContent = [
-      '=== MY WATERPROOFING CONTRACTOR QUESTIONS & NOTES ===',
+    const filteredNotes = getFilteredNotes();
+    
+    const sections = [
+      '=== CONTRACTOR Q&A JOURNAL ===',
       '',
-      ...generatedQuestions.map((q, i) => `Generated Question ${i + 1}: ${q}`),
-      generatedQuestions.length > 0 ? '' : '',
-      ...notes.filter(note => note.trim() !== '').map((note, i) => `Note ${i + 1}: ${note}`),
-      '',
-      '---',
-      'Created with The Elite 12: Basement Waterproofing Contractor Screening Guide',
-      'K-Sump Solutions • Waterproofing Authority • Columbus, OH'
-    ].join('\n');
+      `Export Date: ${new Date().toLocaleDateString()}`,
+      `Total Notes: ${filteredNotes.length}`,
+      ''
+    ];
 
-    const blob = new Blob([allContent], { type: 'text/plain' });
+    // Add generated questions if any
+    if (generatedQuestions.length > 0) {
+      sections.push('=== GENERATED QUESTIONS ===');
+      generatedQuestions.forEach((q, i) => {
+        sections.push(`${i + 1}. ${q}`);
+      });
+      sections.push('');
+    }
+
+    // Group notes by contractor
+    const notesByContractor = filteredNotes.reduce((acc, note) => {
+      const contractor = note.contractorName || 'General Notes';
+      if (!acc[contractor]) acc[contractor] = [];
+      acc[contractor].push(note);
+      return acc;
+    }, {} as Record<string, Note[]>);
+
+    Object.entries(notesByContractor).forEach(([contractor, contractorNotes]) => {
+      sections.push(`=== ${contractor.toUpperCase()} ===`);
+      contractorNotes.forEach((note, i) => {
+        sections.push(`${i + 1}. [${note.type.replace('-', ' ').toUpperCase()}]`);
+        sections.push(`   ${note.content}`);
+        sections.push(`   Date: ${new Date(note.timestamp).toLocaleDateString()}`);
+        sections.push('');
+      });
+    });
+
+    sections.push('---');
+    sections.push('Created with The Elite 12: Basement Waterproofing Contractor Screening Guide');
+    sections.push('K-Sump Solutions • Waterproofing Authority • Columbus, OH');
+
+    const content = sections.join('\n');
+    const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'my-waterproofing-notes.txt';
+    a.download = 'contractor-qa-journal.txt';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
+    toast({
+      title: "Export complete",
+      description: "Your Q&A journal has been downloaded.",
+      duration: 3000,
+    });
+
     // Track analytics
     if (typeof window !== 'undefined' && 'gtag' in window) {
       (window as any).gtag('event', 'notes_exported', {
-        notes_count: notes.filter(note => note.trim() !== '').length,
+        notes_count: filteredNotes.length,
       });
     }
   };
+
+  const getFilteredNotes = () => {
+    return notes.filter(note => {
+      const typeMatch = selectedType === 'all' || note.type === selectedType;
+      const contractorMatch = selectedContractor === 'all' || note.contractorName === selectedContractor;
+      return typeMatch && contractorMatch;
+    });
+  };
+
+  const filteredNotes = getFilteredNotes();
 
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
       
-      <main className="max-w-3xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="font-inter-tight font-bold text-4xl md:text-5xl text-black mb-4">
-            My Custom Questions & Notes
+            Contractor Q&A Journal
           </h1>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Use this space to add your own questions, concerns, or notes for your contractor meetings. Print or save for reference.
+          <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+            Document questions, track contractor responses, and organize your observations. 
+            Compare multiple contractors side-by-side and keep all your notes in one professional place.
           </p>
         </div>
 
@@ -135,61 +240,65 @@ const MyNotes = () => {
           </div>
         )}
 
-        {/* Custom Notes Section */}
+        {/* Filters */}
+        {notes.length > 0 && (
+          <div className="mb-6">
+            <NotesFilters
+              selectedType={selectedType}
+              selectedContractor={selectedContractor}
+              contractors={contractors}
+              onTypeChange={setSelectedType}
+              onContractorChange={setSelectedContractor}
+              totalNotes={notes.length}
+              filteredCount={filteredNotes.length}
+            />
+          </div>
+        )}
+
+        {/* Add Note Form */}
+        <div className="mb-8">
+          <AddNoteForm onAddNote={addNote} contractors={contractors} />
+        </div>
+
+        {/* Notes List */}
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="font-inter-tight font-semibold text-xl text-black">
-              My Custom Notes
-            </h2>
-            <Button
-              onClick={addNote}
-              variant="outline"
-              size="sm"
-              className="border-gray-300 text-black hover:bg-gray-50"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Note
-            </Button>
-          </div>
+          {filteredNotes.length === 0 && notes.length > 0 && (
+            <div className="text-center py-12 text-gray-500">
+              <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p className="text-lg mb-2">No notes match your current filters</p>
+              <p className="text-sm">Try adjusting the filters above or add a new note</p>
+            </div>
+          )}
+          
+          {filteredNotes.length === 0 && notes.length === 0 && (
+            <div className="text-center py-12 text-gray-500">
+              <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p className="text-lg mb-2">Start your contractor evaluation journal</p>
+              <p className="text-sm">Add your first note above to begin organizing contractor responses</p>
+            </div>
+          )}
 
-          <div className="space-y-4">
-            {notes.map((note, index) => (
-              <div key={index} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor={`note-${index}`} className="text-black font-medium">
-                    Question/Note #{index + 1}
-                  </Label>
-                  {notes.length > 1 && (
-                    <Button
-                      onClick={() => removeNote(index)}
-                      variant="ghost"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  )}
-                </div>
-                <Textarea
-                  id={`note-${index}`}
-                  value={note}
-                  onChange={(e) => handleNoteChange(index, e.target.value)}
-                  placeholder="Enter your custom question or note here..."
-                  className="w-full min-h-[100px] border border-gray-300 rounded-lg focus:border-yellow-500 focus:ring-yellow-500"
-                  rows={4}
-                />
-              </div>
-            ))}
-          </div>
+          {filteredNotes.map((note) => (
+            <NoteCard
+              key={note.id}
+              note={note}
+              contractors={contractors}
+              onUpdate={updateNote}
+              onDelete={() => deleteNote(note.id)}
+            />
+          ))}
+        </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+        {/* Actions */}
+        {notes.length > 0 && (
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8 mt-8 border-t">
             <Button
               onClick={saveNotes}
               disabled={!hasChanges}
               className="bg-black text-white hover:bg-gray-800 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50"
             >
               <Save className="w-4 h-4 mr-2" />
-              Save My Notes
+              {hasChanges ? 'Save Changes' : 'All Saved'}
             </Button>
             <Button
               onClick={exportNotes}
@@ -197,24 +306,27 @@ const MyNotes = () => {
               className="border-gray-300 text-black hover:bg-gray-50"
             >
               <Download className="w-4 h-4 mr-2" />
-              Export to File
+              Export Journal
             </Button>
           </div>
+        )}
 
-          {hasChanges && (
-            <p className="text-center text-sm text-amber-600">
-              You have unsaved changes
-            </p>
-          )}
-        </div>
+        {hasChanges && (
+          <p className="text-center text-sm text-amber-600 mt-4">
+            You have unsaved changes
+          </p>
+        )}
 
+        {/* Help Section */}
         <div className="mt-12 bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-          <h3 className="font-semibold text-black mb-2">💡 Making the Most of Your Notes</h3>
-          <ul className="text-gray-700 text-sm space-y-1">
-            <li>• Print your notes before contractor meetings for easy reference</li>
-            <li>• Use the export feature to share with family members or advisors</li>
-            <li>• Add contractor responses directly to your notes during meetings</li>
-            <li>• Keep a record of which contractors gave the best answers</li>
+          <h3 className="font-semibold text-black mb-3">💡 How to Use Your Q&A Journal</h3>
+          <ul className="text-gray-700 text-sm space-y-2">
+            <li>• <strong>Custom Questions:</strong> Add your specific questions before contractor meetings</li>
+            <li>• <strong>Contractor Responses:</strong> Record what each contractor tells you during meetings</li>
+            <li>• <strong>Personal Observations:</strong> Note your impressions, concerns, or gut feelings</li>
+            <li>• <strong>Action Items:</strong> Track follow-ups, documents to request, or next steps</li>
+            <li>• <strong>Compare Contractors:</strong> Use filters to view responses from each contractor side-by-side</li>
+            <li>• <strong>Export & Share:</strong> Download your complete journal to share with family or advisors</li>
           </ul>
         </div>
       </main>
