@@ -1,170 +1,139 @@
-
 import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
-import Navigation from '@/components/Navigation';
-import { ChevronDown, ChevronUp, AlertTriangle, ArrowRight, Lightbulb, Info } from 'lucide-react';
-import { elite12Data } from '@/data/elite12Data';
+import ShareFeedbackModal from '@/components/ShareFeedbackModal';
+import { useShareFeedbackModal } from '@/hooks/useShareFeedbackModal';
 
 const Elite12Questions = () => {
   const navigate = useNavigate();
-  const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
 
+  // Example state for questions and current index
+  const [questions, setQuestions] = useState<string[]>([
+    "Question 1",
+    "Question 2",
+    "Question 3",
+    "Question 4",
+    "Question 5",
+    "Question 6",
+    "Question 7",
+    "Question 8",
+    "Question 9",
+    "Question 10",
+    "Question 11",
+    "Question 12",
+  ]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+  // Load viewed questions from localStorage or initialize
   useEffect(() => {
-    // Check if user has unlocked content
-    const unlocked = localStorage.getItem('elite12_unlocked');
-    if (unlocked !== 'true') {
-      navigate('/');
+    const viewed = localStorage.getItem('viewedQuestions');
+    if (!viewed) {
+      localStorage.setItem('viewedQuestions', JSON.stringify([]));
     }
-  }, [navigate]);
+  }, []);
 
-  const toggleQuestion = (index: number) => {
-    const newExpanded = new Set(expandedQuestions);
-    if (newExpanded.has(index)) {
-      newExpanded.delete(index);
-    } else {
-      newExpanded.add(index);
+  // Track viewed questions on question change
+  useEffect(() => {
+    const viewed = localStorage.getItem('viewedQuestions');
+    let viewedArray: number[] = [];
+    if (viewed) {
+      try {
+        viewedArray = JSON.parse(viewed);
+      } catch {
+        viewedArray = [];
+      }
     }
-    setExpandedQuestions(newExpanded);
+    if (!viewedArray.includes(currentQuestionIndex)) {
+      viewedArray.push(currentQuestionIndex);
+      localStorage.setItem('viewedQuestions', JSON.stringify(viewedArray));
+    }
+  }, [currentQuestionIndex]);
+
+  // Navigation handlers
+  const goToNextQuestion = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
   };
 
-  const CalloutBox = ({ 
-    type, 
-    icon: Icon, 
-    title, 
-    children, 
-    isExpanded, 
-    onToggle, 
-    alwaysExpanded = false 
-  }: { 
-    type: 'info' | 'danger' | 'warning' | 'success';
-    icon: any;
-    title: string;
-    children: React.ReactNode;
-    isExpanded?: boolean;
-    onToggle?: () => void;
-    alwaysExpanded?: boolean;
-  }) => {
-    const colors = {
-      info: { accent: 'bg-blue-500', bg: 'bg-blue-50', text: 'text-blue-700' },
-      danger: { accent: 'bg-red-500', bg: 'bg-red-50', text: 'text-red-700' },
-      warning: { accent: 'bg-yellow-500', bg: 'bg-yellow-50', text: 'text-yellow-700' },
-      success: { accent: 'bg-green-500', bg: 'bg-green-50', text: 'text-green-700' }
-    };
-
-    const color = colors[type];
-    const showContent = alwaysExpanded || isExpanded;
-
-    return (
-      <div className="w-full bg-white border border-black rounded-xl mt-4 overflow-hidden">
-        <div className={`${color.accent} h-1.5 w-full`}></div>
-        <div 
-          className={`p-6 ${!alwaysExpanded ? 'cursor-pointer' : ''}`}
-          onClick={!alwaysExpanded ? onToggle : undefined}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Icon className={`w-5 h-5 ${color.text}`} />
-              <h4 className={`font-semibold text-xs uppercase tracking-wider ${color.text}`}>
-                {title}
-              </h4>
-            </div>
-            {!alwaysExpanded && (
-              <div className="ml-4">
-                {isExpanded ? <ChevronUp className="w-5 h-5 text-gray-500" /> : <ChevronDown className="w-5 h-5 text-gray-500" />}
-              </div>
-            )}
-          </div>
-          
-          {showContent && (
-            <div className="mt-4 text-gray-700">
-              {children}
-            </div>
-          )}
-        </div>
-      </div>
-    );
+  const goToPreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
   };
+
+  // PDF download logic (placeholder)
+  const handlePDFDownload = () => {
+    // Example PDF download logic
+    const pdfUrl = '/path/to/elite12-guide.pdf';
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.download = 'Elite12Guide.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Trigger modal after PDF download
+    setTimeout(() => {
+      showModal('pdf-download');
+    }, 1000);
+  };
+
+  const { isModalOpen, triggerType, showModal, closeModal } = useShareFeedbackModal();
+
+  // Trigger modal when user reaches near the end and has interacted significantly
+  useEffect(() => {
+    const viewedQuestions = localStorage.getItem('viewedQuestions');
+    const hasInteracted = viewedQuestions && JSON.parse(viewedQuestions).length >= 8;
+
+    if (hasInteracted && currentQuestionIndex >= questions.length - 2) {
+      // User is near completion, trigger modal after a delay
+      setTimeout(() => {
+        const event = new CustomEvent('guide-completed');
+        window.dispatchEvent(event);
+      }, 3000);
+    }
+  }, [currentQuestionIndex, questions.length]);
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navigation />
-      
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <h1 className="font-inter-tight font-bold text-4xl md:text-5xl text-black mb-4">
-            The Elite 12 Questions
-          </h1>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Use these proven questions to separate legitimate waterproofing contractors from the rest. Each question is designed to reveal critical information about their process, reliability, and expertise.
-          </p>
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+      <Card className="max-w-3xl w-full p-6">
+        <h1 className="text-3xl font-bold mb-6 text-center">Elite 12 Questions</h1>
+        <div className="mb-4 text-center text-lg font-medium">
+          Question {currentQuestionIndex + 1} of {questions.length}
         </div>
-
-        <div className="space-y-12">
-          {elite12Data.map((question, index) => (
-            <div key={index} className="animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
-              <h2 className="font-inter-tight font-bold text-2xl md:text-3xl text-black mb-4">
-                Q{index + 1}. {question.question}
-              </h2>
-
-              {/* Why This Question Matters - Always expanded */}
-              <CalloutBox
-                type="info"
-                icon={Info}
-                title="Why This Question Matters"
-                alwaysExpanded={true}
-              >
-                <p>{question.why}</p>
-              </CalloutBox>
-
-              {/* Red Flag Decoder - Mobile collapsible */}
-              <CalloutBox
-                type="danger"
-                icon={AlertTriangle}
-                title="Red Flag Decoder"
-                isExpanded={expandedQuestions.has(index * 3 + 1)}
-                onToggle={() => toggleQuestion(index * 3 + 1)}
-              >
-                <ul className="space-y-2">
-                  {question.redFlags.map((flag, flagIndex) => (
-                    <li key={flagIndex} className="flex items-start gap-2">
-                      <span className="text-red-500 font-bold mt-1">•</span>
-                      <span>{flag}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CalloutBox>
-
-              {/* Follow-Up - Mobile collapsible */}
-              <CalloutBox
-                type="warning"
-                icon={ArrowRight}
-                title="Follow-Up — Ask This Next"
-                isExpanded={expandedQuestions.has(index * 3 + 2)}
-                onToggle={() => toggleQuestion(index * 3 + 2)}
-              >
-                <p>{question.followUp}</p>
-              </CalloutBox>
-
-              {/* Pro Tip - Mobile collapsible */}
-              <CalloutBox
-                type="success"
-                icon={Lightbulb}
-                title="Pro Tip"
-                isExpanded={expandedQuestions.has(index * 3 + 3)}
-                onToggle={() => toggleQuestion(index * 3 + 3)}
-              >
-                <p>{question.proTip}</p>
-              </CalloutBox>
-            </div>
-          ))}
+        <div className="mb-8 text-center text-xl text-gray-800">
+          {questions[currentQuestionIndex]}
         </div>
-
-        <div className="mt-16 text-center">
-          <p className="text-gray-600 mb-4">
-            Ready to put these questions to work? Check out the Quick Reference Cheat Sheet for easy printing.
-          </p>
+        <div className="flex justify-between">
+          <Button
+            onClick={goToPreviousQuestion}
+            disabled={currentQuestionIndex === 0}
+            variant="outline"
+          >
+            Previous
+          </Button>
+          <Button
+            onClick={goToNextQuestion}
+            disabled={currentQuestionIndex === questions.length - 1}
+          >
+            Next
+          </Button>
         </div>
-      </main>
+        <div className="mt-8 flex justify-center">
+          <Button onClick={handlePDFDownload} className="bg-yellow-400 text-black hover:bg-yellow-500">
+            Download PDF Guide
+          </Button>
+        </div>
+      </Card>
+
+      {/* Add the Share Feedback Modal */}
+      <ShareFeedbackModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        trigger={triggerType}
+      />
     </div>
   );
 };
