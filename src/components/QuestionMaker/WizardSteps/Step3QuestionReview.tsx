@@ -145,47 +145,42 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
                     </Button>
 
                     {/* Question Content */}
-                    <div className="flex-1 min-w-0 w-full">
+                    <div className="flex-1 min-w-0">
                       <h3 className="font-medium text-gray-900 mb-3 leading-relaxed">
                         {replaceUserConcern(question.question)}
                       </h3>
                       
-                      {/* Category pill with proper wrapping */}
-                      <div className="w-full mb-3">
+                      {/* Fixed pill styling - allows wrapping and prevents overflow */}
+                      <div className="flex flex-wrap gap-2 mb-3 w-full">
                         <Badge 
                           variant="outline" 
-                          className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[#E9F0FF] text-[#0056D2] border-[#0056D2]/20 inline-block max-w-full break-words whitespace-normal leading-normal"
+                          className="text-xs font-semibold px-3 py-1 rounded-full bg-[#E9F0FF] text-[#0056D2] border-[#0056D2]/20 whitespace-normal break-words min-h-[26px] flex items-center"
+                          style={{ wordBreak: 'break-word', hyphens: 'auto' }}
                         >
                           {question.category}
                         </Badge>
                       </div>
 
-                      {/* Pro Tips & Red Flags Toggle */}
-                      <details className="group w-full">
+                      {/* Fixed Pro Tip and Red Flag - full width display */}
+                      <details className="group">
                         <summary className="cursor-pointer text-sm text-blue-600 hover:text-blue-700 font-medium">
                           View Pro Tips & Red Flags
                         </summary>
-                        <div className="mt-4 w-full">
-                          <div className="w-full p-6 bg-gray-50 rounded-lg border shadow-sm">
-                            <div className="space-y-6 w-full max-w-none">
+                        <div className="mt-3 w-full">
+                          <div className="w-full p-4 bg-gray-50 rounded-lg border shadow-sm">
+                            <div className="space-y-4 w-full">
                               {question.proTip && (
                                 <div className="w-full">
-                                  <div className="text-sm font-semibold text-green-700 mb-3 flex items-center gap-2">
-                                    <span>💡</span>
-                                    <span>PRO TIP</span>
-                                  </div>
-                                  <p className="text-sm text-gray-700 leading-relaxed w-full max-w-none break-words">
+                                  <div className="text-xs font-semibold text-green-700 mb-2">💡 PRO TIP</div>
+                                  <p className="text-sm text-gray-700 leading-relaxed max-w-none break-words">
                                     {question.proTip}
                                   </p>
                                 </div>
                               )}
                               {question.redFlag && (
                                 <div className="w-full">
-                                  <div className="text-sm font-semibold text-red-700 mb-3 flex items-center gap-2">
-                                    <span>🚩</span>
-                                    <span>RED FLAG</span>
-                                  </div>
-                                  <p className="text-sm text-gray-700 leading-relaxed w-full max-w-none break-words">
+                                  <div className="text-xs font-semibold text-red-700 mb-2">🚩 RED FLAG</div>
+                                  <p className="text-sm text-gray-700 leading-relaxed max-w-none break-words">
                                     {question.redFlag}
                                   </p>
                                 </div>
