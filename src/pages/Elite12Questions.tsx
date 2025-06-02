@@ -1,13 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { ChevronDown, ChevronUp, AlertTriangle, ArrowRight, Lightbulb, Info } from 'lucide-react';
 import { elite12Data } from '@/data/elite12Data';
+import ShareFeedbackModal from '@/components/ShareFeedbackModal';
+import { useShareFeedbackModal } from '@/hooks/useShareFeedbackModal';
 
 const Elite12Questions = () => {
   const navigate = useNavigate();
   const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
+  const { isModalOpen, triggerModal, closeModal } = useShareFeedbackModal();
 
   useEffect(() => {
     // Check if user has unlocked content
@@ -16,6 +18,23 @@ const Elite12Questions = () => {
       navigate('/');
     }
   }, [navigate]);
+
+  useEffect(() => {
+    // Trigger modal when user reaches the end of the guide
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      
+      // If user scrolled to within 100px of bottom, consider it completion
+      if (scrollPosition >= documentHeight - 100) {
+        triggerModal('guide_completion');
+        window.removeEventListener('scroll', handleScroll);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [triggerModal]);
 
   const toggleQuestion = (index: number) => {
     const newExpanded = new Set(expandedQuestions);
@@ -165,6 +184,8 @@ const Elite12Questions = () => {
           </p>
         </div>
       </main>
+
+      <ShareFeedbackModal isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
 };

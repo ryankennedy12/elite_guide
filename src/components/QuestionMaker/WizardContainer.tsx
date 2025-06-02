@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +25,11 @@ const stepTitles = [
   "Export or Share Your Plan"
 ];
 
-const WizardContainer: React.FC = () => {
+interface WizardContainerProps {
+  onPlanComplete?: () => void;
+}
+
+const WizardContainer: React.FC<WizardContainerProps> = ({ onPlanComplete }) => {
   const navigate = useNavigate();
   
   const [wizardState, setWizardState] = useState<WizardState>({
@@ -73,13 +76,13 @@ const WizardContainer: React.FC = () => {
     setWizardState(prev => ({ ...prev, ...updates }));
   };
 
-  const nextStep = () => {
+  const handleNext = () => {
     if (wizardState.currentStep < TOTAL_STEPS) {
       updateWizardState({ currentStep: wizardState.currentStep + 1 });
     }
   };
 
-  const prevStep = () => {
+  const handleBack = () => {
     if (wizardState.currentStep > 1) {
       updateWizardState({ currentStep: wizardState.currentStep - 1 });
     }
@@ -120,8 +123,15 @@ const WizardContainer: React.FC = () => {
     localStorage.removeItem('wizardState');
   };
 
+  const handleExportComplete = () => {
+    // Trigger the completion callback when user exports their plan
+    if (onPlanComplete) {
+      onPlanComplete();
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header with Progress */}
         <WizardHeader
@@ -136,9 +146,10 @@ const WizardContainer: React.FC = () => {
           <WizardStepRenderer
             wizardState={wizardState}
             onUpdateState={updateWizardState}
-            onNext={nextStep}
-            onBack={prevStep}
+            onNext={handleNext}
+            onBack={handleBack}
             onStartOver={handleStartOver}
+            onExportComplete={handleExportComplete}
           />
         </Card>
 
@@ -147,8 +158,8 @@ const WizardContainer: React.FC = () => {
           currentStep={wizardState.currentStep}
           totalSteps={TOTAL_STEPS}
           canProceed={canProceed()}
-          onPrevStep={prevStep}
-          onNextStep={nextStep}
+          onPrevStep={handleBack}
+          onNextStep={handleNext}
         />
       </div>
     </div>

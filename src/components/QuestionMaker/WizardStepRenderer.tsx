@@ -13,6 +13,7 @@ interface WizardStepRendererProps {
   onNext: () => void;
   onBack: () => void;
   onStartOver: () => void;
+  onExportComplete?: () => void;
 }
 
 const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
@@ -20,7 +21,8 @@ const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
   onUpdateState,
   onNext,
   onBack,
-  onStartOver
+  onStartOver,
+  onExportComplete
 }) => {
   const handleStarToggle = (questionId: string) => {
     const newStarred = new Set(wizardState.starredQuestions);
@@ -79,6 +81,7 @@ const WizardStepRenderer: React.FC<WizardStepRendererProps> = ({
           wizardState={wizardState}
           onBack={onBack}
           onStartOver={onStartOver}
+          onExportComplete={onExportComplete}
         />
       );
     default:
