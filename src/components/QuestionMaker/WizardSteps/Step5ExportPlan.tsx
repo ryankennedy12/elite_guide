@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Copy, Download, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Note, NotesData } from '@/types/notes';
 import { generateQuestionList } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 
 interface WizardState {
   userConcern: string;
@@ -28,7 +29,7 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
   onExportComplete
 }) => {
   const { toast } = useToast();
-  const router = useRouter();
+  const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
 
   const handleExport = () => {
@@ -129,7 +130,7 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
       });
 
       // Redirect to MyNotes page
-      router.push('/my-notes');
+      navigate('/my-notes');
     } catch (error) {
       console.error("Error saving questions:", error);
       toast({
