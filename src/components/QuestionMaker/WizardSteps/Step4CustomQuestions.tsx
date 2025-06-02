@@ -14,7 +14,7 @@ interface Step4CustomQuestionsProps {
   userConcern: string;
 }
 
-const inspirationExamples = [
+const inspirationQuestions = [
   "How long have you been fixing this specific type of problem?",
   "What happens if your solution doesn't work as expected?",
   "Can you show me before/after photos from similar jobs?",
@@ -71,12 +71,12 @@ const Step4CustomQuestions: React.FC<Step4CustomQuestionsProps> = ({
             {/* Need Inspiration Section */}
             <div className="mb-6">
               <h3 className="text-lg font-medium text-gray-900 mb-3">Need Inspiration?</h3>
-              <div className="flex flex-wrap gap-2">
-                {inspirationExamples.map((question, index) => (
+              <div className="grid gap-2">
+                {inspirationQuestions.map((question, index) => (
                   <button
                     key={index}
                     onClick={() => handleInspirationClick(question)}
-                    className="inline-flex items-center px-3 py-2 text-sm bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-full transition-colors duration-200 text-blue-800 hover:text-blue-900"
+                    className="w-full p-3 text-left bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors duration-200 text-sm text-blue-800"
                   >
                     {question}
                   </button>
@@ -94,12 +94,9 @@ const Step4CustomQuestions: React.FC<Step4CustomQuestionsProps> = ({
                   value={currentQuestion}
                   onChange={(e) => setCurrentQuestion(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Think about details unique to your home, timeline, or goals..."
+                  placeholder="Think about your specific situation, timeline, or unique concerns..."
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[100px] resize-none"
                 />
-                <p className="text-sm text-gray-500 mt-1">
-                  Think about details unique to your home, timeline, or goals.
-                </p>
               </div>
               
               <Button

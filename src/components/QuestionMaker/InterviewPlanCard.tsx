@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 
-export type QuestionPriority = 'must-ask' | 'maybe' | 'optional' | 'remove';
+export type QuestionPriority = 'must-ask' | 'maybe' | 'remove';
 
 interface InterviewPlanCardProps {
   question: {
@@ -45,11 +45,9 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
   const getPriorityColor = (priority?: QuestionPriority) => {
     switch (priority) {
       case 'must-ask':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'maybe':
         return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'optional':
-        return 'bg-gray-100 text-gray-600 border-gray-200';
       default:
         return 'bg-gray-100 text-gray-600 border-gray-200';
     }
@@ -60,8 +58,6 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
       case 'must-ask':
         return <Star className="w-3 h-3" fill="currentColor" />;
       case 'maybe':
-        return <Circle className="w-3 h-3" fill="currentColor" />;
-      case 'optional':
         return <Circle className="w-3 h-3" />;
       default:
         return <Circle className="w-3 h-3" />;
@@ -93,7 +89,7 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
               <div className="flex items-center gap-2 mb-3 flex-wrap">
                 <Badge 
                   variant="outline" 
-                  className={`text-xs rounded-full px-3 py-1 ${
+                  className={`text-xs ${
                     question.type === 'starred' 
                       ? 'bg-blue-50 text-blue-700 border-blue-200' 
                       : 'bg-green-50 text-green-700 border-green-200'
@@ -103,7 +99,7 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                 </Badge>
                 
                 {question.category && (
-                  <Badge variant="outline" className="text-xs rounded-full px-3 py-1 bg-gray-50 text-gray-600 border-gray-200">
+                  <Badge variant="outline" className="text-xs bg-gray-50 text-gray-600 border-gray-200">
                     {question.category}
                   </Badge>
                 )}
@@ -111,10 +107,10 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                 {question.priority && question.priority !== 'remove' && (
                   <Badge 
                     variant="outline" 
-                    className={`text-xs rounded-full px-3 py-1 flex items-center gap-1 ${getPriorityColor(question.priority)}`}
+                    className={`text-xs flex items-center gap-1 ${getPriorityColor(question.priority)}`}
                   >
                     {getPriorityIcon(question.priority)}
-                    {question.priority === 'must-ask' ? 'Must Ask' : question.priority === 'maybe' ? 'Maybe' : 'Optional'}
+                    {question.priority === 'must-ask' ? 'Must Ask' : 'Maybe'}
                   </Badge>
                 )}
               </div>
@@ -132,19 +128,19 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                 </Button>
               )}
               
-              {/* Collapsible Details - 85-90% width, centered */}
+              {/* Collapsible Details */}
               {showDetails && (question.proTip || question.redFlag) && (
-                <div className="w-[87%] mx-auto space-y-3 mt-3 p-4 bg-gray-50 rounded-lg border">
+                <div className="space-y-2 mt-3 p-3 bg-gray-50 rounded-lg border">
                   {question.proTip && (
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                      <div className="text-xs font-semibold text-green-700 mb-2">💡 PRO TIP</div>
-                      <p className="text-sm text-green-800">{question.proTip}</p>
+                    <div>
+                      <div className="text-xs font-semibold text-green-700 mb-1">💡 PRO TIP</div>
+                      <p className="text-sm text-gray-700">{question.proTip}</p>
                     </div>
                   )}
                   {question.redFlag && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                      <div className="text-xs font-semibold text-red-700 mb-2">🚩 RED FLAG</div>
-                      <p className="text-sm text-red-800">{question.redFlag}</p>
+                    <div>
+                      <div className="text-xs font-semibold text-red-700 mb-1">🚩 RED FLAG</div>
+                      <p className="text-sm text-gray-700">{question.redFlag}</p>
                     </div>
                   )}
                 </div>
@@ -162,8 +158,8 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                     variant="ghost"
                     className={`p-2 h-8 w-8 ${
                       question.priority === 'must-ask'
-                        ? 'text-red-600 bg-red-50' 
-                        : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
+                        ? 'text-orange-600 bg-orange-50' 
+                        : 'text-gray-400 hover:text-orange-600 hover:bg-orange-50'
                     }`}
                   >
                     <Star className="w-4 h-4" fill={question.priority === 'must-ask' ? 'currentColor' : 'none'} />
@@ -192,27 +188,6 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Mark as Maybe</p>
-                </TooltipContent>
-              </Tooltip>
-              
-              {/* Optional Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    onClick={() => onPriorityChange('optional')}
-                    size="sm"
-                    variant="ghost"
-                    className={`p-2 h-8 w-8 ${
-                      question.priority === 'optional'
-                        ? 'text-gray-600 bg-gray-50' 
-                        : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    <Circle className="w-4 h-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Mark as Optional</p>
                 </TooltipContent>
               </Tooltip>
               
