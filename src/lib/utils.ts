@@ -1,6 +1,7 @@
 
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { wizardQuestionBank } from '@/data/wizard'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -9,25 +10,28 @@ export function cn(...inputs: ClassValue[]) {
 export function generateQuestionList(wizardState: any) {
   const { selectedCategories, customQuestions, starredQuestions, questionOrder } = wizardState;
   
-  // This is a simplified implementation - you may need to adjust based on your actual data structure
   const questions: Array<{ id: string; content: string; category?: string }> = [];
   
-  // Add questions from selected categories (this would need to be implemented based on your category data)
-  if (selectedCategories && selectedCategories.length > 0) {
-    selectedCategories.forEach((category: any) => {
-      if (category.questions) {
-        category.questions.forEach((question: any) => {
-          questions.push({
-            id: question.id || `cat-${questions.length}`,
-            content: question.content || question.question || question,
-            category: category.name || category.title
-          });
+  // Add starred questions from the question bank
+  if (starredQuestions && starredQuestions.size > 0) {
+    wizardQuestionBank.forEach((question) => {
+      if (starredQuestions.has(question.id)) {
+        // Replace placeholders with user concern if present
+        let content = question.question;
+        if (wizardState.userConcern) {
+          content = content.replace(/\[.*?\]/g, wizardState.userConcern);
+        }
+        
+        questions.push({
+          id: question.id,
+          content: content,
+          category: question.category
         });
       }
     });
   }
   
-  // Add custom questions
+  // Add custom questions from Step 4
   if (customQuestions && customQuestions.length > 0) {
     customQuestions.forEach((question: string, index: number) => {
       questions.push({
@@ -36,11 +40,6 @@ export function generateQuestionList(wizardState: any) {
         category: 'Custom'
       });
     });
-  }
-  
-  // Filter by starred questions if any are specified
-  if (starredQuestions && starredQuestions.size > 0) {
-    return questions.filter(q => starredQuestions.has(q.id));
   }
   
   // Apply custom order if specified

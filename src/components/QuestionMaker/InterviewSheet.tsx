@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { GripVertical, ArrowUp, ArrowDown } from 'lucide-react';
+import { GripVertical, ArrowUp, ArrowDown, Star } from 'lucide-react';
 import { generateQuestionList } from '@/lib/utils';
 
 interface InterviewSheetProps {
@@ -16,6 +16,7 @@ interface QuestionItem {
   content: string;
   category?: string;
   type: 'starred' | 'custom';
+  isMustAsk?: boolean;
 }
 
 const InterviewSheet: React.FC<InterviewSheetProps> = ({ wizardState, onReorder }) => {
@@ -24,7 +25,8 @@ const InterviewSheet: React.FC<InterviewSheetProps> = ({ wizardState, onReorder 
       id: q.id || `q-${index}`,
       content: q.content,
       category: q.category,
-      type: wizardState.starredQuestions?.has(q.id) ? 'starred' : 'custom'
+      type: wizardState.starredQuestions?.has(q.id) ? 'starred' : 'custom',
+      isMustAsk: false
     }));
   });
 
@@ -41,6 +43,14 @@ const InterviewSheet: React.FC<InterviewSheetProps> = ({ wizardState, onReorder 
       }
     }
   };
+
+  const toggleMustAsk = (index: number) => {
+    const newQuestions = [...questions];
+    newQuestions[index].isMustAsk = !newQuestions[index].isMustAsk;
+    setQuestions(newQuestions);
+  };
+
+  const mustAskCount = questions.filter(q => q.isMustAsk).length;
 
   return (
     <div className="space-y-6">
@@ -69,7 +79,7 @@ const InterviewSheet: React.FC<InterviewSheetProps> = ({ wizardState, onReorder 
           </div>
         ) : (
           questions.map((question, index) => (
-            <Card key={question.id} className="border border-gray-200">
+            <Card key={question.id} className={`border ${question.isMustAsk ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200'}`}>
               <CardContent className="p-4">
                 <div className="flex items-start gap-4">
                   {/* Drag Handle & Number */}
@@ -87,15 +97,33 @@ const InterviewSheet: React.FC<InterviewSheetProps> = ({ wizardState, onReorder 
                     </p>
                     
                     {/* Category Badge */}
-                    {question.category && (
-                      <Badge variant="outline" className="text-xs">
-                        {question.category}
-                      </Badge>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {question.category && (
+                        <Badge variant="outline" className="text-xs">
+                          {question.category}
+                        </Badge>
+                      )}
+                      {question.isMustAsk && (
+                        <Badge className="text-xs bg-yellow-500 text-white">
+                          Must Ask
+                        </Badge>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Move Controls */}
+                  {/* Controls */}
                   <div className="flex flex-col gap-1 flex-shrink-0">
+                    {/* Must Ask Star */}
+                    <Button
+                      onClick={() => toggleMustAsk(index)}
+                      size="sm"
+                      variant="ghost"
+                      className={`p-1 h-6 w-6 ${question.isMustAsk ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'}`}
+                    >
+                      <Star className={`w-3 h-3 ${question.isMustAsk ? 'fill-current' : ''}`} />
+                    </Button>
+                    
+                    {/* Move Controls */}
                     <Button
                       onClick={() => moveQuestion(index, 'up')}
                       disabled={index === 0}
@@ -125,7 +153,7 @@ const InterviewSheet: React.FC<InterviewSheetProps> = ({ wizardState, onReorder 
       {/* Footer */}
       {questions.length > 0 && (
         <div className="text-center pt-6 border-t text-sm text-gray-500">
-          <p>Total Questions: {questions.length}</p>
+          <p>Total Questions: {questions.length} | Must Ask: {mustAskCount}</p>
           <p className="mt-1">
             Created with The Elite 12: Basement Waterproofing Contractor Screening Guide
           </p>
