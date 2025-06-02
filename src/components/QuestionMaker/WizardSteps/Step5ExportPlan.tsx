@@ -22,6 +22,18 @@ interface Step5ExportPlanProps {
   onExportComplete?: () => void;
 }
 
+// Confetti animation function
+const triggerConfetti = () => {
+  if (typeof window !== 'undefined' && window.confetti) {
+    window.confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#FFD700', '#FFA500', '#FF6347']
+    });
+  }
+};
+
 const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
   wizardState,
   onBack,
@@ -36,7 +48,7 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
     const questionList = generateQuestionList(wizardState);
 
     const sections = [
-      '=== CONTRACTOR Q&A PLAN ===',
+      '=== K-SUMP INTERVIEW PLAN ===',
       '',
       `Generated: ${new Date().toLocaleDateString()}`,
       `Total Questions: ${questionList.length}`,
@@ -60,15 +72,17 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'contractor-qa-plan.txt';
+    a.download = 'K-Sump Interview Plan.txt';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
+    // Trigger confetti and success toast
+    triggerConfetti();
     toast({
-      title: "Export complete",
-      description: "Your Q&A plan has been downloaded.",
+      title: "Download Complete! 🎉",
+      description: "Your K-Sump Interview Plan has been downloaded successfully.",
       duration: 3000,
     });
 
@@ -85,9 +99,11 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
     const questionsText = questionList.map((q, i) => `${i + 1}. ${q.content}`).join('\n');
     navigator.clipboard.writeText(questionsText)
       .then(() => {
+        // Trigger confetti and success toast
+        triggerConfetti();
         toast({
-          title: "Questions Copied",
-          description: "All questions copied to clipboard.",
+          title: "Questions Copied! 🎉",
+          description: "All questions have been copied to your clipboard.",
           duration: 2000,
         });
       })
@@ -123,14 +139,18 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
       };
       localStorage.setItem('customNotes', JSON.stringify(dataToSave));
 
+      // Trigger confetti and success toast
+      triggerConfetti();
       toast({
-        title: "Questions Saved",
-        description: "All questions saved to your notes.",
+        title: "Questions Saved! 🎉",
+        description: "All questions have been saved to your notes successfully.",
         duration: 2000,
       });
 
-      // Redirect to MyNotes page
-      navigate('/my-notes');
+      // Redirect to MyNotes page after a short delay
+      setTimeout(() => {
+        navigate('/my-notes');
+      }, 1000);
     } catch (error) {
       console.error("Error saving questions:", error);
       toast({

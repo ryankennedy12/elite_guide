@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus } from 'lucide-react';
+import { Plus, RefreshCw } from 'lucide-react';
 import { useQuestionPool } from '@/hooks/useQuestionPool';
 import { WizardQuestionItem, WizardQuestionCategory } from '@/data/wizard';
 import { useToast } from '@/hooks/use-toast';
@@ -123,45 +123,47 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
               {displayedQuestions.map((question, index) => (
                 <div
                   key={question.id}
-                  className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                  className={`w-full p-4 rounded-lg border-2 transition-all duration-200 ${
                     starredQuestions.has(question.id) 
                       ? 'border-green-300 bg-green-50' 
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   } animate-fade-in`}
                 >
-                  <div className="flex items-start gap-3">
-                    {/* Add Button */}
-                    <Button
-                      onClick={() => handleAddQuestion(question.id)}
-                      disabled={starredQuestions.has(question.id)}
-                      size="sm"
-                      className={`flex-shrink-0 mt-1 ${
-                        starredQuestions.has(question.id)
-                          ? 'bg-green-600 text-white'
-                          : 'bg-blue-600 hover:bg-blue-700 text-white'
-                      }`}
-                    >
-                      {starredQuestions.has(question.id) ? '✓ Added' : <><Plus className="w-4 h-4 mr-1" />Add</>}
-                    </Button>
+                  {/* Fixed layout with proper alignment */}
+                  <div className="flex items-start justify-between gap-4 w-full">
+                    {/* Add Button - Fixed width */}
+                    <div className="flex-shrink-0">
+                      <Button
+                        onClick={() => handleAddQuestion(question.id)}
+                        disabled={starredQuestions.has(question.id)}
+                        size="sm"
+                        className={`min-w-[80px] ${
+                          starredQuestions.has(question.id)
+                            ? 'bg-green-600 text-white'
+                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                        }`}
+                      >
+                        {starredQuestions.has(question.id) ? '✓ Added' : <><Plus className="w-4 h-4 mr-1" />Add</>}
+                      </Button>
+                    </div>
 
-                    {/* Question Content */}
+                    {/* Question Content - Flexible width */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-gray-900 mb-3 leading-relaxed">
+                      <h3 className="font-medium text-gray-900 mb-3 leading-relaxed break-words">
                         {replaceUserConcern(question.question)}
                       </h3>
                       
-                      {/* Fixed pill styling - allows wrapping and prevents overflow */}
-                      <div className="flex flex-wrap gap-2 mb-3 w-full">
+                      {/* Category badge */}
+                      <div className="mb-3">
                         <Badge 
                           variant="outline" 
-                          className="text-xs font-semibold px-3 py-1 rounded-full bg-[#E9F0FF] text-[#0056D2] border-[#0056D2]/20 whitespace-normal break-words min-h-[26px] flex items-center"
-                          style={{ wordBreak: 'break-word', hyphens: 'auto' }}
+                          className="text-xs font-semibold px-3 py-1 rounded-full bg-[#E9F0FF] text-[#0056D2] border-[#0056D2]/20"
                         >
                           {question.category}
                         </Badge>
                       </div>
 
-                      {/* Fixed Pro Tip and Red Flag - full width display */}
+                      {/* Pro Tips & Red Flags - Collapsible */}
                       <details className="group">
                         <summary className="cursor-pointer text-sm text-blue-600 hover:text-blue-700 font-medium">
                           View Pro Tips & Red Flags
@@ -172,7 +174,7 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
                               {question.proTip && (
                                 <div className="w-full">
                                   <div className="text-xs font-semibold text-green-700 mb-2">💡 PRO TIP</div>
-                                  <p className="text-sm text-gray-700 leading-relaxed max-w-none break-words">
+                                  <p className="text-sm text-gray-700 leading-relaxed break-words">
                                     {question.proTip}
                                   </p>
                                 </div>
@@ -180,7 +182,7 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
                               {question.redFlag && (
                                 <div className="w-full">
                                   <div className="text-xs font-semibold text-red-700 mb-2">🚩 RED FLAG</div>
-                                  <p className="text-sm text-gray-700 leading-relaxed max-w-none break-words">
+                                  <p className="text-sm text-gray-700 leading-relaxed break-words">
                                     {question.redFlag}
                                   </p>
                                 </div>
@@ -191,15 +193,18 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
                       </details>
                     </div>
 
-                    {/* Refresh Button */}
-                    <Button
-                      onClick={() => handleQuestionRefresh(question.id)}
-                      variant="ghost"
-                      size="sm"
-                      className="flex-shrink-0 text-gray-400 hover:text-gray-600"
-                    >
-                      ↻
-                    </Button>
+                    {/* Refresh Button - Fixed width */}
+                    <div className="flex-shrink-0">
+                      <Button
+                        onClick={() => handleQuestionRefresh(question.id)}
+                        variant="ghost"
+                        size="sm"
+                        className="w-10 h-10 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                        title="Get a different question"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
