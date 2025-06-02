@@ -45,9 +45,9 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
   const getPriorityColor = (priority?: QuestionPriority) => {
     switch (priority) {
       case 'must-ask':
-        return 'bg-orange-100 text-orange-800 border-orange-300';
+        return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'maybe':
-        return 'bg-blue-100 text-blue-800 border-blue-300';
+        return 'bg-blue-100 text-blue-800 border-blue-200';
       default:
         return 'bg-gray-100 text-gray-600 border-gray-200';
     }
@@ -67,12 +67,12 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
   return (
     <TooltipProvider>
       <Card className={`transition-all duration-200 ${
-        isDragging ? 'shadow-xl scale-[1.02] rotate-1' : 'shadow-sm hover:shadow-md'
-      } bg-white border-gray-200`}>
-        <CardContent className="p-4 md:p-6">
-          <div className="flex items-start gap-4">
+        isDragging ? 'shadow-lg scale-105 rotate-1' : 'shadow-sm hover:shadow-md'
+      } ${question.priority === 'remove' ? 'opacity-50' : 'bg-white border-gray-200'}`}>
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
             {/* Drag Handle */}
-            <div {...dragHandleProps} className="cursor-grab hover:cursor-grabbing p-2 rounded-lg hover:bg-gray-100 transition-colors touch-manipulation">
+            <div {...dragHandleProps} className="cursor-grab hover:cursor-grabbing p-2 rounded hover:bg-gray-100 transition-colors">
               <GripVertical className="w-5 h-5 text-gray-400" />
             </div>
             
@@ -83,13 +83,13 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
             
             {/* Question Content */}
             <div className="flex-1 min-w-0">
-              <p className="text-gray-800 leading-relaxed font-medium mb-3 text-base">{question.text}</p>
+              <p className="text-gray-800 leading-relaxed font-medium mb-2">{question.text}</p>
               
               {/* Tags */}
               <div className="flex items-center gap-2 mb-3 flex-wrap">
                 <Badge 
                   variant="outline" 
-                  className={`text-xs font-medium px-2 py-1 ${
+                  className={`text-xs ${
                     question.type === 'starred' 
                       ? 'bg-blue-50 text-blue-700 border-blue-200' 
                       : 'bg-green-50 text-green-700 border-green-200'
@@ -99,7 +99,7 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                 </Badge>
                 
                 {question.category && (
-                  <Badge variant="outline" className="text-xs bg-gray-50 text-gray-600 border-gray-200 px-2 py-1">
+                  <Badge variant="outline" className="text-xs bg-gray-50 text-gray-600 border-gray-200">
                     {question.category}
                   </Badge>
                 )}
@@ -107,7 +107,7 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                 {question.priority && question.priority !== 'remove' && (
                   <Badge 
                     variant="outline" 
-                    className={`text-xs flex items-center gap-1 font-medium px-2 py-1 ${getPriorityColor(question.priority)}`}
+                    className={`text-xs flex items-center gap-1 ${getPriorityColor(question.priority)}`}
                   >
                     {getPriorityIcon(question.priority)}
                     {question.priority === 'must-ask' ? 'Must Ask' : 'Maybe'}
@@ -121,7 +121,7 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowDetails(!showDetails)}
-                  className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 p-0 h-auto mb-2 font-medium"
+                  className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 p-0 h-auto mb-2"
                 >
                   {showDetails ? <ChevronUp className="w-4 h-4 mr-1" /> : <ChevronDown className="w-4 h-4 mr-1" />}
                   View tips & notes
@@ -130,17 +130,17 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
               
               {/* Collapsible Details */}
               {showDetails && (question.proTip || question.redFlag) && (
-                <div className="space-y-3 mt-3">
+                <div className="space-y-2 mt-3 p-3 bg-gray-50 rounded-lg border">
                   {question.proTip && (
-                    <div className="w-[90%] mx-auto p-3 bg-green-100 border border-green-200 rounded-lg">
-                      <div className="text-xs font-bold text-green-800 mb-1">💡 PRO TIP</div>
-                      <p className="text-sm text-green-700 leading-relaxed">{question.proTip}</p>
+                    <div>
+                      <div className="text-xs font-semibold text-green-700 mb-1">💡 PRO TIP</div>
+                      <p className="text-sm text-gray-700">{question.proTip}</p>
                     </div>
                   )}
                   {question.redFlag && (
-                    <div className="w-[90%] mx-auto p-3 bg-red-100 border border-red-200 rounded-lg">
-                      <div className="text-xs font-bold text-red-800 mb-1">🚩 RED FLAG</div>
-                      <p className="text-sm text-red-700 leading-relaxed">{question.redFlag}</p>
+                    <div>
+                      <div className="text-xs font-semibold text-red-700 mb-1">🚩 RED FLAG</div>
+                      <p className="text-sm text-gray-700">{question.redFlag}</p>
                     </div>
                   )}
                 </div>
@@ -156,9 +156,9 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                     onClick={() => onPriorityChange('must-ask')}
                     size="sm"
                     variant="ghost"
-                    className={`p-2 h-10 w-10 touch-manipulation ${
+                    className={`p-2 h-8 w-8 ${
                       question.priority === 'must-ask'
-                        ? 'text-orange-600 bg-orange-50 border border-orange-200' 
+                        ? 'text-orange-600 bg-orange-50' 
                         : 'text-gray-400 hover:text-orange-600 hover:bg-orange-50'
                     }`}
                   >
@@ -177,9 +177,9 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                     onClick={() => onPriorityChange('maybe')}
                     size="sm"
                     variant="ghost"
-                    className={`p-2 h-10 w-10 touch-manipulation ${
+                    className={`p-2 h-8 w-8 ${
                       question.priority === 'maybe'
-                        ? 'text-blue-600 bg-blue-50 border border-blue-200' 
+                        ? 'text-blue-600 bg-blue-50' 
                         : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'
                     }`}
                   >
@@ -198,7 +198,7 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                     onClick={onDelete}
                     size="sm"
                     variant="ghost"
-                    className="p-2 h-10 w-10 text-red-500 hover:bg-red-50 touch-manipulation"
+                    className="p-2 h-8 w-8 text-red-500 hover:bg-red-50"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>

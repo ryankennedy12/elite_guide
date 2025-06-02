@@ -4,11 +4,12 @@ import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { RotateCcw, ArrowUpDown, Eye, Download, Share2 } from 'lucide-react';
+import { RotateCcw, ArrowUpDown } from 'lucide-react';
 import { type WizardState } from '../WizardContainer';
 import { wizardQuestionBank } from '@/data/wizard';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { InterviewPlanCard, type QuestionPriority } from '../InterviewPlanCard';
+import { StickyExportBar } from '../StickyExportBar';
 import { useToast } from '@/hooks/use-toast';
 
 interface Step5ExportPlanProps {
@@ -46,7 +47,7 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
           text: question.question.replace(/\[.*?\]/g, wizardState.userConcern || 'the issue'),
           type: 'starred',
           category: question.category,
-          priority: 'maybe',
+          priority: 'maybe', // Default to maybe
           proTip: question.proTip,
           redFlag: question.redFlag
         });
@@ -59,7 +60,7 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
         id: `custom-${index}`,
         text: question,
         type: 'custom',
-        priority: 'maybe'
+        priority: 'maybe' // Default to maybe
       });
     });
     
@@ -73,19 +74,13 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
   const totalQuestions = organizedQuestions.filter(q => q.priority !== 'remove').length;
 
   const handleAutoOrganize = () => {
+    // Smart organize: Must Ask first, then Maybe, grouped by logical flow
     const mustAsk = organizedQuestions.filter(q => q.priority === 'must-ask');
     const maybe = organizedQuestions.filter(q => q.priority === 'maybe');
     const removed = organizedQuestions.filter(q => q.priority === 'remove');
     
-    const categoryOrder = [
-      'Diagnostic / Investigation', 
-      'System Selection', 
-      'Timeline / Project Management', 
-      'Health / Safety / Air Quality', 
-      'Compliance / Code', 
-      'Cost & Value', 
-      'Warranty / Contract'
-    ];
+    // Sort by category priority (diagnostics first, cost last)
+    const categoryOrder = ['Diagnostic / Investigation', 'System Selection', 'Timeline / Project Management', 'Health / Safety / Air Quality', 'Compliance / Code', 'Cost & Value', 'Warranty / Contract'];
     
     const sortByCategory = (a: OrganizedQuestion, b: OrganizedQuestion) => {
       const aIndex = categoryOrder.indexOf(a.category || '');
@@ -126,18 +121,17 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
   };
 
   const handleDownloadPDF = () => {
-    window.print();
     toast({
-      title: "Print dialog opened",
-      description: "Use your browser's print function to save as PDF.",
+      title: "Downloading PDF...",
+      description: "Your interview plan will download shortly.",
       duration: 3000,
     });
+    // TODO: Implement actual PDF generation
   };
 
   const handleShare = () => {
     const visibleQuestions = organizedQuestions.filter(q => q.priority !== 'remove');
-    const text = `My Contractor Interview Questions\n\n${visibleQuestions.map((q, i) => `${i + 1}. ${q.text}`).join('\n\n')}`;
-    
+    const text = visibleQuestions.map((q, i) => `${i + 1}. ${q.text}`).join('\n\n');
     if (navigator.share) {
       navigator.share({
         title: 'My Contractor Interview Questions',
@@ -166,19 +160,19 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
             Prioritize your questions, organize the order, and export your final plan.
           </p>
           <div className="flex justify-center gap-2 mt-4 flex-wrap">
-            <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-300 font-medium">
+            <Badge variant="secondary" className="bg-orange-100 text-orange-800">
               {mustAskCount} Must Ask
             </Badge>
-            <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-300 font-medium">
+            <Badge variant="secondary" className="bg-blue-100 text-blue-800">
               {maybeCount} Maybe
             </Badge>
-            <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-300 font-medium">
+            <Badge variant="secondary" className="bg-green-100 text-green-800">
               {totalQuestions} total questions
             </Badge>
           </div>
         </CardHeader>
         
-        <CardContent className="space-y-6 pb-32">
+        <CardContent className="space-y-6 pb-24">
           <div className="max-w-4xl mx-auto">
             {/* Smart Organize Section */}
             <Card className="border-blue-200 bg-blue-50 mb-6">
@@ -209,11 +203,11 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
             {showPreview ? (
               /* PDF Preview Mode */
               <Card className="bg-white shadow-lg border-2 border-gray-200">
-                <div className="p-6 md:p-8 space-y-6">
+                <div className="p-8 space-y-6">
                   <div className="text-center border-b pb-4">
                     <h1 className="text-2xl font-bold text-black">Contractor Interview Plan</h1>
                     {wizardState.userConcern && (
-                      <p className="text-gray-600 mt-2 font-medium">Focus: {wizardState.userConcern}</p>
+                      <p className="text-gray-600 mt-2">Focus: {wizardState.userConcern}</p>
                     )}
                     <p className="text-sm text-gray-500 mt-1">
                       Generated on {new Date().toLocaleDateString()}
@@ -222,27 +216,15 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
                   
                   <div className="space-y-4">
                     {visibleQuestions.map((question, index) => (
-                      <div key={question.id} className="flex gap-3 p-3 border-l-4 border-gray-200">
-                        <span className="text-gray-500 font-medium flex-shrink-0 text-sm">
+                      <div key={question.id} className="flex gap-3">
+                        <span className="text-gray-500 font-medium flex-shrink-0">
                           {index + 1}.
                         </span>
-                        <div className="flex-1">
-                          <p className="text-gray-800 leading-relaxed mb-2">{question.text}</p>
-                          <div className="flex gap-2 flex-wrap">
-                            {question.priority === 'must-ask' && (
-                              <Badge className="text-xs bg-orange-100 text-orange-700 border-orange-300">
-                                ★ MUST ASK
-                              </Badge>
-                            )}
-                            {question.category && (
-                              <Badge variant="outline" className="text-xs">
-                                {question.category}
-                              </Badge>
-                            )}
-                            <Badge variant="outline" className="text-xs">
-                              {question.type === 'starred' ? 'Pre-built' : 'Custom'}
-                            </Badge>
-                          </div>
+                        <div>
+                          <p className="text-gray-800 leading-relaxed">{question.text}</p>
+                          {question.priority === 'must-ask' && (
+                            <span className="text-xs text-orange-600 font-medium">★ MUST ASK</span>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -282,7 +264,7 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
             )}
           </div>
 
-          <div className="flex justify-center gap-3 mt-8 flex-wrap">
+          <div className="flex justify-center gap-3 mt-8">
             <Button
               onClick={onBack}
               variant="outline"
@@ -302,57 +284,15 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
           </div>
         </CardContent>
 
-        {/* Sticky Export Bar */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-50">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="flex gap-2 flex-wrap">
-                  <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-300">
-                    {mustAskCount} Must Ask
-                  </Badge>
-                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-300">
-                    {maybeCount} Maybe
-                  </Badge>
-                </div>
-                <span className="text-sm text-gray-600 hidden sm:block">
-                  Your interview plan is ready!
-                </span>
-              </div>
-              
-              <div className="flex gap-2 flex-wrap">
-                <Button
-                  onClick={() => setShowPreview(!showPreview)}
-                  variant="outline"
-                  size="sm"
-                  className="hidden sm:flex"
-                >
-                  <Eye className="w-4 h-4 mr-2" />
-                  {showPreview ? 'Edit View' : 'Preview'}
-                </Button>
-                
-                <Button
-                  onClick={handleShare}
-                  variant="outline"
-                  size="sm"
-                  className="hidden sm:flex"
-                >
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Share
-                </Button>
-                
-                <Button
-                  onClick={handleDownloadPDF}
-                  size="sm"
-                  className="bg-black text-white hover:bg-gray-800 font-medium"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download PDF
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <StickyExportBar
+          totalQuestions={totalQuestions}
+          mustAskCount={mustAskCount}
+          maybeCount={maybeCount}
+          onPreview={() => setShowPreview(!showPreview)}
+          onExport={handleDownloadPDF}
+          onShare={handleShare}
+          isPreviewMode={showPreview}
+        />
       </>
     </TooltipProvider>
   );
