@@ -16,11 +16,16 @@ export const useContentAccess = () => {
   const hasAccess = isUnlocked || isDevelopment;
   
   useEffect(() => {
+    // In development mode, NEVER redirect - allow free navigation
+    if (isDevelopment) {
+      return;
+    }
+    
     // Only redirect if we don't have access and we're not already on the home page
     if (!hasAccess && location.pathname !== '/') {
       navigate('/');
     }
-  }, [hasAccess, location.pathname, navigate]);
+  }, [hasAccess, location.pathname, navigate, isDevelopment]);
   
   return { hasAccess, isUnlocked, isDevelopment };
 };
