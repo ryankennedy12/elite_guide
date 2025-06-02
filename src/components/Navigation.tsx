@@ -10,6 +10,9 @@ const Navigation: React.FC = () => {
 
   // Check if user has unlocked content
   const isUnlocked = localStorage.getItem('elite12_unlocked') === 'true';
+  
+  // Check if we're in development mode
+  const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
   const navItems = [
     { label: 'Elite 12 Questions', href: '/elite-12', id: 'elite-12' },
@@ -22,8 +25,8 @@ const Navigation: React.FC = () => {
 
   const isActive = (href: string) => location.pathname === href;
 
-  // Don't show navigation on home page if not unlocked
-  if (location.pathname === '/' && !isUnlocked) {
+  // Don't show navigation on home page if not unlocked AND not in development
+  if (location.pathname === '/' && !isUnlocked && !isDevelopment) {
     return null;
   }
 
