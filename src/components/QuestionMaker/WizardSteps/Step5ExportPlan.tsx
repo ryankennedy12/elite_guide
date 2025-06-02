@@ -1,11 +1,11 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Copy, Download, Save } from 'lucide-react';
+import { Copy, Download, Save, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Note, NotesData } from '@/types/notes';
 import { generateQuestionList } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import InterviewSheet from '../InterviewSheet';
 
 interface WizardState {
   userConcern: string;
@@ -43,6 +43,7 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
+  const [showPreview, setShowPreview] = useState(true);
 
   const handleExport = () => {
     const questionList = generateQuestionList(wizardState);
@@ -165,31 +166,54 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
 
   return (
     <div className="space-y-6">
-      <h2 className="font-inter-tight font-bold text-2xl md:text-3xl text-black mb-4">
-        Export Your Interview Plan
-      </h2>
-      <p className="text-gray-600">
-        Choose how you want to use your custom contractor interview plan.
-      </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-inter-tight font-bold text-2xl md:text-3xl text-black mb-2">
+            Your Interview Plan
+          </h2>
+          <p className="text-gray-600">
+            Review your customized contractor interview checklist and export it for use during meetings.
+          </p>
+        </div>
+        <Button
+          onClick={() => setShowPreview(!showPreview)}
+          variant="outline"
+          className="flex items-center gap-2"
+        >
+          {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          {showPreview ? 'Hide Preview' : 'Show Preview'}
+        </Button>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Button onClick={handleExport} className="bg-black text-white hover:bg-gray-800">
-          <Download className="w-4 h-4 mr-2" />
-          Download as Text File
-        </Button>
-        <Button onClick={handleCopyToClipboard} variant="outline">
-          <Copy className="w-4 h-4 mr-2" />
-          Copy Questions
-        </Button>
-        <Button onClick={handleSaveToNotes} disabled={isSaving} className="bg-blue-600 text-white hover:bg-blue-800 disabled:opacity-50">
-          <Save className="w-4 h-4 mr-2" />
-          Save to My Notes
-        </Button>
+      {/* Interview Sheet Preview */}
+      {showPreview && (
+        <div className="bg-white border border-gray-200 rounded-lg p-6 max-h-96 overflow-y-auto">
+          <InterviewSheet wizardState={wizardState} />
+        </div>
+      )}
+
+      {/* Export Options */}
+      <div className="space-y-4">
+        <h3 className="font-semibold text-lg text-gray-900">Export Your Plan</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Button onClick={handleExport} className="bg-black text-white hover:bg-gray-800">
+            <Download className="w-4 h-4 mr-2" />
+            Download as Text File
+          </Button>
+          <Button onClick={handleCopyToClipboard} variant="outline">
+            <Copy className="w-4 h-4 mr-2" />
+            Copy Questions
+          </Button>
+          <Button onClick={handleSaveToNotes} disabled={isSaving} className="bg-blue-600 text-white hover:bg-blue-800 disabled:opacity-50">
+            <Save className="w-4 h-4 mr-2" />
+            Save to My Notes
+          </Button>
+        </div>
       </div>
 
       <div className="flex justify-between mt-8">
         <Button variant="outline" onClick={onBack}>
-          ← Back to Review
+          ← Back to Custom Questions
         </Button>
         <Button variant="ghost" onClick={onStartOver}>
           Start Over
