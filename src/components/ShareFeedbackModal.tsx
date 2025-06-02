@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { X, Star, Copy, MessageSquare, Mail, Share, MessageCircle, BarChart3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ShareFeedbackModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ isOpen, onClose
   const [surveyStep, setSurveyStep] = useState(0);
   const [surveyAnswers, setSurveyAnswers] = useState<string[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
   const surveyQuestions = [
     {
@@ -46,24 +48,57 @@ const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ isOpen, onClose
     setTimeout(() => setShowConfetti(false), 3000);
   };
 
-  const handleFeedbackSubmit = () => {
-    if (rating > 0) {
-      sessionStorage.setItem('feedback_submitted', 'true');
-      setHasSubmittedFeedback(true);
-      triggerConfetti();
+  const handleFeedbackSubmit = async () => {
+    if (rating > 0 && !isSubmittingFeedback) {
+      setIsSubmittingFeedback(true);
       
-      toast({
-        title: "Thank you!",
-        description: "Your feedback protects more homes in Columbus.",
-        duration: 3000,
-      });
+      try {
+        // Save feedback to Supabase
+        const { error } = await supabase
+          .from('feedback')
+          .insert({
+            rating: rating,
+            feedback_text: feedback.trim() || null
+          });
 
-      // Track analytics if available
-      if (typeof window !== 'undefined' && 'gtag' in window) {
-        (window as any).gtag('event', 'feedback_submitted', {
-          rating: rating,
-          has_text_feedback: feedback.length > 0
+        if (error) {
+          console.error('Error saving feedback:', error);
+          toast({
+            title: "Error",
+            description: "There was an issue saving your feedback. Please try again.",
+            variant: "destructive",
+          });
+          setIsSubmittingFeedback(false);
+          return;
+        }
+
+        sessionStorage.setItem('feedback_submitted', 'true');
+        setHasSubmittedFeedback(true);
+        triggerConfetti();
+        
+        toast({
+          title: "Thank you!",
+          description: "Your feedback protects more homes in Columbus.",
+          duration: 3000,
         });
+
+        // Track analytics if available
+        if (typeof window !== 'undefined' && 'gtag' in window) {
+          (window as any).gtag('event', 'feedback_submitted', {
+            rating: rating,
+            has_text_feedback: feedback.length > 0
+          });
+        }
+        
+      } catch (error) {
+        console.error('Unexpected error saving feedback:', error);
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsSubmittingFeedback(false);
       }
     }
   };
@@ -112,7 +147,22 @@ const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ isOpen, onClose
     triggerConfetti();
   };
 
-  const handleSurveyAnswer = (answer: string) => {
+  const handleSurveyAnswer = async (answer: string) => {
+    const currentQuestion = surveyQuestions[surveyStep].question;
+    
+    try {
+      // Save survey response to Supabase
+      await supabase
+        .from('survey_responses')
+        .insert({
+          question: currentQuestion,
+          answer: answer
+        });
+    } catch (error) {
+      console.error('Error saving survey response:', error);
+      // Continue with the survey even if saving fails
+    }
+
     const newAnswers = [...surveyAnswers, answer];
     setSurveyAnswers(newAnswers);
     
@@ -179,7 +229,8 @@ const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ isOpen, onClose
                     <button
                       key={star}
                       onClick={() => setRating(star)}
-                      className="p-1 hover:scale-110 transition-transform"
+                      disabled={isSubmittingFeedback}
+                      className="p-1 hover:scale-110 transition-transform disabled:opacity-50"
                     >
                       <Star
                         className={`w-8 h-8 transition-colors ${
@@ -194,15 +245,16 @@ const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ isOpen, onClose
                   placeholder="What did you love? What could be better?"
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value)}
+                  disabled={isSubmittingFeedback}
                   className="border-gray-300 focus:border-yellow-500 focus:ring-yellow-500/20"
                 />
 
                 <Button
                   onClick={handleFeedbackSubmit}
-                  disabled={rating === 0}
+                  disabled={rating === 0 || isSubmittingFeedback}
                   className="w-full bg-black text-white hover:bg-gray-800 disabled:opacity-50"
                 >
-                  Submit Feedback
+                  {isSubmittingFeedback ? "Submitting..." : "Submit Feedback"}
                 </Button>
               </div>
             </div>

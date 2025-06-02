@@ -6,12 +6,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Lock, Check, Shield } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     // Check if user has already unlocked content
@@ -25,28 +29,76 @@ const Home = () => {
     }
   }, [navigate]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim() && email.trim() && acceptedTerms) {
-      console.log('Lead captured:', { name: name.trim(), email: email.trim(), acceptedTerms });
+    if (name.trim() && email.trim() && acceptedTerms && !isSubmitting) {
+      setIsSubmitting(true);
       
-      // Track analytics events
-      if (typeof window !== 'undefined' && 'gtag' in window) {
-        (window as any).gtag('event', 'LeadMagnetDownloaded', {
-          currency: 'USD',
-          value: 0,
+      try {
+        // Capture UTM source if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const utmSource = urlParams.get('utm_source');
+        
+        // Save lead to Supabase
+        const { error } = await supabase
+          .from('leads')
+          .insert({
+            name: name.trim(),
+            email: email.trim(),
+            accepted_terms: acceptedTerms,
+            utm_source: utmSource
+          });
+
+        if (error) {
+          console.error('Error saving lead:', error);
+          toast({
+            title: "Error",
+            description: "There was an issue saving your information. Please try again.",
+            variant: "destructive",
+          });
+          setIsSubmitting(false);
+          return;
+        }
+
+        console.log('Lead captured and saved to database:', { 
+          name: name.trim(), 
+          email: email.trim(), 
+          acceptedTerms,
+          utm_source: utmSource 
         });
+        
+        // Track analytics events
+        if (typeof window !== 'undefined' && 'gtag' in window) {
+          (window as any).gtag('event', 'LeadMagnetDownloaded', {
+            currency: 'USD',
+            value: 0,
+          });
+        }
+        
+        // Store unlock state
+        localStorage.setItem('elite12_unlocked', 'true');
+        
+        toast({
+          title: "Success!",
+          description: "Welcome! Your guide is now unlocked.",
+        });
+        
+        // Navigate to Elite 12 Questions page
+        navigate('/elite-12');
+        
+      } catch (error) {
+        console.error('Unexpected error:', error);
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred. Please try again.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
       }
-      
-      // Store unlock state
-      localStorage.setItem('elite12_unlocked', 'true');
-      
-      // Navigate to Elite 12 Questions page
-      navigate('/elite-12');
     }
   };
 
-  const isFormValid = name.trim() && email.trim() && acceptedTerms;
+  const isFormValid = name.trim() && email.trim() && acceptedTerms && !isSubmitting;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
@@ -138,6 +190,7 @@ const Home = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
+                    disabled={isSubmitting}
                     className="w-full h-12 text-center border-gray-300 focus:border-gray-400 focus:ring-0 focus:outline-none rounded-xl text-lg placeholder:text-gray-400"
                     placeholder="Your full name"
                   />
@@ -151,6 +204,7 @@ const Home = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    disabled={isSubmitting}
                     className="w-full h-12 text-center border-gray-300 focus:border-gray-400 focus:ring-0 focus:outline-none rounded-xl text-lg placeholder:text-gray-400"
                     placeholder="your.email@example.com"
                   />
@@ -163,6 +217,7 @@ const Home = () => {
                   id="terms"
                   checked={acceptedTerms}
                   onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
+                  disabled={isSubmitting}
                   className="mt-1"
                 />
                 <Label 
@@ -185,7 +240,7 @@ const Home = () => {
                 disabled={!isFormValid}
                 className="w-full h-12 bg-gray-900 text-white hover:bg-gray-800 focus:ring-0 focus:outline-none font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-base tracking-wide hover:shadow-lg transform hover:-translate-y-0.5"
               >
-                UNLOCK MY GUIDE NOW
+                {isSubmitting ? "SAVING..." : "UNLOCK MY GUIDE NOW"}
               </Button>
             </form>
             
