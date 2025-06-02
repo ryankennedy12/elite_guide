@@ -4,12 +4,11 @@ import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { RotateCcw, ArrowUpDown } from 'lucide-react';
+import { RotateCcw, ArrowUpDown, Eye, Download, Share2 } from 'lucide-react';
 import { type WizardState } from '../WizardContainer';
 import { wizardQuestionBank } from '@/data/wizard';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { InterviewPlanCard, type QuestionPriority } from '../InterviewPlanCard';
-import { StickyExportBar } from '../StickyExportBar';
 import { useToast } from '@/hooks/use-toast';
 
 interface Step5ExportPlanProps {
@@ -47,20 +46,21 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
           text: question.question.replace(/\[.*?\]/g, wizardState.userConcern || 'the issue'),
           type: 'starred',
           category: question.category,
-          priority: 'maybe', // Default to maybe
+          priority: 'maybe',
           proTip: question.proTip,
           redFlag: question.redFlag
         });
       }
     });
     
-    // Add custom questions
+    // Add custom questions (handle both string and object formats)
     wizardState.customQuestions.forEach((question, index) => {
+      const questionText = typeof question === 'string' ? question : question.text || question;
       questions.push({
         id: `custom-${index}`,
-        text: question,
+        text: questionText,
         type: 'custom',
-        priority: 'maybe' // Default to maybe
+        priority: 'maybe'
       });
     });
     
@@ -74,12 +74,10 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
   const totalQuestions = organizedQuestions.filter(q => q.priority !== 'remove').length;
 
   const handleAutoOrganize = () => {
-    // Smart organize: Must Ask first, then Maybe, grouped by logical flow
     const mustAsk = organizedQuestions.filter(q => q.priority === 'must-ask');
     const maybe = organizedQuestions.filter(q => q.priority === 'maybe');
     const removed = organizedQuestions.filter(q => q.priority === 'remove');
     
-    // Sort by category priority (diagnostics first, cost last)
     const categoryOrder = ['Diagnostic / Investigation', 'System Selection', 'Timeline / Project Management', 'Health / Safety / Air Quality', 'Compliance / Code', 'Cost & Value', 'Warranty / Contract'];
     
     const sortByCategory = (a: OrganizedQuestion, b: OrganizedQuestion) => {
@@ -120,13 +118,40 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
     });
   };
 
+  const handleMoveUp = (index: number) => {
+    if (index === 0) return;
+    const updated = [...organizedQuestions];
+    [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
+    setOrganizedQuestions(updated);
+  };
+
+  const handleMoveDown = (index: number) => {
+    if (index === organizedQuestions.length - 1) return;
+    const updated = [...organizedQuestions];
+    [updated[index], updated[index + 1]] = [updated[index + 1], updated[index]];
+    setOrganizedQuestions(updated);
+  };
+
   const handleDownloadPDF = () => {
+    // Simple text export for now
+    const visibleQuestions = organizedQuestions.filter(q => q.priority !== 'remove');
+    const content = `Contractor Interview Questions\n\n${visibleQuestions.map((q, i) => `${i + 1}. ${q.text}`).join('\n\n')}`;
+    
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'contractor-interview-questions.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
     toast({
-      title: "Downloading PDF...",
-      description: "Your interview plan will download shortly.",
+      title: "Download started!",
+      description: "Your interview questions have been exported.",
       duration: 3000,
     });
-    // TODO: Implement actual PDF generation
   };
 
   const handleShare = () => {
@@ -256,6 +281,10 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
                           priority
                         )}
                         onDelete={() => handleDelete(organizedQuestions.findIndex(q => q.id === question.id))}
+                        onMoveUp={() => handleMoveUp(organizedQuestions.findIndex(q => q.id === question.id))}
+                        onMoveDown={() => handleMoveDown(organizedQuestions.findIndex(q => q.id === question.id))}
+                        canMoveUp={index > 0}
+                        canMoveDown={index < visibleQuestions.length - 1}
                       />
                     ))}
                   </div>
@@ -284,15 +313,50 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
           </div>
         </CardContent>
 
-        <StickyExportBar
-          totalQuestions={totalQuestions}
-          mustAskCount={mustAskCount}
-          maybeCount={maybeCount}
-          onPreview={() => setShowPreview(!showPreview)}
-          onExport={handleDownloadPDF}
-          onShare={handleShare}
-          isPreviewMode={showPreview}
-        />
+        {/* Sticky Export Bar */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-50">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-600">
+                {totalQuestions} questions ready
+              </span>
+              <div className="flex gap-2">
+                <Badge variant="outline" className="bg-orange-50 text-orange-700">
+                  {mustAskCount} must-ask
+                </Badge>
+                <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                  {maybeCount} maybe
+                </Badge>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setShowPreview(!showPreview)}
+                variant="outline"
+                size="sm"
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                {showPreview ? 'Edit' : 'Preview'}
+              </Button>
+              <Button
+                onClick={handleDownloadPDF}
+                variant="outline"
+                size="sm"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export
+              </Button>
+              <Button
+                onClick={handleShare}
+                size="sm"
+                className="bg-black text-white hover:bg-gray-800"
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Share
+              </Button>
+            </div>
+          </div>
+        </div>
       </>
     </TooltipProvider>
   );

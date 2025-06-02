@@ -4,12 +4,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
-  GripVertical, 
   Star, 
   Circle,
   Trash2, 
   ChevronDown, 
-  ChevronUp 
+  ChevronUp,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 
@@ -28,8 +29,11 @@ interface InterviewPlanCardProps {
   index: number;
   onPriorityChange: (priority: QuestionPriority) => void;
   onDelete: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
+  canMoveUp?: boolean;
+  canMoveDown?: boolean;
   isDragging?: boolean;
-  dragHandleProps?: any;
 }
 
 export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
@@ -37,8 +41,11 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
   index,
   onPriorityChange,
   onDelete,
-  isDragging = false,
-  dragHandleProps
+  onMoveUp,
+  onMoveDown,
+  canMoveUp = true,
+  canMoveDown = true,
+  isDragging = false
 }) => {
   const [showDetails, setShowDetails] = useState(false);
   
@@ -71,9 +78,41 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
       } ${question.priority === 'remove' ? 'opacity-50' : 'bg-white border-gray-200'}`}>
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            {/* Drag Handle */}
-            <div {...dragHandleProps} className="cursor-grab hover:cursor-grabbing p-2 rounded hover:bg-gray-100 transition-colors">
-              <GripVertical className="w-5 h-5 text-gray-400" />
+            {/* Move Up/Down Controls */}
+            <div className="flex flex-col gap-1 flex-shrink-0">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onMoveUp}
+                    disabled={!canMoveUp}
+                    size="sm"
+                    variant="ghost"
+                    className="p-1 h-6 w-6 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                  >
+                    <ArrowUp className="w-3 h-3" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Move up</p>
+                </TooltipContent>
+              </Tooltip>
+              
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onMoveDown}
+                    disabled={!canMoveDown}
+                    size="sm"
+                    variant="ghost"
+                    className="p-1 h-6 w-6 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                  >
+                    <ArrowDown className="w-3 h-3" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Move down</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
             
             {/* Question Number */}
@@ -83,23 +122,22 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
             
             {/* Question Content */}
             <div className="flex-1 min-w-0">
-              <p className="text-gray-800 leading-relaxed font-medium mb-2">{question.text}</p>
+              <p className="text-gray-800 leading-relaxed font-medium mb-3">{question.text}</p>
               
-              {/* Tags */}
-              <div className="flex items-center gap-2 mb-3 flex-wrap">
+              {/* Tags - Improved alignment and styling */}
+              <div className="flex flex-wrap gap-2 mb-3">
                 <Badge 
                   variant="outline" 
-                  className={`text-xs ${
-                    question.type === 'starred' 
-                      ? 'bg-blue-50 text-blue-700 border-blue-200' 
-                      : 'bg-green-50 text-green-700 border-green-200'
-                  }`}
+                  className="text-xs font-semibold h-[30px] leading-[30px] px-[14px] rounded-[18px] bg-[#E9F0FF] text-[#0056D2] border-[#0056D2]/20 max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
                 >
                   {question.type === 'starred' ? 'Pre-built' : 'Custom'}
                 </Badge>
                 
                 {question.category && (
-                  <Badge variant="outline" className="text-xs bg-gray-50 text-gray-600 border-gray-200">
+                  <Badge 
+                    variant="outline" 
+                    className="text-xs font-semibold h-[30px] leading-[30px] px-[14px] rounded-[18px] bg-[#E9F0FF] text-[#0056D2] border-[#0056D2]/20 max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+                  >
                     {question.category}
                   </Badge>
                 )}
@@ -107,10 +145,10 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                 {question.priority && question.priority !== 'remove' && (
                   <Badge 
                     variant="outline" 
-                    className={`text-xs flex items-center gap-1 ${getPriorityColor(question.priority)}`}
+                    className={`text-xs font-semibold h-[30px] leading-[30px] px-[14px] rounded-[18px] flex items-center gap-1 ${getPriorityColor(question.priority)} max-w-full overflow-hidden`}
                   >
                     {getPriorityIcon(question.priority)}
-                    {question.priority === 'must-ask' ? 'Must Ask' : 'Maybe'}
+                    <span className="truncate">{question.priority === 'must-ask' ? 'Must Ask' : 'Maybe'}</span>
                   </Badge>
                 )}
               </div>
@@ -128,21 +166,25 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                 </Button>
               )}
               
-              {/* Collapsible Details */}
+              {/* Collapsible Details - Improved width and spacing */}
               {showDetails && (question.proTip || question.redFlag) && (
-                <div className="space-y-2 mt-3 p-3 bg-gray-50 rounded-lg border">
-                  {question.proTip && (
-                    <div>
-                      <div className="text-xs font-semibold text-green-700 mb-1">💡 PRO TIP</div>
-                      <p className="text-sm text-gray-700">{question.proTip}</p>
+                <div className="mt-3 mx-0 max-w-[calc(100%-24px)]">
+                  <div className="w-full p-3 bg-gray-50 rounded-lg border shadow-sm">
+                    <div className="grid gap-3">
+                      {question.proTip && (
+                        <div>
+                          <div className="text-xs font-semibold text-green-700 mb-1">💡 PRO TIP</div>
+                          <p className="text-sm text-gray-700 leading-[1.45]">{question.proTip}</p>
+                        </div>
+                      )}
+                      {question.redFlag && (
+                        <div>
+                          <div className="text-xs font-semibold text-red-700 mb-1">🚩 RED FLAG</div>
+                          <p className="text-sm text-gray-700 leading-[1.45]">{question.redFlag}</p>
+                        </div>
+                      )}
                     </div>
-                  )}
-                  {question.redFlag && (
-                    <div>
-                      <div className="text-xs font-semibold text-red-700 mb-1">🚩 RED FLAG</div>
-                      <p className="text-sm text-gray-700">{question.redFlag}</p>
-                    </div>
-                  )}
+                  </div>
                 </div>
               )}
             </div>
