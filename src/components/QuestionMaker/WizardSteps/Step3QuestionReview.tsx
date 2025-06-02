@@ -95,13 +95,22 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
           Browse relevant questions and add the ones you want to ask contractors. You can organize and prioritize them in the next step.
         </p>
         <div className="flex items-center justify-center gap-4 mt-4">
-          <Badge variant="secondary">
+          <Badge 
+            variant="secondary" 
+            className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200 rounded-md"
+          >
             {selectedCategories.length} topic{selectedCategories.length !== 1 ? 's' : ''} selected
           </Badge>
-          <Badge variant="outline">
+          <Badge 
+            variant="outline" 
+            className="px-2 py-1 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 rounded-md"
+          >
             {questionPool.totalAvailable} questions available
           </Badge>
-          <Badge variant="outline" className="bg-green-100 text-green-800">
+          <Badge 
+            variant="outline" 
+            className="px-2 py-1 text-xs font-medium bg-green-50 text-green-700 border border-green-200 rounded-md"
+          >
             {starredQuestions.size} added to plan
           </Badge>
         </div>
@@ -151,7 +160,10 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
                       </h3>
                       
                       <div className="flex items-center gap-2 mb-3">
-                        <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                        <Badge 
+                          variant="outline" 
+                          className="px-2 py-1 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 rounded-md max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+                        >
                           {question.category}
                         </Badge>
                       </div>
@@ -161,7 +173,7 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
                         <summary className="cursor-pointer text-sm text-blue-600 hover:text-blue-700 font-medium">
                           View Pro Tips & Red Flags
                         </summary>
-                        <div className="mt-2 space-y-2 p-3 bg-gray-50 rounded border">
+                        <div className="mt-2 space-y-2 p-3 bg-gray-50 rounded border w-[92%] mx-auto">
                           {question.proTip && (
                             <div>
                               <div className="text-xs font-semibold text-green-700 mb-1">💡 PRO TIP</div>
