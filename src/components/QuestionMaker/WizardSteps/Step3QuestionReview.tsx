@@ -150,34 +150,44 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
                         {replaceUserConcern(question.question)}
                       </h3>
                       
-                      {/* Improved pill styling */}
+                      {/* Improved pill styling with proper wrapping */}
                       <div className="flex flex-wrap gap-2 mb-3">
-                        <Badge 
-                          variant="outline" 
-                          className="text-xs font-semibold h-[30px] leading-[30px] px-[14px] rounded-[18px] bg-[#E9F0FF] text-[#0056D2] border-[#0056D2]/20 max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+                        <span 
+                          className="inline-block text-xs font-semibold rounded-[18px] bg-[#E9F0FF] text-[#0056D2] border border-[#0056D2]/20"
+                          style={{
+                            maxWidth: '100%',
+                            wordBreak: 'break-word',
+                            whiteSpace: 'normal',
+                            lineHeight: '1.2',
+                            padding: '6px 14px',
+                            height: 'auto',
+                            minHeight: '30px',
+                            display: 'flex',
+                            alignItems: 'center'
+                          }}
                         >
                           {question.category}
-                        </Badge>
+                        </span>
                       </div>
 
-                      {/* Collapsible Pro Tip and Red Flag - Improved styling */}
+                      {/* Improved Pro Tip and Red Flag section with full width */}
                       <details className="group">
                         <summary className="cursor-pointer text-sm text-blue-600 hover:text-blue-700 font-medium">
                           View Pro Tips & Red Flags
                         </summary>
-                        <div className="mt-2 max-w-[calc(100%-24px)]">
-                          <div className="w-full p-3 bg-gray-50 rounded border shadow-sm">
-                            <div className="grid gap-3">
+                        <div className="mt-3 w-full">
+                          <div className="w-full p-4 bg-gray-50 rounded border shadow-sm">
+                            <div className="space-y-4">
                               {question.proTip && (
                                 <div>
-                                  <div className="text-xs font-semibold text-green-700 mb-1">💡 PRO TIP</div>
-                                  <p className="text-sm text-gray-700 leading-[1.45]">{question.proTip}</p>
+                                  <div className="text-xs font-semibold text-green-700 mb-2">💡 PRO TIP</div>
+                                  <p className="text-sm text-gray-700 leading-[1.45] max-w-none">{question.proTip}</p>
                                 </div>
                               )}
                               {question.redFlag && (
                                 <div>
-                                  <div className="text-xs font-semibold text-red-700 mb-1">🚩 RED FLAG</div>
-                                  <p className="text-sm text-gray-700 leading-[1.45]">{question.redFlag}</p>
+                                  <div className="text-xs font-semibold text-red-700 mb-2">🚩 RED FLAG</div>
+                                  <p className="text-sm text-gray-700 leading-[1.45] max-w-none">{question.redFlag}</p>
                                 </div>
                               )}
                             </div>

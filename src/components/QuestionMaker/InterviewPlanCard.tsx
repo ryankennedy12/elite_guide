@@ -124,32 +124,60 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
             <div className="flex-1 min-w-0">
               <p className="text-gray-800 leading-relaxed font-medium mb-3">{question.text}</p>
               
-              {/* Tags - Improved alignment and styling */}
+              {/* Improved Tags - Better wrapping and alignment */}
               <div className="flex flex-wrap gap-2 mb-3">
-                <Badge 
-                  variant="outline" 
-                  className="text-xs font-semibold h-[30px] leading-[30px] px-[14px] rounded-[18px] bg-[#E9F0FF] text-[#0056D2] border-[#0056D2]/20 max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+                <span 
+                  className="inline-block text-xs font-semibold h-[30px] leading-[30px] px-[14px] rounded-[18px] bg-[#E9F0FF] text-[#0056D2] border border-[#0056D2]/20"
+                  style={{
+                    maxWidth: '100%',
+                    wordBreak: 'break-word',
+                    whiteSpace: 'normal',
+                    lineHeight: '1.2',
+                    padding: '6px 14px',
+                    height: 'auto',
+                    minHeight: '30px',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
                 >
                   {question.type === 'starred' ? 'Pre-built' : 'Custom'}
-                </Badge>
+                </span>
                 
                 {question.category && (
-                  <Badge 
-                    variant="outline" 
-                    className="text-xs font-semibold h-[30px] leading-[30px] px-[14px] rounded-[18px] bg-[#E9F0FF] text-[#0056D2] border-[#0056D2]/20 max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+                  <span 
+                    className="inline-block text-xs font-semibold h-[30px] leading-[30px] px-[14px] rounded-[18px] bg-[#E9F0FF] text-[#0056D2] border border-[#0056D2]/20"
+                    style={{
+                      maxWidth: '100%',
+                      wordBreak: 'break-word',
+                      whiteSpace: 'normal',
+                      lineHeight: '1.2',
+                      padding: '6px 14px',
+                      height: 'auto',
+                      minHeight: '30px',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
                   >
                     {question.category}
-                  </Badge>
+                  </span>
                 )}
                 
                 {question.priority && question.priority !== 'remove' && (
-                  <Badge 
-                    variant="outline" 
-                    className={`text-xs font-semibold h-[30px] leading-[30px] px-[14px] rounded-[18px] flex items-center gap-1 ${getPriorityColor(question.priority)} max-w-full overflow-hidden`}
+                  <span 
+                    className={`inline-flex items-center gap-1 text-xs font-semibold px-[14px] rounded-[18px] border ${getPriorityColor(question.priority)}`}
+                    style={{
+                      maxWidth: '100%',
+                      wordBreak: 'break-word',
+                      whiteSpace: 'normal',
+                      lineHeight: '1.2',
+                      padding: '6px 14px',
+                      height: 'auto',
+                      minHeight: '30px'
+                    }}
                   >
                     {getPriorityIcon(question.priority)}
-                    <span className="truncate">{question.priority === 'must-ask' ? 'Must Ask' : 'Maybe'}</span>
-                  </Badge>
+                    <span>{question.priority === 'must-ask' ? 'Must Ask' : 'Maybe'}</span>
+                  </span>
                 )}
               </div>
               
@@ -166,21 +194,21 @@ export const InterviewPlanCard: React.FC<InterviewPlanCardProps> = ({
                 </Button>
               )}
               
-              {/* Collapsible Details - Improved width and spacing */}
+              {/* Improved Collapsible Details - Full width with proper spacing */}
               {showDetails && (question.proTip || question.redFlag) && (
-                <div className="mt-3 mx-0 max-w-[calc(100%-24px)]">
-                  <div className="w-full p-3 bg-gray-50 rounded-lg border shadow-sm">
-                    <div className="grid gap-3">
+                <div className="mt-3 w-full">
+                  <div className="w-full p-4 bg-gray-50 rounded-lg border shadow-sm">
+                    <div className="space-y-4">
                       {question.proTip && (
                         <div>
-                          <div className="text-xs font-semibold text-green-700 mb-1">💡 PRO TIP</div>
-                          <p className="text-sm text-gray-700 leading-[1.45]">{question.proTip}</p>
+                          <div className="text-xs font-semibold text-green-700 mb-2">💡 PRO TIP</div>
+                          <p className="text-sm text-gray-700 leading-[1.45] max-w-none">{question.proTip}</p>
                         </div>
                       )}
                       {question.redFlag && (
                         <div>
-                          <div className="text-xs font-semibold text-red-700 mb-1">🚩 RED FLAG</div>
-                          <p className="text-sm text-gray-700 leading-[1.45]">{question.redFlag}</p>
+                          <div className="text-xs font-semibold text-red-700 mb-2">🚩 RED FLAG</div>
+                          <p className="text-sm text-gray-700 leading-[1.45] max-w-none">{question.redFlag}</p>
                         </div>
                       )}
                     </div>
