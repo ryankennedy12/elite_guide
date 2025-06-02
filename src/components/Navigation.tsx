@@ -10,9 +10,6 @@ const Navigation: React.FC = () => {
 
   // Check if user has unlocked content
   const isUnlocked = localStorage.getItem('elite12_unlocked') === 'true';
-  
-  // Check if we're in development mode
-  const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
   const navItems = [
     { label: 'Elite 12 Questions', href: '/elite-12', id: 'elite-12' },
@@ -25,11 +22,8 @@ const Navigation: React.FC = () => {
 
   const isActive = (href: string) => location.pathname === href;
 
-  // Show navigation if unlocked OR in development mode
-  // But don't show on home page unless we're in development mode
-  const shouldShowNavigation = isUnlocked || (isDevelopment && location.pathname !== '/');
-
-  if (!shouldShowNavigation) {
+  // Don't show navigation on home page if not unlocked
+  if (location.pathname === '/' && !isUnlocked) {
     return null;
   }
 
@@ -37,10 +31,7 @@ const Navigation: React.FC = () => {
     <nav className="sticky top-0 bg-black text-white z-50 border-b border-gray-800">
       <div className="max-w-4xl mx-auto px-4">
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center justify-between py-3">
-          <Link to="/" className="text-sm font-medium text-gray-300 hover:text-white">
-            Home
-          </Link>
+        <div className="hidden md:flex items-center justify-center py-3">
           <div className="flex space-x-8">
             {navItems.map((item) => (
               <Link
@@ -60,9 +51,7 @@ const Navigation: React.FC = () => {
 
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center justify-between py-3">
-          <Link to="/" className="text-sm font-medium text-gray-300 hover:text-white">
-            Home
-          </Link>
+          <span className="text-sm font-medium">Elite 12 Guide</span>
           <Button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             variant="ghost"
@@ -92,17 +81,6 @@ const Navigation: React.FC = () => {
             
             <div className="flex-1 overflow-y-auto p-4">
               <div className="space-y-2">
-                <Link
-                  to="/"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors duration-200 ${
-                    location.pathname === '/'
-                      ? 'bg-gray-800 text-white'
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                  }`}
-                >
-                  Home
-                </Link>
                 {navItems.map((item) => (
                   <Link
                     key={item.id}
