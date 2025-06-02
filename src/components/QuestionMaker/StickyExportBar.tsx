@@ -6,6 +6,8 @@ import { Download, Eye, Share2 } from 'lucide-react';
 
 interface StickyExportBarProps {
   totalQuestions: number;
+  mustAskCount: number;
+  maybeCount: number;
   onPreview: () => void;
   onExport: () => void;
   onShare: () => void;
@@ -14,6 +16,8 @@ interface StickyExportBarProps {
 
 export const StickyExportBar: React.FC<StickyExportBarProps> = ({
   totalQuestions,
+  mustAskCount,
+  maybeCount,
   onPreview,
   onExport,
   onShare,
@@ -23,7 +27,7 @@ export const StickyExportBar: React.FC<StickyExportBarProps> = ({
     return (
       <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 shadow-lg">
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-gray-600 mb-2">Add or star at least one question to finish your plan.</p>
+          <p className="text-gray-600 mb-2">Add questions to create your interview plan.</p>
           <Badge variant="outline" className="bg-gray-50 text-gray-600">
             {totalQuestions} questions
           </Badge>
@@ -37,11 +41,16 @@ export const StickyExportBar: React.FC<StickyExportBarProps> = ({
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
-              {totalQuestions} question{totalQuestions !== 1 ? 's' : ''} ready
-            </Badge>
+            <div className="flex gap-2">
+              <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+                {mustAskCount} Must Ask
+              </Badge>
+              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                {maybeCount} Maybe
+              </Badge>
+            </div>
             <span className="text-sm text-gray-600 hidden sm:block">
-              Your interview plan is complete!
+              Your interview plan is ready!
             </span>
           </div>
           
@@ -53,7 +62,7 @@ export const StickyExportBar: React.FC<StickyExportBarProps> = ({
               className="hidden sm:flex"
             >
               <Eye className="w-4 h-4 mr-2" />
-              {isPreviewMode ? 'Edit View' : 'Preview PDF'}
+              {isPreviewMode ? 'Edit View' : 'Preview'}
             </Button>
             
             <Button

@@ -4,12 +4,11 @@ import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, ArrowUpDown } from 'lucide-react';
 import { type WizardState } from '../WizardContainer';
 import { wizardQuestionBank } from '@/data/wizard';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { QuestionPlanCard } from '../QuestionPlanCard';
-import { SmartOrganizer } from '../SmartOrganizer';
+import { InterviewPlanCard, type QuestionPriority } from '../InterviewPlanCard';
 import { StickyExportBar } from '../StickyExportBar';
 import { useToast } from '@/hooks/use-toast';
 
@@ -24,7 +23,7 @@ interface OrganizedQuestion {
   text: string;
   type: 'starred' | 'custom';
   category?: string;
-  isStarred?: boolean;
+  priority?: QuestionPriority;
   proTip?: string;
   redFlag?: string;
 }
@@ -48,7 +47,7 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
           text: question.question.replace(/\[.*?\]/g, wizardState.userConcern || 'the issue'),
           type: 'starred',
           category: question.category,
-          isStarred: true,
+          priority: 'maybe', // Default to maybe
           proTip: question.proTip,
           redFlag: question.redFlag
         });
@@ -60,7 +59,8 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
       questions.push({
         id: `custom-${index}`,
         text: question,
-        type: 'custom'
+        type: 'custom',
+        priority: 'maybe' // Default to maybe
       });
     });
     
@@ -68,39 +68,34 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
   });
 
   const [showPreview, setShowPreview] = useState(false);
-  const totalQuestions = organizedQuestions.length;
-  const mustAskCount = organizedQuestions.filter(q => q.isStarred).length;
-
-  const categoryOrder = ['Diagnostics', 'System', 'Warranty', 'Cost', 'Timeline', 'Process'];
   
+  const mustAskCount = organizedQuestions.filter(q => q.priority === 'must-ask').length;
+  const maybeCount = organizedQuestions.filter(q => q.priority === 'maybe').length;
+  const totalQuestions = organizedQuestions.filter(q => q.priority !== 'remove').length;
+
   const handleAutoOrganize = () => {
-    const organized: OrganizedQuestion[] = [];
-    const grouped = organizedQuestions.reduce((groups, question) => {
-      const category = question.category || 'Custom Questions';
-      if (!groups[category]) groups[category] = [];
-      groups[category].push(question);
-      return groups;
-    }, {} as Record<string, OrganizedQuestion[]>);
+    // Smart organize: Must Ask first, then Maybe, grouped by logical flow
+    const mustAsk = organizedQuestions.filter(q => q.priority === 'must-ask');
+    const maybe = organizedQuestions.filter(q => q.priority === 'maybe');
+    const removed = organizedQuestions.filter(q => q.priority === 'remove');
     
-    // Add must-ask questions first
-    const mustAsk = organizedQuestions.filter(q => q.isStarred);
-    organized.push(...mustAsk);
+    // Sort by category priority (diagnostics first, cost last)
+    const categoryOrder = ['Diagnostic / Investigation', 'System Selection', 'Timeline / Project Management', 'Health / Safety / Air Quality', 'Compliance / Code', 'Cost & Value', 'Warranty / Contract'];
     
-    // Add remaining questions by category priority
-    categoryOrder.forEach(category => {
-      if (grouped[category]) {
-        const remaining = grouped[category].filter(q => !q.isStarred);
-        organized.push(...remaining);
-      }
-    });
+    const sortByCategory = (a: OrganizedQuestion, b: OrganizedQuestion) => {
+      const aIndex = categoryOrder.indexOf(a.category || '');
+      const bIndex = categoryOrder.indexOf(b.category || '');
+      if (aIndex === -1 && bIndex === -1) return 0;
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    };
     
-    // Add remaining categories
-    Object.keys(grouped).forEach(category => {
-      if (!categoryOrder.includes(category)) {
-        const remaining = grouped[category].filter(q => !q.isStarred);
-        organized.push(...remaining);
-      }
-    });
+    const organized = [
+      ...mustAsk.sort(sortByCategory),
+      ...maybe.sort(sortByCategory),
+      ...removed
+    ];
     
     setOrganizedQuestions(organized);
     toast({
@@ -110,15 +105,10 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
     });
   };
 
-  const handleToggleStar = (index: number) => {
+  const handlePriorityChange = (index: number, priority: QuestionPriority) => {
     const updated = [...organizedQuestions];
-    updated[index] = { ...updated[index], isStarred: !updated[index].isStarred };
+    updated[index] = { ...updated[index], priority };
     setOrganizedQuestions(updated);
-  };
-
-  const handleEdit = (index: number) => {
-    // TODO: Implement inline editing
-    console.log('Edit question at index:', index);
   };
 
   const handleDelete = (index: number) => {
@@ -140,7 +130,8 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
   };
 
   const handleShare = () => {
-    const text = organizedQuestions.map((q, i) => `${i + 1}. ${q.text}`).join('\n\n');
+    const visibleQuestions = organizedQuestions.filter(q => q.priority !== 'remove');
+    const text = visibleQuestions.map((q, i) => `${i + 1}. ${q.text}`).join('\n\n');
     if (navigator.share) {
       navigator.share({
         title: 'My Contractor Interview Questions',
@@ -156,59 +147,65 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
     }
   };
 
-  // Group questions by category for display
-  const groupedQuestions = organizedQuestions.reduce((groups, question, index) => {
-    const category = question.category || 'Custom Questions';
-    if (!groups[category]) groups[category] = [];
-    groups[category].push({ ...question, originalIndex: index });
-    return groups;
-  }, {} as Record<string, (OrganizedQuestion & { originalIndex: number })[]>);
-
-  const shouldShowCategoryHeader = (index: number): boolean => {
-    if (index === 0) return true;
-    const currentCategory = organizedQuestions[index].category || 'Custom Questions';
-    const previousCategory = organizedQuestions[index - 1].category || 'Custom Questions';
-    return currentCategory !== previousCategory;
-  };
+  const visibleQuestions = organizedQuestions.filter(q => q.priority !== 'remove');
 
   return (
     <TooltipProvider>
       <>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl md:text-3xl font-bold text-black mb-4">
-            Your Interview Plan is Ready!
+            Organize Your Interview Plan
           </CardTitle>
           <p className="text-gray-600 text-lg">
-            Review, organize, and export your customized contractor interview questions.
+            Prioritize your questions, organize the order, and export your final plan.
           </p>
-          <div className="flex justify-center gap-2 mt-4">
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
-              {totalQuestions} question{totalQuestions !== 1 ? 's' : ''} total
+          <div className="flex justify-center gap-2 mt-4 flex-wrap">
+            <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+              {mustAskCount} Must Ask
             </Badge>
-            {mustAskCount > 0 && (
-              <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-                {mustAskCount} must-ask
-              </Badge>
-            )}
             <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-              {wizardState.selectedCategories.length} topic{wizardState.selectedCategories.length !== 1 ? 's' : ''}
+              {maybeCount} Maybe
+            </Badge>
+            <Badge variant="secondary" className="bg-green-100 text-green-800">
+              {totalQuestions} total questions
             </Badge>
           </div>
         </CardHeader>
         
-        <CardContent className="space-y-6 pb-24"> {/* Add bottom padding for sticky bar */}
+        <CardContent className="space-y-6 pb-24">
           <div className="max-w-4xl mx-auto">
-            <SmartOrganizer
-              onAutoOrganize={handleAutoOrganize}
-              totalQuestions={totalQuestions}
-            />
+            {/* Smart Organize Section */}
+            <Card className="border-blue-200 bg-blue-50 mb-6">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <ArrowUpDown className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-blue-900 mb-2">Smart Interview Order</h4>
+                    <p className="text-sm text-blue-800 mb-3">
+                      Organize questions for maximum effectiveness: diagnostics first, process/timeline middle, cost and contracts last.
+                    </p>
+                    <Button
+                      onClick={handleAutoOrganize}
+                      variant="outline"
+                      size="sm"
+                      className="bg-white border-blue-200 text-blue-700 hover:bg-blue-50"
+                    >
+                      <ArrowUpDown className="w-4 h-4 mr-2" />
+                      Auto-Organize
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {showPreview ? (
               /* PDF Preview Mode */
-              <Card className="bg-white shadow-lg border-2 border-gray-200 mt-6">
+              <Card className="bg-white shadow-lg border-2 border-gray-200">
                 <div className="p-8 space-y-6">
                   <div className="text-center border-b pb-4">
-                    <h1 className="text-2xl font-bold text-black">Contractor Interview Kit</h1>
+                    <h1 className="text-2xl font-bold text-black">Contractor Interview Plan</h1>
                     {wizardState.userConcern && (
                       <p className="text-gray-600 mt-2">Focus: {wizardState.userConcern}</p>
                     )}
@@ -218,18 +215,16 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
                   </div>
                   
                   <div className="space-y-4">
-                    {organizedQuestions.map((question, index) => (
-                      <div key={question.id}>
-                        {shouldShowCategoryHeader(index) && (
-                          <h3 className="text-lg font-semibold text-black mt-6 mb-3 border-b border-gray-300 pb-1">
-                            {question.category || 'Custom Questions'}
-                          </h3>
-                        )}
-                        <div className="flex gap-3">
-                          <span className="text-gray-500 font-medium flex-shrink-0">
-                            {index + 1}.
-                          </span>
+                    {visibleQuestions.map((question, index) => (
+                      <div key={question.id} className="flex gap-3">
+                        <span className="text-gray-500 font-medium flex-shrink-0">
+                          {index + 1}.
+                        </span>
+                        <div>
                           <p className="text-gray-800 leading-relaxed">{question.text}</p>
+                          {question.priority === 'must-ask' && (
+                            <span className="text-xs text-orange-600 font-medium">★ MUST ASK</span>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -244,32 +239,24 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
               </Card>
             ) : (
               /* Edit Mode */
-              <div className="space-y-4 mt-6">
+              <div className="space-y-4">
                 {organizedQuestions.length === 0 ? (
                   <div className="text-center py-12 text-gray-500">
                     <p>No questions added yet. Go back to add some questions to your plan.</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {organizedQuestions.map((question, index) => (
-                      <div key={question.id}>
-                        {shouldShowCategoryHeader(index) && (
-                          <div className="flex items-center gap-3 mt-8 mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900">
-                              {question.category || 'Custom Questions'}
-                            </h3>
-                            <div className="flex-1 h-px bg-gray-300"></div>
-                          </div>
+                    {organizedQuestions.filter(q => q.priority !== 'remove').map((question, index) => (
+                      <InterviewPlanCard
+                        key={question.id}
+                        question={question}
+                        index={index}
+                        onPriorityChange={(priority) => handlePriorityChange(
+                          organizedQuestions.findIndex(q => q.id === question.id), 
+                          priority
                         )}
-                        
-                        <QuestionPlanCard
-                          question={question}
-                          index={index}
-                          onEdit={() => handleEdit(index)}
-                          onDelete={() => handleDelete(index)}
-                          onToggleStar={() => handleToggleStar(index)}
-                        />
-                      </div>
+                        onDelete={() => handleDelete(organizedQuestions.findIndex(q => q.id === question.id))}
+                      />
                     ))}
                   </div>
                 )}
@@ -299,6 +286,8 @@ const Step5ExportPlan: React.FC<Step5ExportPlanProps> = ({
 
         <StickyExportBar
           totalQuestions={totalQuestions}
+          mustAskCount={mustAskCount}
+          maybeCount={maybeCount}
           onPreview={() => setShowPreview(!showPreview)}
           onExport={handleDownloadPDF}
           onShare={handleShare}
