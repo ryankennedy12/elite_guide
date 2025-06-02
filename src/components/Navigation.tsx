@@ -25,8 +25,11 @@ const Navigation: React.FC = () => {
 
   const isActive = (href: string) => location.pathname === href;
 
-  // Don't show navigation on home page if not unlocked AND not in development
-  if (location.pathname === '/' && !isUnlocked && !isDevelopment) {
+  // Show navigation if unlocked OR in development mode
+  // But don't show on home page unless we're in development mode
+  const shouldShowNavigation = isUnlocked || (isDevelopment && location.pathname !== '/');
+
+  if (!shouldShowNavigation) {
     return null;
   }
 
@@ -34,7 +37,10 @@ const Navigation: React.FC = () => {
     <nav className="sticky top-0 bg-black text-white z-50 border-b border-gray-800">
       <div className="max-w-4xl mx-auto px-4">
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center justify-center py-3">
+        <div className="hidden md:flex items-center justify-between py-3">
+          <Link to="/" className="text-sm font-medium text-gray-300 hover:text-white">
+            Home
+          </Link>
           <div className="flex space-x-8">
             {navItems.map((item) => (
               <Link
@@ -54,7 +60,9 @@ const Navigation: React.FC = () => {
 
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center justify-between py-3">
-          <span className="text-sm font-medium">Elite 12 Guide</span>
+          <Link to="/" className="text-sm font-medium text-gray-300 hover:text-white">
+            Home
+          </Link>
           <Button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             variant="ghost"
@@ -84,6 +92,17 @@ const Navigation: React.FC = () => {
             
             <div className="flex-1 overflow-y-auto p-4">
               <div className="space-y-2">
+                <Link
+                  to="/"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors duration-200 ${
+                    location.pathname === '/'
+                      ? 'bg-gray-800 text-white'
+                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                  }`}
+                >
+                  Home
+                </Link>
                 {navItems.map((item) => (
                   <Link
                     key={item.id}
