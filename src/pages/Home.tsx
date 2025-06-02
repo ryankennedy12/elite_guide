@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -24,9 +23,12 @@ const Home = () => {
     // In development mode (localhost), bypass the opt-in gate
     const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
-    if (unlocked === 'true' || isDevelopment) {
+    if (unlocked === 'true') {
       navigate('/elite-12');
     }
+    
+    // In development mode, don't auto-redirect - let user see the opt-in form
+    // but they can navigate freely using the navigation
   }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -100,9 +102,21 @@ const Home = () => {
 
   const isFormValid = name.trim() && email.trim() && acceptedTerms && !isSubmitting;
 
+  // Check if we're in development mode
+  const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
       <div className="w-full max-w-lg">
+        {/* Development mode notice */}
+        {isDevelopment && (
+          <div className="mb-4 p-3 bg-blue-100 border border-blue-300 rounded-lg text-center">
+            <p className="text-sm text-blue-800">
+              <strong>Development Mode:</strong> You can navigate freely using the navigation above, or fill out the form below to unlock content.
+            </p>
+          </div>
+        )}
+
         {/* Main Card */}
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-fade-in">
           {/* Top accent bar */}
