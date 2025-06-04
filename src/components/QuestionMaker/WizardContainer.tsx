@@ -1,6 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
-import { useNavigate } from 'react-router-dom';
 import { type WizardQuestionCategory } from '@/data/wizard';
 import WizardHeader from './WizardHeader';
 import WizardNavigation from './WizardNavigation';
@@ -30,8 +30,6 @@ interface WizardContainerProps {
 }
 
 const WizardContainer: React.FC<WizardContainerProps> = ({ onPlanComplete }) => {
-  const navigate = useNavigate();
-  
   const [wizardState, setWizardState] = useState<WizardState>({
     currentStep: 1,
     userConcern: '',
@@ -40,13 +38,6 @@ const WizardContainer: React.FC<WizardContainerProps> = ({ onPlanComplete }) => 
     customQuestions: [],
     questionOrder: []
   });
-
-  useEffect(() => {
-    const unlocked = localStorage.getItem('elite12_unlocked');
-    if (unlocked !== 'true') {
-      navigate('/');
-    }
-  }, [navigate]);
 
   // Save state to localStorage
   useEffect(() => {
