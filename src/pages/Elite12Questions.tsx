@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -14,14 +13,6 @@ const Elite12Questions = () => {
   const { isModalOpen, triggerModal, closeModal } = useShareFeedbackModal();
   
   useContentAccess();
-
-  useEffect(() => {
-    // Check if user has unlocked content
-    const unlocked = localStorage.getItem('elite12_unlocked');
-    if (unlocked !== 'true') {
-      navigate('/');
-    }
-  }, [navigate]);
 
   useEffect(() => {
     // Trigger modal when user reaches the end of the guide

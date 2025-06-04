@@ -1,6 +1,5 @@
 
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import Navigation from '@/components/Navigation';
 import { Elite12Questions } from '@/components/Elite12Questions';
 import PremiumCheatSheet from '@/components/PremiumCheatSheet';
@@ -8,17 +7,10 @@ import { PrepChecklist } from '@/components/PrepChecklist';
 import { Glossary } from '@/components/Glossary';
 import { DownloadSection } from '@/components/DownloadSection';
 import { ProgressBar } from '@/components/ProgressBar';
+import { useContentAccess } from '@/hooks/useContentAccess';
 
 const Content = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    // Check if user has unlocked content
-    const unlocked = localStorage.getItem('elite12_unlocked');
-    if (unlocked !== 'true') {
-      navigate('/');
-    }
-  }, [navigate]);
+  useContentAccess();
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
