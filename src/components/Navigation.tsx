@@ -8,9 +8,6 @@ const Navigation: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
-  // Check if user has unlocked content
-  const isUnlocked = localStorage.getItem('elite12_unlocked') === 'true';
-
   const navItems = [
     { label: 'Elite 12 Questions', href: '/elite-12', id: 'elite-12' },
     { label: 'Quick Reference', href: '/cheat-sheet', id: 'cheat-sheet' },
@@ -21,11 +18,6 @@ const Navigation: React.FC = () => {
   ];
 
   const isActive = (href: string) => location.pathname === href;
-
-  // Don't show navigation on home page if not unlocked
-  if (location.pathname === '/' && !isUnlocked) {
-    return null;
-  }
 
   return (
     <nav className="sticky top-0 bg-black text-white z-50 border-b border-gray-800">
