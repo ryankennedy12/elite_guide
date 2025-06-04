@@ -9,8 +9,10 @@ export const useContentAccess = () => {
   // Check if user has unlocked content
   const isUnlocked = localStorage.getItem('elite12_unlocked') === 'true';
   
-  // Check if we're in development mode
-  const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  // Check if we're in development mode - include Vite's DEV flag
+  const isDevelopment = import.meta.env.DEV || 
+                       window.location.hostname === 'localhost' || 
+                       window.location.hostname === '127.0.0.1';
   
   // Allow access if unlocked OR in development mode
   const hasAccess = isUnlocked || isDevelopment;

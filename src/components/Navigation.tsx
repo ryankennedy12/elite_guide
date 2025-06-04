@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,8 +10,10 @@ const Navigation: React.FC = () => {
   // Check if user has unlocked content
   const isUnlocked = localStorage.getItem('elite12_unlocked') === 'true';
   
-  // Check if we're in development mode
-  const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  // Check if we're in development mode - include Vite's DEV flag
+  const isDevelopment = import.meta.env.DEV || 
+                       window.location.hostname === 'localhost' || 
+                       window.location.hostname === '127.0.0.1';
 
   const navItems = [
     { label: 'Elite 12 Questions', href: '/elite-12', id: 'elite-12' },

@@ -20,8 +20,10 @@ const Home = () => {
     // Check if user has already unlocked content
     const unlocked = localStorage.getItem('elite12_unlocked');
     
-    // In development mode (localhost), bypass the opt-in gate
-    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    // Check if we're in development mode - include Vite's DEV flag
+    const isDevelopment = import.meta.env.DEV || 
+                         window.location.hostname === 'localhost' || 
+                         window.location.hostname === '127.0.0.1';
     
     if (unlocked === 'true') {
       navigate('/elite-12');
@@ -102,8 +104,10 @@ const Home = () => {
 
   const isFormValid = name.trim() && email.trim() && acceptedTerms && !isSubmitting;
 
-  // Check if we're in development mode
-  const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  // Check if we're in development mode - include Vite's DEV flag
+  const isDevelopment = import.meta.env.DEV || 
+                       window.location.hostname === 'localhost' || 
+                       window.location.hostname === '127.0.0.1';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
