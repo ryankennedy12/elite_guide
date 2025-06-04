@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Save, Download, FileText } from 'lucide-react';
@@ -10,6 +11,7 @@ import NotesFilters from '@/components/Notes/NotesFilters';
 import { useToast } from '@/hooks/use-toast';
 
 const MyNotes = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [notes, setNotes] = useState<Note[]>([]);
   const [generatedQuestions, setGeneratedQuestions] = useState<string[]>([]);
@@ -19,6 +21,12 @@ const MyNotes = () => {
   const [selectedContractor, setSelectedContractor] = useState('all');
 
   useEffect(() => {
+    // Check if user has unlocked content
+    const unlocked = localStorage.getItem('elite12_unlocked');
+    if (unlocked !== 'true') {
+      navigate('/');
+    }
+
     // Load saved notes
     const savedNotes = localStorage.getItem('customNotes');
     if (savedNotes) {
@@ -53,7 +61,7 @@ const MyNotes = () => {
         console.error('Error loading notes:', error);
       }
     }
-  }, []);
+  }, [navigate]);
 
   // Update contractors list when notes change
   useEffect(() => {

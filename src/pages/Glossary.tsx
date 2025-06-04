@@ -1,5 +1,6 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,8 +14,17 @@ import { Search, Download, Printer, ArrowUp } from 'lucide-react';
 import { glossaryData, glossarySections } from '@/data/glossaryData';
 
 const Glossary = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [openSections, setOpenSections] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Check if user has unlocked content
+    const unlocked = localStorage.getItem('elite12_unlocked');
+    if (unlocked !== 'true') {
+      navigate('/');
+    }
+  }, [navigate]);
 
   // Filter terms based on search
   const filteredData = useMemo(() => {

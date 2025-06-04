@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { prepChecklistData } from '@/data/prepChecklistData';
 import { InteractiveCheckbox } from '@/components/InteractiveCheckbox';
@@ -10,11 +11,18 @@ import { Printer, Download, Mail, Trophy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const PrepChecklist = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   const [completedSections, setCompletedSections] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    // Check if user has unlocked content
+    const unlocked = localStorage.getItem('elite12_unlocked');
+    if (unlocked !== 'true') {
+      navigate('/');
+    }
+
     // Load saved progress
     const savedProgress = localStorage.getItem('prep_checklist_progress');
     if (savedProgress) {
@@ -24,7 +32,7 @@ const PrepChecklist = () => {
         console.error('Error loading saved progress:', error);
       }
     }
-  }, []);
+  }, [navigate]);
 
   // Calculate total items and completion
   const totalItems = prepChecklistData.reduce((sum, section) => sum + section.items.length, 0);
