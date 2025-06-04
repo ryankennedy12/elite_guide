@@ -1,4 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { ChevronDown, ChevronUp, AlertTriangle, ArrowRight, Lightbulb, Info } from 'lucide-react';
 import { elite12Data } from '@/data/elite12Data';
@@ -7,6 +9,7 @@ import { useShareFeedbackModal } from '@/hooks/useShareFeedbackModal';
 import { useContentAccess } from '@/hooks/useContentAccess';
 
 const Elite12Questions = () => {
+  const navigate = useNavigate();
   const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
   const { isModalOpen, triggerModal, closeModal } = useShareFeedbackModal();
   
