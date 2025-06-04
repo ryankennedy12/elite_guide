@@ -1,6 +1,4 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -12,11 +10,14 @@ import {
 } from '@/components/ui/accordion';
 import { Search, Download, Printer, ArrowUp } from 'lucide-react';
 import { glossaryData, glossarySections } from '@/data/glossaryData';
+import { useContentAccess } from '@/hooks/useContentAccess';
 
 const Glossary = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [openSections, setOpenSections] = useState<string[]>([]);
+
+  useContentAccess();
 
   useEffect(() => {
     // Check if user has unlocked content

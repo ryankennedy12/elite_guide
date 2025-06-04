@@ -1,19 +1,11 @@
 
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import Navigation from '@/components/Navigation';
 import PremiumCheatSheet from '@/components/PremiumCheatSheet';
+import { useContentAccess } from '@/hooks/useContentAccess';
 
 const CheatSheet = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    // Check if user has unlocked content
-    const unlocked = localStorage.getItem('elite12_unlocked');
-    if (unlocked !== 'true') {
-      navigate('/');
-    }
-  }, [navigate]);
+  useContentAccess();
 
   return (
     <div className="min-h-screen bg-white">

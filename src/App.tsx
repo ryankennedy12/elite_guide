@@ -22,7 +22,6 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Navigation />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/elite-12" element={<Elite12Questions />} />
