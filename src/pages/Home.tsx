@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,11 +22,97 @@ const Home = () => {
   const [nameValid, setNameValid] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // Refs for advanced interactions
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const submitBtnRef = useRef<HTMLButtonElement>(null);
+
+  // Debounce utility function
+  const debounce = (func: Function, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return function(...args: any[]) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+  };
+
+  // WAAPI Animation for input validation
+  const animateInputValidation = (element: HTMLElement) => {
+    if (typeof element.animate === 'function') {
+      const keyframes = [
+        { transform: 'translateY(0) scale(1)', opacity: 1 },
+        { transform: 'translateY(-5px) scale(1.05)', opacity: 1, offset: 0.5 },
+        { transform: 'translateY(0) scale(1)', opacity: 1 }
+      ];
+      const options = {
+        duration: 600,
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        fill: 'forwards' as FillMode
+      };
+      element.animate(keyframes, options);
+    }
+  };
+
+  // localStorage persistence
+  const saveFormProgress = () => {
+    localStorage.setItem('optInFormEmail', email);
+    localStorage.setItem('optInFormName', name);
+    localStorage.setItem('optInFormCurrentStep', currentStep.toString());
+    localStorage.setItem('optInFormTermsAccepted', acceptedTerms.toString());
+  };
+
+  const loadFormProgress = () => {
+    const savedEmail = localStorage.getItem('optInFormEmail');
+    const savedName = localStorage.getItem('optInFormName');
+    const savedStep = localStorage.getItem('optInFormCurrentStep');
+    const savedTerms = localStorage.getItem('optInFormTermsAccepted');
+
+    if (savedEmail) {
+      setEmail(savedEmail);
+      const isValid = validateEmail(savedEmail);
+      setEmailValid(isValid);
+    }
+
+    if (savedName) {
+      setName(savedName);
+      const isValid = validateName(savedName);
+      setNameValid(isValid);
+    }
+
+    if (savedStep) {
+      const step = parseInt(savedStep, 10);
+      setCurrentStep(step);
+    }
+
+    if (savedTerms) {
+      setAcceptedTerms(savedTerms === 'true');
+    }
+  };
+
+  const clearFormProgress = () => {
+    localStorage.removeItem('optInFormEmail');
+    localStorage.removeItem('optInFormName');
+    localStorage.removeItem('optInFormCurrentStep');
+    localStorage.removeItem('optInFormTermsAccepted');
+  };
+
+  // Enhanced validation with ARIA support
+  const markInputAsValid = (element: HTMLElement) => {
+    element.removeAttribute('aria-invalid');
+    element.removeAttribute('aria-describedby');
+    animateInputValidation(element);
+  };
+
+  const markInputAsInvalid = (element: HTMLElement) => {
+    element.setAttribute('aria-invalid', 'true');
+  };
+
   useEffect(() => {
+    // Load form progress on mount
+    loadFormProgress();
+    
     // Check if user has already unlocked content
     const unlocked = localStorage.getItem('elite12_unlocked');
-    
-    // Check if we're in development mode - include Vite's DEV flag
     const isDevelopment = import.meta.env.DEV || 
                          window.location.hostname === 'localhost' || 
                          window.location.hostname === '127.0.0.1';
@@ -35,7 +120,19 @@ const Home = () => {
     if (unlocked === 'true' && !isDevelopment) {
       navigate('/elite-12');
     }
+
+    // Dynamic import simulation for scroll animations
+    import('./Home').then(() => {
+      console.log('ScrollAnimations module loaded dynamically.');
+    }).catch(err => {
+      console.error('Failed to load ScrollAnimations module dynamically:', err);
+    });
   }, [navigate]);
+
+  // Save progress whenever form state changes
+  useEffect(() => {
+    saveFormProgress();
+  }, [email, name, currentStep, acceptedTerms]);
 
   // Email validation
   const validateEmail = (email: string) => {
@@ -48,34 +145,88 @@ const Home = () => {
     return name.trim().length >= 2;
   };
 
-  // Handle email input
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  // Debounced email handler
+  const handleEmailInput = debounce((value: string) => {
     setEmail(value);
     const isValid = validateEmail(value);
     setEmailValid(isValid);
     
+    if (emailInputRef.current) {
+      if (isValid) {
+        markInputAsValid(emailInputRef.current);
+      } else {
+        markInputAsInvalid(emailInputRef.current);
+      }
+    }
+    
     if (isValid && currentStep === 1) {
       setTimeout(() => setCurrentStep(2), 1200);
     }
-  };
+  }, 400);
 
-  // Handle name input
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  // Debounced name handler
+  const handleNameInput = debounce((value: string) => {
     setName(value);
     const isValid = validateName(value);
     setNameValid(isValid);
     
+    if (nameInputRef.current) {
+      if (isValid) {
+        markInputAsValid(nameInputRef.current);
+      } else {
+        markInputAsInvalid(nameInputRef.current);
+      }
+    }
+    
     if (isValid && currentStep === 2) {
       setTimeout(() => setCurrentStep(3), 1200);
+    }
+  }, 400);
+
+  // Handle email change
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleEmailInput(e.target.value);
+  };
+
+  // Handle name change
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleNameInput(e.target.value);
+  };
+
+  const showError = (message: string) => {
+    const errorDiv = document.createElement('div');
+    errorDiv.setAttribute('role', 'alert');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    document.body.appendChild(errorDiv);
+    
+    setTimeout(() => {
+      document.body.removeChild(errorDiv);
+    }, 5000);
+  };
+
+  const showSuccessMessage = () => {
+    const statusMessageDiv = document.getElementById('form-completion-status');
+    if (statusMessageDiv) {
+      statusMessageDiv.textContent = 'Form submitted successfully. Your script is on its way to your inbox.';
+    }
+  };
+
+  const setLoadingState = (loading: boolean) => {
+    setIsSubmitting(loading);
+    if (submitBtnRef.current) {
+      if (loading) {
+        submitBtnRef.current.setAttribute('aria-busy', 'true');
+      } else {
+        submitBtnRef.current.removeAttribute('aria-busy');
+      }
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim() && email.trim() && acceptedTerms && !isSubmitting) {
-      setIsSubmitting(true);
+      setLoadingState(true);
       
       try {
         // Capture UTM source if present
@@ -94,12 +245,8 @@ const Home = () => {
 
         if (error) {
           console.error('Error saving lead:', error);
-          toast({
-            title: "Error",
-            description: "There was an issue saving your information. Please try again.",
-            variant: "destructive",
-          });
-          setIsSubmitting(false);
+          showError("There was an issue saving your information. Please try again.");
+          setLoadingState(false);
           return;
         }
 
@@ -118,9 +265,11 @@ const Home = () => {
           });
         }
         
-        // Store unlock state
+        // Store unlock state and clear form progress
         localStorage.setItem('elite12_unlocked', 'true');
+        clearFormProgress();
         
+        showSuccessMessage();
         setShowSuccess(true);
         
         setTimeout(() => {
@@ -135,12 +284,8 @@ const Home = () => {
         
       } catch (error) {
         console.error('Unexpected error:', error);
-        toast({
-          title: "Error",
-          description: "An unexpected error occurred. Please try again.",
-          variant: "destructive",
-        });
-        setIsSubmitting(false);
+        showError("An unexpected error occurred. Please try again.");
+        setLoadingState(false);
       }
     }
   };
@@ -155,6 +300,18 @@ const Home = () => {
   return (
     <>
       <style>{`
+        .visually-hidden {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+
         @keyframes gradientShift {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
@@ -412,6 +569,17 @@ const Home = () => {
         .success-animation {
           animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        .error-message {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #ef4444;
+          color: white;
+          padding: 1rem;
+          border-radius: 8px;
+          z-index: 1000;
+        }
       `}</style>
 
       <div className="min-h-screen hero-background flex items-center justify-center p-4">
@@ -423,6 +591,9 @@ const Home = () => {
           <div className="particle"></div>
           <div className="particle"></div>
         </div>
+
+        {/* Status message for screen readers */}
+        <div id="form-completion-status" aria-live="polite" className="visually-hidden"></div>
 
         <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center relative z-10">
           {/* Left Column - Benefits */}
@@ -562,6 +733,7 @@ const Home = () => {
                       </Label>
                       <div className="relative">
                         <Input
+                          ref={emailInputRef}
                           id="email"
                           type="email"
                           inputMode="email"
@@ -571,6 +743,7 @@ const Home = () => {
                           disabled={isSubmitting}
                           className={`neumorphic-input w-full h-14 text-lg px-6 ${emailValid ? 'valid' : ''}`}
                           placeholder="Enter your email address"
+                          aria-describedby={emailValid ? undefined : "email-error"}
                         />
                         {emailValid && (
                           <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
@@ -589,6 +762,7 @@ const Home = () => {
                       </Label>
                       <div className="relative">
                         <Input
+                          ref={nameInputRef}
                           id="name"
                           type="text"
                           value={name}
@@ -597,6 +771,7 @@ const Home = () => {
                           disabled={isSubmitting}
                           className={`neumorphic-input w-full h-14 text-lg px-6 ${nameValid ? 'valid' : ''}`}
                           placeholder="Enter your first name"
+                          aria-describedby={nameValid ? undefined : "name-error"}
                         />
                         {nameValid && (
                           <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
@@ -634,6 +809,7 @@ const Home = () => {
                       </div>
 
                       <Button
+                        ref={submitBtnRef}
                         type="submit"
                         disabled={!isFormValid}
                         className="golden-button w-full h-16 text-lg font-bold tracking-wide rounded-xl"
