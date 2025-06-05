@@ -1,0 +1,35 @@
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.mainContent {
+  width: 100%;
+  max-width: 6xl;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+  position: relative;
+  z-index: 10;
+  padding: 1rem;
+  margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+  .mainContent {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 4xl;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    gap: 1.5rem;
+    padding: 0.5rem;
+  }
+}

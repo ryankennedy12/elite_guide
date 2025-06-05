@@ -1,0 +1,333 @@
+
+.formContainer {
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 1.5rem;
+  padding: 3rem;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 10px 20px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: sticky;
+  top: 2.5rem;
+}
+
+.formContainer:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.15),
+    0 15px 30px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.lockedPreview {
+  margin-bottom: 2rem;
+  position: relative;
+  group: hover;
+}
+
+.previewContent {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 2px solid #e5e7eb;
+  background: linear-gradient(to bottom right, #dbeafe, #fdf4ff);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.previewContent:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-color: #fbbf24;
+}
+
+.previewImage {
+  width: 100%;
+  height: 12rem;
+  object-fit: cover;
+  opacity: 0.95;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.previewContent:hover .previewImage {
+  opacity: 0.8;
+}
+
+.previewOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(0.25rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.previewContent:hover .previewOverlay {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.lockSection {
+  text-align: center;
+  transform: scale(1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.previewContent:hover .lockSection {
+  transform: scale(1.05);
+}
+
+.lockIcon {
+  width: 2rem;
+  height: 2rem;
+  color: #4b5563;
+  margin-bottom: 0.75rem;
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.previewContent:hover .lockIcon {
+  color: #d97706;
+}
+
+.unlockText {
+  color: #374151;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.unlockSubtext {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formStep {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 0;
+}
+
+.stepTransition {
+  opacity: 1;
+  transform: translateY(0);
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.modernInput {
+  width: 100%;
+  height: 3.5rem;
+  font-size: 1.125rem;
+  padding: 0 1.5rem;
+  border-radius: 1rem;
+  border: 2px solid #e5e7eb;
+  background: #f9fafb;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modernInput:focus {
+  outline: none;
+  border-color: #fbbf24;
+  background: white;
+  box-shadow: 
+    inset 8px 8px 16px rgba(0, 0, 0, 0.1),
+    inset -8px -8px 16px rgba(255, 255, 255, 0.8),
+    0 0 0 3px rgba(255, 215, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.validInput {
+  background: linear-gradient(145deg, #ecfdf5, #f0fdf4);
+  border-color: #22c55e;
+  box-shadow: 
+    inset 8px 8px 16px rgba(0, 0, 0, 0.05),
+    inset -8px -8px 16px rgba(255, 255, 255, 0.9),
+    0 0 0 2px rgba(34, 197, 94, 0.3);
+}
+
+.inputIcon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.successIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #22c55e;
+  animation: successPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.checkboxGroup {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 0;
+}
+
+.checkboxLabel {
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.25;
+  cursor: pointer;
+}
+
+.link {
+  color: #d97706;
+  text-decoration: underline;
+  transition: color 0.3s;
+}
+
+.link:hover {
+  color: #b45309;
+}
+
+.submitBtn {
+  width: 100%;
+  height: 4rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+  background-size: 200% 200%;
+  border: none;
+  color: #1a1a1a;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 30px rgba(255, 215, 0, 0.4),
+    0 5px 15px rgba(255, 215, 0, 0.2);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  transform: none;
+  animation: none;
+  cursor: not-allowed;
+}
+
+.loadingContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid rgba(26, 26, 26, 0.3);
+  border-top: 2px solid #1a1a1a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.securityBadges {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.securityBadge {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.securityBadge:hover {
+  border-color: #ffd700;
+  color: #1a1a1a;
+}
+
+.badgeIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0 auto 0.25rem;
+  color: #6b7280;
+}
+
+.badgeEmoji {
+  font-size: 1.125rem;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.badgeText {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.privacyNotice {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.privacyNotice p {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+@keyframes successPop {
+  0% { scale: 0; opacity: 0; }
+  50% { scale: 1.2; opacity: 0.8; }
+  100% { scale: 1; opacity: 1; }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .formContainer {
+    padding: 2rem;
+    position: static;
+  }
+  
+  .previewImage {
+    height: 10rem;
+  }
+  
+  .securityBadges {
+    gap: 0.5rem;
+  }
+  
+  .securityBadge {
+    padding: 0.5rem;
+  }
+}
