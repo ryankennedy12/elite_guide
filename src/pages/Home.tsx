@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -127,25 +128,25 @@ const Home = () => {
           <div className="w-full h-1 bg-gradient-to-r from-yellow-400 to-yellow-500"></div>
           
           <div className="p-8 text-center">
-            {/* Headline */}
+            {/* Enhanced Headline */}
             <div className="mb-8">
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight tracking-tight">
-                Stop Basement Regret<br />
-                <span className="text-gray-700">Before It Starts</span>
+                Protect Your Home: Unlock the 12 Questions<br />
+                <span className="text-gray-700">Columbus Insiders Use to Vet Waterproofing Pros</span>
               </h1>
               
               <p className="text-xl text-gray-600 mb-6 leading-relaxed max-w-md mx-auto">
-                Get the exact 12-question script Columbus insiders use to vet waterproofing contractors.
+                Discover the <em>proven</em> 12-question script Columbus waterproofing experts use to expose hidden flaws and secure reliable contractors.
               </p>
               
-              {/* Urgency badge */}
-              <div className="inline-flex items-center px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium mb-8">
-                <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
-                LIMITED RELEASE: Free for Columbus homeowners
+              {/* Enhanced urgency badge */}
+              <div className="inline-flex items-center px-4 py-2 bg-red-100 text-red-800 rounded-full text-sm font-medium mb-8">
+                <span className="text-lg mr-2">🚨</span>
+                <span className="font-semibold">EXCLUSIVE ACCESS: Get this <em>Limited-Time</em> Resource – Absolutely FREE for Columbus Homeowners!</span>
               </div>
             </div>
             
-            {/* Locked Preview with Image */}
+            {/* Enhanced Locked Preview with Image */}
             <div className="mb-8 relative group">
               <div className="relative overflow-hidden rounded-xl border-2 border-gray-200 bg-gradient-to-br from-blue-50 to-purple-50 transition-all duration-300 group-hover:shadow-lg group-hover:border-yellow-300">
                 {/* Background Image */}
@@ -165,17 +166,25 @@ const Home = () => {
                   <div className="text-center transform transition-all duration-300 group-hover:scale-105">
                     <Lock className="w-8 h-8 text-gray-600 mb-3 transition-colors duration-300 group-hover:text-yellow-600" />
                     <p className="text-gray-700 font-medium mb-2">
-                      See all 12 questions—unlock below
+                      Unlock Instant Access to the Full 12-Question Contractor Vetting Script
                     </p>
                     <p className="text-sm text-gray-500">
-                      Preview of your waterproofing guide
+                      See How to Avoid Costly Basement Mistakes!
                     </p>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Why This Matters Section */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Why This Matters For Your Home</h3>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                Hiring a basement waterproofing contractor can feel overwhelming. Without the right questions, you risk overpaying, shoddy workmanship, and even costly repairs down the line. Our exclusive script levels the playing field, empowering you with the exact insights professionals use to ensure your home's long-term protection.
+              </p>
+            </div>
             
-            {/* What's Inside */}
+            {/* Enhanced What's Inside */}
             <div className="mb-8">
               <div className="w-16 h-px bg-gray-300 mx-auto mb-6"></div>
               <h3 className="text-sm uppercase tracking-wider text-gray-500 font-medium mb-6">
@@ -184,21 +193,37 @@ const Home = () => {
               
               <div className="space-y-4 text-left max-w-sm mx-auto">
                 {[
-                  'Pinpoints questions that reveal contractor red flags',
-                  'Avoids hidden costs, unfinished jobs, and code violations', 
-                  'Works for any type of basement, finished or not'
+                  {
+                    title: 'Expose Hidden Contractor Red Flags',
+                    description: 'Instantly identify unreliable contractors before you hire them, saving you countless headaches and wasted money.'
+                  },
+                  {
+                    title: 'Slash Unexpected Costs & Delays', 
+                    description: 'Prevent surprise charges, unfinished work, and costly code violations by asking the right questions upfront.'
+                  },
+                  {
+                    title: 'Comprehensive for Any Basement',
+                    description: 'Whether your basement is finished or unfinished, these questions are universally applicable to secure expert waterproofing.'
+                  },
+                  {
+                    title: 'Gain Absolute Peace of Mind',
+                    description: 'Confidently select a reliable contractor knowing you\'ve asked every crucial question to ensure a successful, lasting job.'
+                  }
                 ].map((benefit, index) => (
                   <div key={index} className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5 flex-shrink-0">
+                    <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-1 flex-shrink-0">
                       <Check className="w-3 h-3 text-green-600" strokeWidth={2.5} />
                     </div>
-                    <span className="text-gray-700 leading-relaxed">{benefit}</span>
+                    <div>
+                      <div className="font-semibold text-gray-800 mb-1">{benefit.title}:</div>
+                      <span className="text-gray-700 leading-relaxed text-sm">{benefit.description}</span>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
             
-            {/* Form */}
+            {/* Enhanced Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-4">
                 <div>
@@ -210,7 +235,7 @@ const Home = () => {
                     required
                     disabled={isSubmitting}
                     className="w-full h-12 text-center border-gray-300 focus:border-gray-400 focus:ring-0 focus:outline-none rounded-xl text-lg placeholder:text-gray-400"
-                    placeholder="Your full name"
+                    placeholder="First Name"
                   />
                 </div>
                 
@@ -224,7 +249,7 @@ const Home = () => {
                     required
                     disabled={isSubmitting}
                     className="w-full h-12 text-center border-gray-300 focus:border-gray-400 focus:ring-0 focus:outline-none rounded-xl text-lg placeholder:text-gray-400"
-                    placeholder="your.email@example.com"
+                    placeholder="Email Address"
                   />
                 </div>
               </div>
@@ -253,20 +278,24 @@ const Home = () => {
                 </Label>
               </div>
               
+              {/* Enhanced CTA Button */}
               <Button
                 type="submit"
                 disabled={!isFormValid}
-                className="w-full h-12 bg-gray-900 text-white hover:bg-gray-800 focus:ring-0 focus:outline-none font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-base tracking-wide hover:shadow-lg transform hover:-translate-y-0.5"
+                className="w-full h-14 bg-orange-600 text-white hover:bg-orange-700 focus:ring-0 focus:outline-none font-bold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-lg tracking-wide hover:shadow-lg transform hover:-translate-y-0.5"
               >
-                {isSubmitting ? "SAVING..." : "UNLOCK MY GUIDE NOW"}
+                {isSubmitting ? "PROCESSING..." : "GET MY FREE 12-QUESTION SCRIPT NOW!"}
               </Button>
             </form>
             
-            {/* Privacy notice */}
+            {/* Enhanced Privacy notice */}
             <div className="flex items-center justify-center gap-2 mt-6">
               <Shield className="w-4 h-4 text-gray-400" />
               <p className="text-sm text-gray-500 max-w-sm">
-                We respect your inbox. You'll receive a short follow-up from K-Sump with bonus resources—unsubscribe any time.
+                Your information is 100% secure. We will never share your email.{' '}
+                <a href="#" className="text-yellow-600 hover:text-yellow-700 underline">
+                  Privacy Policy
+                </a>
               </p>
             </div>
           </div>
