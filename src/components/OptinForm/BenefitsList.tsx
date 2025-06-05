@@ -42,10 +42,15 @@ export const BenefitsList: React.FC = React.memo(() => {
       </div>
 
       <div className={styles.whyMattersCard}>
-        <h3 className={styles.whyMattersTitle}>Why This Matters For Your Home</h3>
+        <h2 className={styles.whyMattersTitle}>Why This Matters For Your Home</h2>
         <p className={styles.whyMattersText}>
           Hiring a basement waterproofing contractor can feel overwhelming. Without the right questions, you risk overpaying, shoddy workmanship, and even costly repairs down the line. Our exclusive script levels the playing field, empowering you with the exact insights professionals use to ensure your home's long-term protection.
         </p>
+      </div>
+
+      <div className={styles.socialProof}>
+        <div className={styles.statNumber}>1,247+</div>
+        <p>Columbus homeowners have already used this script to find trusted waterproofing contractors</p>
       </div>
     </div>
   );

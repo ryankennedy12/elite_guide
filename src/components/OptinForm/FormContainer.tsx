@@ -38,6 +38,22 @@ export const FormContainer: React.FC<FormContainerProps> = ({
 }) => {
   return (
     <div className={styles.formContainer}>
+      {/* Trust Indicators */}
+      <div className={styles.trustIndicators}>
+        <div className={styles.trustItem}>
+          <span className={styles.trustIcon}>⭐</span>
+          <span>A+ BBB Rating</span>
+        </div>
+        <div className={styles.trustItem}>
+          <span className={styles.trustIcon}>🏠</span>
+          <span>Columbus Local</span>
+        </div>
+        <div className={styles.trustItem}>
+          <span className={styles.trustIcon}>🛡️</span>
+          <span>Fully Licensed</span>
+        </div>
+      </div>
+
       <FormHeader />
       
       <ProgressIndicator currentStep={currentStep} totalSteps={3} />

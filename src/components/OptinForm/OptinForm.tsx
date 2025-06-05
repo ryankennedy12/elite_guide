@@ -110,7 +110,22 @@ export const OptinForm: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <HeroSection />
+      {/* Floating Particles */}
+      <div className={styles.floatingParticles}>
+        <div className={styles.particle}></div>
+        <div className={styles.particle}></div>
+        <div className={styles.particle}></div>
+        <div className={styles.particle}></div>
+        <div className={styles.particle}></div>
+        <div className={styles.particle}></div>
+        <div className={styles.particle}></div>
+        <div className={styles.particle}></div>
+      </div>
+
+      <div className={styles.heroSection}>
+        <HeroSection />
+      </div>
+      
       <div className={styles.mainContent}>
         <BenefitsList />
         <FormContainer 
