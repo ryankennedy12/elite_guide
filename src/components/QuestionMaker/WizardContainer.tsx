@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { type WizardQuestionCategory } from '@/data/wizard';
@@ -31,7 +30,16 @@ interface WizardContainerProps {
 }
 
 const WizardContainer: React.FC<WizardContainerProps> = ({ onPlanComplete }) => {
-  useContentAccess();
+  // Check if we're in development mode
+  const isDevelopment = import.meta.env.DEV || 
+                       window.location.hostname === 'localhost' || 
+                       window.location.hostname === '127.0.0.1';
+  
+  // Only use content access hook in production
+  const contentAccess = useContentAccess();
+  
+  // In development, bypass the access check entirely
+  const hasAccess = isDevelopment || contentAccess.hasAccess;
   
   const [wizardState, setWizardState] = useState<WizardState>({
     currentStep: 1,
@@ -124,9 +132,23 @@ const WizardContainer: React.FC<WizardContainerProps> = ({ onPlanComplete }) => 
     }
   };
 
+  // Show development notice if in dev mode
+  if (isDevelopment) {
+    console.log('WizardContainer: Running in development mode - access checks bypassed');
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Development mode notice */}
+        {isDevelopment && (
+          <div className="mb-4 p-3 bg-blue-100 border border-blue-300 rounded-lg text-center">
+            <p className="text-sm text-blue-800">
+              <strong>Development Mode:</strong> Access checks are bypassed for development.
+            </p>
+          </div>
+        )}
+
         {/* Header with Progress */}
         <WizardHeader
           currentStep={wizardState.currentStep}
