@@ -25,10 +25,10 @@ const Home = () => {
                          window.location.hostname === 'localhost' || 
                          window.location.hostname === '127.0.0.1';
     
-    if (unlocked === 'true') {
+    if (unlocked === 'true' && !isDevelopment) {
       navigate('/elite-12');
     }
-    
+
     // In development mode, don't auto-redirect - let user see the opt-in form
     // but they can navigate freely using the navigation
   }, [navigate]);

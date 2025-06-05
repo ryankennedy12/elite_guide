@@ -21,13 +21,8 @@ const Glossary = () => {
 
   useContentAccess();
 
-  useEffect(() => {
-    // Check if user has unlocked content
-    const unlocked = localStorage.getItem('elite12_unlocked');
-    if (unlocked !== 'true') {
-      navigate('/');
-    }
-  }, [navigate]);
+  // Client-side redirect is handled in useContentAccess.
+  // No additional navigation check is required here.
 
   // Filter terms based on search
   const filteredData = useMemo(() => {
