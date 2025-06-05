@@ -27,28 +27,29 @@
 
 .mainContent {
   width: 100%;
-  max-width: 6xl;
+  max-width: 1400px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  grid-template-columns: 1fr 500px;
+  gap: 120px;
   align-items: start;
   position: relative;
   z-index: 10;
-  padding: 1rem;
+  padding: 80px 40px;
   margin: 0 auto;
 }
 
 @media (max-width: 1024px) {
   .mainContent {
     grid-template-columns: 1fr;
-    gap: 2rem;
-    max-width: 4xl;
+    gap: 60px;
+    max-width: 100%;
+    padding: 60px 24px;
   }
 }
 
 @media (max-width: 768px) {
   .mainContent {
-    gap: 1.5rem;
-    padding: 0.5rem;
+    gap: 60px;
+    padding: 40px 20px;
   }
 }

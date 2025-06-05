@@ -1,116 +1,106 @@
 
 .formContainer {
+  width: 500px;
+  max-width: 500px;
   background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 1.5rem;
-  padding: 3rem;
+  border-radius: 32px;
+  padding: 56px 48px;
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 10px 20px rgba(0, 0, 0, 0.05),
+    0 32px 64px rgba(0, 0, 0, 0.12),
+    0 16px 32px rgba(0, 0, 0, 0.08),
+    0 8px 16px rgba(0, 0, 0, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: sticky;
-  top: 2.5rem;
-  border: 1px solid rgba(255, 215, 0, 0.2);
+  top: 40px;
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .formContainer:hover {
   transform: translateY(-4px);
   box-shadow: 
-    0 30px 60px rgba(0, 0, 0, 0.15),
-    0 15px 30px rgba(0, 0, 0, 0.1),
+    0 40px 80px rgba(0, 0, 0, 0.15),
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 10px 20px rgba(0, 0, 0, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.8),
     0 0 40px rgba(255, 215, 0, 0.1);
-  border-color: rgba(255, 215, 0, 0.4);
+  border-color: rgba(255, 215, 0, 0.3);
 }
 
-.lockedPreview {
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-.previewContent {
-  position: relative;
-  overflow: hidden;
-  border-radius: 0.75rem;
-  border: 2px solid #e5e7eb;
-  background: linear-gradient(to bottom right, #dbeafe, #fdf4ff);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.previewContent:hover {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  border-color: #fbbf24;
-  transform: translateY(-2px);
-}
-
-.previewImage {
-  width: 100%;
-  height: 12rem;
-  object-fit: cover;
-  opacity: 0.95;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.previewContent:hover .previewImage {
-  opacity: 0.8;
-  transform: scale(1.02);
-}
-
-.previewOverlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(0.25rem);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.previewContent:hover .previewOverlay {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(0.375rem);
-}
-
-.lockSection {
+.formHeader {
   text-align: center;
-  transform: scale(1);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.previewContent:hover .lockSection {
-  transform: scale(1.05);
+  margin-bottom: 48px;
 }
 
 .lockIcon {
-  width: 2rem;
-  height: 2rem;
-  color: #4b5563;
-  margin-bottom: 0.75rem;
-  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  font-size: 32px;
+  color: #1a1a1a;
+  box-shadow: 
+    0 12px 24px rgba(255, 215, 0, 0.3),
+    0 6px 12px rgba(255, 215, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.previewContent:hover .lockIcon {
-  color: #d97706;
+.lockIcon:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 16px 32px rgba(255, 215, 0, 0.4),
+    0 8px 16px rgba(255, 215, 0, 0.3);
 }
 
-.unlockText {
-  color: #374151;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
+.formTitle {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+  line-height: 1.2;
 }
 
-.unlockSubtext {
-  font-size: 0.75rem;
-  color: #6b7280;
+.formSubtitle {
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.progressDots {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.progressDot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progressDot.active {
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  transform: scale(1.2);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.progressDot.completed {
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
 }
 
 .formStep {
@@ -118,83 +108,88 @@
   transform: translateY(20px);
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   margin-bottom: 0;
+  display: none;
 }
 
-.stepTransition {
+.formStep.active {
   opacity: 1;
   transform: translateY(0);
-  margin-bottom: 1.5rem;
+  margin-bottom: 32px;
+  display: block;
 }
 
 .label {
   display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: #374151;
-  margin-bottom: 0.5rem;
+  margin-bottom: 16px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.5px;
 }
 
 .inputWrapper {
   position: relative;
+  margin-bottom: 32px;
 }
 
 .modernInput {
   width: 100%;
-  height: 3.5rem;
+  height: 64px;
   font-size: 1.125rem;
-  padding: 0 1.5rem;
-  border-radius: 1rem;
-  border: 2px solid #e5e7eb;
-  background: #f9fafb;
+  padding: 24px;
+  border-radius: 16px;
+  border: 2px solid #e0e0e0;
+  background: #fafafa;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 500;
+  font-family: inherit;
 }
 
 .modernInput:focus {
   outline: none;
-  border-color: #fbbf24;
+  border-color: #ffd700;
   background: white;
   box-shadow: 
-    0 0 0 3px rgba(255, 215, 0, 0.3),
+    0 0 0 3px rgba(255, 215, 0, 0.1),
     0 4px 12px rgba(255, 215, 0, 0.2);
   transform: translateY(-1px);
 }
 
-.validInput {
-  background: linear-gradient(145deg, #ecfdf5, #f0fdf4);
-  border-color: #22c55e;
+.modernInput.validInput {
+  border-color: #4ade80;
+  background: linear-gradient(145deg, #f0fdf4, #ecfdf5);
   box-shadow: 
-    0 0 0 2px rgba(34, 197, 94, 0.3),
-    0 4px 12px rgba(34, 197, 94, 0.1);
+    0 0 0 2px rgba(74, 222, 128, 0.2),
+    0 4px 12px rgba(74, 222, 128, 0.1);
 }
 
 .inputIcon {
   position: absolute;
-  right: 1rem;
+  right: 20px;
   top: 50%;
   transform: translateY(-50%);
 }
 
 .successIcon {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: #22c55e;
+  width: 24px;
+  height: 24px;
+  color: #4ade80;
   animation: successPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .checkboxGroup {
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
-  padding: 1rem 0;
+  gap: 12px;
+  padding: 24px 0;
+  margin-bottom: 32px;
 }
 
 .checkboxLabel {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   color: #374151;
-  line-height: 1.25;
+  line-height: 1.4;
   cursor: pointer;
 }
 
@@ -210,11 +205,11 @@
 
 .submitBtn {
   width: 100%;
-  height: 4rem;
+  height: 64px;
   font-size: 1.125rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
-  border-radius: 1rem;
+  letter-spacing: 0.5px;
+  border-radius: 16px;
   background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
   background-size: 200% 200%;
   border: none;
@@ -222,16 +217,18 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: gradientShift 3s ease-in-out infinite;
   box-shadow: 
-    0 8px 24px rgba(255, 215, 0, 0.3),
-    0 4px 12px rgba(255, 215, 0, 0.2);
+    0 12px 32px rgba(255, 215, 0, 0.3),
+    0 6px 16px rgba(255, 215, 0, 0.2);
   text-transform: uppercase;
+  cursor: pointer;
+  margin-bottom: 32px;
 }
 
 .submitBtn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 
-    0 12px 32px rgba(255, 215, 0, 0.4),
-    0 6px 16px rgba(255, 215, 0, 0.3);
+    0 16px 40px rgba(255, 215, 0, 0.4),
+    0 8px 20px rgba(255, 215, 0, 0.3);
 }
 
 .submitBtn:disabled {
@@ -245,12 +242,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  gap: 12px;
 }
 
 .spinner {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 20px;
+  height: 20px;
   border: 2px solid rgba(26, 26, 26, 0.3);
   border-top: 2px solid #1a1a1a;
   border-radius: 50%;
@@ -258,57 +255,58 @@
 }
 
 .securityBadges {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 32px;
 }
 
 .securityBadge {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 0.75rem;
-  padding: 0.75rem;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #666;
+  padding: 12px 20px;
+  background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+  border-radius: 25px;
+  border: 2px solid transparent;
+  font-weight: 600;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    inset 4px 4px 8px rgba(0, 0, 0, 0.05),
-    inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+  gap: 8px;
 }
 
 .securityBadge:hover {
-  border-color: #ffd700;
-  color: #1a1a1a;
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  border-color: rgba(255, 215, 0, 0.3);
   transform: translateY(-1px);
+  color: #1a1a1a;
 }
 
 .badgeIcon {
-  width: 1.25rem;
-  height: 1.25rem;
-  margin: 0 auto 0.25rem;
-  color: #6b7280;
+  width: 16px;
+  height: 16px;
+  color: inherit;
 }
 
 .badgeEmoji {
-  font-size: 1.125rem;
-  display: block;
-  margin-bottom: 0.25rem;
+  font-size: 1rem;
 }
 
 .badgeText {
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .privacyNotice {
   text-align: center;
-  margin-top: 1.5rem;
+  margin-top: 24px;
 }
 
 .privacyNotice p {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   color: #6b7280;
   margin: 0;
+  line-height: 1.4;
 }
 
 @keyframes successPop {
@@ -329,19 +327,48 @@
 
 @media (max-width: 768px) {
   .formContainer {
-    padding: 2rem;
-    position: static;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 40px 32px;
+    position: relative;
+    top: auto;
   }
   
-  .previewImage {
-    height: 10rem;
+  .formTitle {
+    font-size: 1.5rem;
+  }
+  
+  .formSubtitle {
+    font-size: 1rem;
+  }
+  
+  .lockIcon {
+    width: 64px;
+    height: 64px;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .modernInput {
+    height: 56px;
+    padding: 20px;
+    font-size: 1rem;
+  }
+  
+  .submitBtn {
+    height: 56px;
+    font-size: 1rem;
   }
   
   .securityBadges {
-    gap: 0.5rem;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
   }
   
   .securityBadge {
-    padding: 0.5rem;
+    padding: 10px 16px;
+    font-size: 0.8rem;
   }
 }

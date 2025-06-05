@@ -1,8 +1,21 @@
 
 .heroSection {
   position: relative;
-  padding: 2rem 1rem;
+  padding: 60px 0;
   text-align: center;
+  margin-bottom: 120px;
+}
+
+.heroSection::before {
+  content: '';
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(255,215,0,0.06) 0%, transparent 70%);
+  z-index: -1;
 }
 
 .floatingParticles {
@@ -20,64 +33,67 @@
   height: 4px;
   background: #ffd700;
   border-radius: 50%;
-  animation: particleFloat 6s ease-in-out infinite;
+  opacity: 0.4;
+  animation: particleFloat 15s ease-in-out infinite;
 }
 
 .particle:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
-.particle:nth-child(2) { top: 20%; left: 80%; animation-delay: 1s; }
-.particle:nth-child(3) { top: 60%; left: 20%; animation-delay: 2s; }
-.particle:nth-child(4) { top: 80%; left: 70%; animation-delay: 3s; }
-.particle:nth-child(5) { top: 40%; left: 90%; animation-delay: 4s; }
+.particle:nth-child(2) { top: 20%; left: 80%; animation-delay: 3s; }
+.particle:nth-child(3) { top: 60%; left: 20%; animation-delay: 6s; }
+.particle:nth-child(4) { top: 80%; left: 70%; animation-delay: 9s; }
+.particle:nth-child(5) { top: 40%; left: 90%; animation-delay: 12s; }
 
 @keyframes particleFloat {
-  0%, 100% { transform: translateY(0px) translateX(0px); }
-  25% { transform: translateY(-20px) translateX(10px); }
-  50% { transform: translateY(-10px) translateX(-10px); }
-  75% { transform: translateY(-30px) translateX(5px); }
+  0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.4; }
+  25% { transform: translateY(-30px) translateX(15px); opacity: 0.6; }
+  50% { transform: translateY(-15px) translateX(-15px); opacity: 0.8; }
+  75% { transform: translateY(-45px) translateX(8px); opacity: 0.5; }
 }
 
 .heroContent {
-  max-width: 4xl;
+  max-width: 900px;
   margin: 0 auto;
 }
 
 .heroBadge {
   display: inline-flex;
   align-items: center;
-  padding: 0.5rem 1rem;
-  background: linear-gradient(to right, #facc15, #eab308);
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #facc15, #eab308);
   color: black;
-  border-radius: 9999px;
-  font-size: 0.875rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
   font-weight: 700;
-  margin-bottom: 1.5rem;
+  margin-bottom: 48px;
   animation: slideInFromTop 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+  box-shadow: 0 8px 24px rgba(255, 215, 0, 0.3);
 }
 
 .alertIcon {
   font-size: 1.125rem;
-  margin-right: 0.5rem;
+  margin-right: 8px;
 }
 
 .heroTitle {
-  margin-bottom: 2rem;
+  margin-bottom: 48px;
   animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s both;
 }
 
 .glowLine {
-  height: 2px;
-  width: 4rem;
+  height: 3px;
+  width: 80px;
   background: linear-gradient(90deg, transparent, #ffd700, transparent);
-  margin: 1rem auto 2rem;
+  margin: 24px auto 40px;
   animation: glowPulse 2s ease-in-out infinite;
+  border-radius: 2px;
 }
 
 .heroTitle h1 {
-  font-size: clamp(2rem, 5vw, 3.75rem);
+  font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 900;
   line-height: 1.1;
   margin: 0;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
 }
 
 .gradientText {
@@ -104,29 +120,33 @@
 .goldenGradient::after {
   content: '';
   position: absolute;
-  bottom: -2px;
+  bottom: -3px;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 3px;
   background: linear-gradient(90deg, transparent, #ffd700, transparent);
   animation: underlineGlow 2s ease-in-out infinite;
+  border-radius: 2px;
 }
 
 .heroSubtitle {
   animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.8s both;
+  margin-bottom: 56px;
 }
 
 .heroSubtitle p {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   color: #d1d5db;
   line-height: 1.6;
-  margin: 0;
+  margin: 0 auto;
+  max-width: 700px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .heroSubtitle em {
   font-style: italic;
   font-weight: 600;
+  color: #ffd700;
 }
 
 @keyframes gradientShift {
@@ -162,11 +182,12 @@
 
 @media (max-width: 768px) {
   .heroSection {
-    padding: 1rem 0.5rem;
+    padding: 40px 0;
+    margin-bottom: 60px;
   }
   
   .heroTitle h1 {
-    font-size: 2rem;
+    font-size: 2.5rem;
   }
   
   .heroSubtitle p {
@@ -175,5 +196,11 @@
   
   .particle {
     display: none;
+  }
+  
+  .heroSection::before {
+    width: 400px;
+    height: 400px;
+    top: -100px;
   }
 }

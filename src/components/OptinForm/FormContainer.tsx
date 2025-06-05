@@ -1,7 +1,6 @@
 
 import React, { useRef, useEffect } from 'react';
 import { Lock, CheckCircle, Shield } from 'lucide-react';
-import { ProgressDots } from './ProgressDots';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -79,64 +78,72 @@ export const FormContainer: React.FC<FormContainerProps> = ({
 
   return (
     <div className={styles.formContainer}>
-      {/* Locked Preview */}
-      <div className={styles.lockedPreview}>
-        <div className={styles.previewContent}>
-          <img 
-            src="/lovable-uploads/673e2590-5b67-45cc-a3d3-993323344ba4.png"
-            alt="Preview of Elite 12 Questions guide"
-            className={styles.previewImage}
-          />
-          <div className={styles.previewOverlay}>
-            <div className={styles.lockSection}>
-              <Lock className={styles.lockIcon} />
-              <p className={styles.unlockText}>
-                Unlock Instant Access to the Full 12-Question Contractor Vetting Script
-              </p>
-              <p className={styles.unlockSubtext}>
-                See How to Avoid Costly Basement Mistakes!
-              </p>
-            </div>
-          </div>
+      {/* Form Header */}
+      <div className={styles.formHeader}>
+        <div className={styles.lockIcon}>
+          🔓
         </div>
+        <h3 className={styles.formTitle}>
+          Get Instant Access
+        </h3>
+        <p className={styles.formSubtitle}>
+          Download the complete 12-question contractor vetting script
+        </p>
       </div>
 
       {/* Progress Dots */}
-      <ProgressDots currentStep={currentStep} totalSteps={3} />
+      <div className={styles.progressDots}>
+        {Array.from({ length: 3 }, (_, index) => {
+          const stepNumber = index + 1;
+          let dotClass = styles.progressDot;
+          
+          if (stepNumber < currentStep) {
+            dotClass += ` ${styles.completed}`;
+          } else if (stepNumber === currentStep) {
+            dotClass += ` ${styles.active}`;
+          }
+          
+          return (
+            <div 
+              key={stepNumber}
+              className={dotClass}
+              aria-label={`Step ${stepNumber} ${stepNumber < currentStep ? 'completed' : stepNumber === currentStep ? 'active' : 'pending'}`}
+            />
+          );
+        })}
+      </div>
 
       {/* Progressive Form */}
       <form onSubmit={handleSubmit} className={styles.form}>
-        {/* Step 1: Email */}
-        {currentStep >= 1 && (
-          <div className={`${styles.formStep} ${styles.stepTransition}`}>
-            <Label htmlFor="email" className={styles.label}>
-              Email Address
-            </Label>
-            <div className={styles.inputWrapper}>
-              <Input
-                ref={emailRef}
-                id="email"
-                type="email"
-                inputMode="email"
-                value={formData.email}
-                onChange={handleEmailChange}
-                required
-                disabled={validationState.isSubmitting}
-                className={`${styles.modernInput} ${validationState.emailValid ? styles.validInput : ''}`}
-                placeholder="Enter your email address"
-              />
-              {validationState.emailValid && (
-                <div className={styles.inputIcon}>
-                  <CheckCircle className={styles.successIcon} />
-                </div>
-              )}
-            </div>
+        {/* Step 1: Email Only */}
+        <div className={`${styles.formStep} ${currentStep >= 1 ? styles.active : ''}`}>
+          <Label htmlFor="email" className={styles.label}>
+            Email Address
+          </Label>
+          <div className={styles.inputWrapper}>
+            <Input
+              ref={emailRef}
+              id="email"
+              type="email"
+              inputMode="email"
+              value={formData.email}
+              onChange={handleEmailChange}
+              required
+              disabled={validationState.isSubmitting}
+              className={`${styles.modernInput} ${validationState.emailValid ? styles.validInput : ''}`}
+              placeholder="Enter your email address"
+            />
+            {validationState.emailValid && (
+              <div className={styles.inputIcon}>
+                <CheckCircle className={styles.successIcon} />
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
-        {/* Step 2: Name */}
+        {/* Step 2: Name Only */}
         {currentStep >= 2 && (
-          <div className={`${styles.formStep} ${styles.stepTransition}`}>
+          <div className={`${styles.formStep} ${styles.active}`}>
             <Label htmlFor="firstName" className={styles.label}>
               First Name
             </Label>
@@ -161,9 +168,9 @@ export const FormContainer: React.FC<FormContainerProps> = ({
           </div>
         )}
 
-        {/* Step 3: Terms & Submit */}
+        {/* Step 3: Terms & Submit Only */}
         {currentStep >= 3 && (
-          <div className={`${styles.formStep} ${styles.stepTransition}`}>
+          <div className={`${styles.formStep} ${styles.active}`}>
             <div className={styles.checkboxGroup}>
               <Checkbox
                 id="terms"
