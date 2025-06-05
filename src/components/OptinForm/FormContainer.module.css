@@ -10,6 +10,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: sticky;
   top: 2.5rem;
+  border: 1px solid rgba(255, 215, 0, 0.2);
 }
 
 .formContainer:hover {
@@ -17,13 +18,14 @@
   box-shadow: 
     0 30px 60px rgba(0, 0, 0, 0.15),
     0 15px 30px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 0 40px rgba(255, 215, 0, 0.1);
+  border-color: rgba(255, 215, 0, 0.4);
 }
 
 .lockedPreview {
   margin-bottom: 2rem;
   position: relative;
-  group: hover;
 }
 
 .previewContent {
@@ -38,6 +40,7 @@
 .previewContent:hover {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   border-color: #fbbf24;
+  transform: translateY(-2px);
 }
 
 .previewImage {
@@ -50,6 +53,7 @@
 
 .previewContent:hover .previewImage {
   opacity: 0.8;
+  transform: scale(1.02);
 }
 
 .previewOverlay {
@@ -66,6 +70,7 @@
 
 .previewContent:hover .previewOverlay {
   background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(0.375rem);
 }
 
 .lockSection {
@@ -127,6 +132,8 @@
   font-weight: 500;
   color: #374151;
   margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .inputWrapper {
@@ -142,6 +149,7 @@
   border: 2px solid #e5e7eb;
   background: #f9fafb;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
 }
 
 .modernInput:focus {
@@ -149,19 +157,17 @@
   border-color: #fbbf24;
   background: white;
   box-shadow: 
-    inset 8px 8px 16px rgba(0, 0, 0, 0.1),
-    inset -8px -8px 16px rgba(255, 255, 255, 0.8),
-    0 0 0 3px rgba(255, 215, 0, 0.3);
-  transform: translateY(-2px);
+    0 0 0 3px rgba(255, 215, 0, 0.3),
+    0 4px 12px rgba(255, 215, 0, 0.2);
+  transform: translateY(-1px);
 }
 
 .validInput {
   background: linear-gradient(145deg, #ecfdf5, #f0fdf4);
   border-color: #22c55e;
   box-shadow: 
-    inset 8px 8px 16px rgba(0, 0, 0, 0.05),
-    inset -8px -8px 16px rgba(255, 255, 255, 0.9),
-    0 0 0 2px rgba(34, 197, 94, 0.3);
+    0 0 0 2px rgba(34, 197, 94, 0.3),
+    0 4px 12px rgba(34, 197, 94, 0.1);
 }
 
 .inputIcon {
@@ -215,13 +221,17 @@
   color: #1a1a1a;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: gradientShift 3s ease-in-out infinite;
+  box-shadow: 
+    0 8px 24px rgba(255, 215, 0, 0.3),
+    0 4px 12px rgba(255, 215, 0, 0.2);
+  text-transform: uppercase;
 }
 
 .submitBtn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 
-    0 10px 30px rgba(255, 215, 0, 0.4),
-    0 5px 15px rgba(255, 215, 0, 0.2);
+    0 12px 32px rgba(255, 215, 0, 0.4),
+    0 6px 16px rgba(255, 215, 0, 0.3);
 }
 
 .submitBtn:disabled {
@@ -261,11 +271,15 @@
   padding: 0.75rem;
   text-align: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.05),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.9);
 }
 
 .securityBadge:hover {
   border-color: #ffd700;
   color: #1a1a1a;
+  transform: translateY(-1px);
 }
 
 .badgeIcon {
