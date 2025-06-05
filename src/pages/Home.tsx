@@ -1,1927 +1,696 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protect Your Home: 12 Questions to Vet Waterproofing Pros</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Lock, Check, Shield, CheckCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+
+const Home = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Progressive form states
+  const [currentStep, setCurrentStep] = useState(1);
+  const [emailValid, setEmailValid] = useState(false);
+  const [nameValid, setNameValid] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    // Check if user has already unlocked content
+    const unlocked = localStorage.getItem('elite12_unlocked');
+    
+    // Check if we're in development mode - include Vite's DEV flag
+    const isDevelopment = import.meta.env.DEV || 
+                         window.location.hostname === 'localhost' || 
+                         window.location.hostname === '127.0.0.1';
+    
+    if (unlocked === 'true' && !isDevelopment) {
+      navigate('/elite-12');
+    }
+  }, [navigate]);
+
+  // Email validation
+  const validateEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  // Name validation
+  const validateName = (name: string) => {
+    return name.trim().length >= 2;
+  };
+
+  // Handle email input
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    const isValid = validateEmail(value);
+    setEmailValid(isValid);
+    
+    if (isValid && currentStep === 1) {
+      setTimeout(() => setCurrentStep(2), 1200);
+    }
+  };
+
+  // Handle name input
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setName(value);
+    const isValid = validateName(value);
+    setNameValid(isValid);
+    
+    if (isValid && currentStep === 2) {
+      setTimeout(() => setCurrentStep(3), 1200);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (name.trim() && email.trim() && acceptedTerms && !isSubmitting) {
+      setIsSubmitting(true);
+      
+      try {
+        // Capture UTM source if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const utmSource = urlParams.get('utm_source');
         
-        :root {
-            --primary-yellow: #ffd700;
-            --secondary-yellow: #ffed4e;
-            --light-yellow: #fff176;
-            --dark-black: #0a0a0a;
-            --medium-black: #1a1a1a;
-            --light-black: #2d2d2d;
-            --pure-white: #ffffff;
-            --off-white: #fafafa;
-            --border-light: rgba(255, 255, 255, 0.1);
-            --border-medium: rgba(255, 255, 255, 0.2);
-            --shadow-yellow: rgba(255, 215, 0, 0.3);
-            --shadow-dark: rgba(0, 0, 0, 0.2);
+        // Save lead to Supabase
+        const { error } = await supabase
+          .from('leads')
+          .insert({
+            name: name.trim(),
+            email: email.trim(),
+            accepted_terms: acceptedTerms,
+            utm_source: utmSource
+          });
+
+        if (error) {
+          console.error('Error saving lead:', error);
+          toast({
+            title: "Error",
+            description: "There was an issue saving your information. Please try again.",
+            variant: "destructive",
+          });
+          setIsSubmitting(false);
+          return;
+        }
+
+        console.log('Lead captured and saved to database:', { 
+          name: name.trim(), 
+          email: email.trim(), 
+          acceptedTerms,
+          utm_source: utmSource 
+        });
+        
+        // Track analytics events
+        if (typeof window !== 'undefined' && 'gtag' in window) {
+          (window as any).gtag('event', 'LeadMagnetDownloaded', {
+            currency: 'USD',
+            value: 0,
+          });
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        // Store unlock state
+        localStorage.setItem('elite12_unlocked', 'true');
+        
+        setShowSuccess(true);
+        
+        setTimeout(() => {
+          toast({
+            title: "Success!",
+            description: "Welcome! Your guide is now unlocked.",
+          });
+          
+          // Navigate to Elite 12 Questions page
+          navigate('/elite-12');
+        }, 2000);
+        
+      } catch (error) {
+        console.error('Unexpected error:', error);
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred. Please try again.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+      }
+    }
+  };
+
+  const isFormValid = name.trim() && email.trim() && acceptedTerms && !isSubmitting;
+
+  // Check if we're in development mode
+  const isDevelopment = import.meta.env.DEV || 
+                       window.location.hostname === 'localhost' || 
+                       window.location.hostname === '127.0.0.1';
+
+  return (
+    <>
+      <style>{`
+        @keyframes gradientShift {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
         }
         
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--dark-black);
-            min-height: 100vh;
-            line-height: 1.6;
-            overflow-x: hidden;
-            position: relative;
+        @keyframes particleFloat {
+          0%, 100% { transform: translateY(0px) translateX(0px); }
+          25% { transform: translateY(-20px) translateX(10px); }
+          50% { transform: translateY(-10px) translateX(-10px); }
+          75% { transform: translateY(-30px) translateX(5px); }
         }
         
-        /* Advanced Background with Animated Particles */
-        .background-effects {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            overflow: hidden;
+        @keyframes glowPulse {
+          0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+          50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
         }
         
-        .gradient-orb {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--primary-yellow) 0%, transparent 70%);
-            animation: float 20s ease-in-out infinite;
-            opacity: 0.1;
+        @keyframes slideInFromTop {
+          from { transform: translateY(-30px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
         }
         
-        .gradient-orb:nth-child(1) {
-            width: 600px;
-            height: 600px;
-            top: -300px;
-            left: -300px;
-            animation-delay: 0s;
+        @keyframes fadeInUp {
+          from { transform: translateY(20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
         }
         
-        .gradient-orb:nth-child(2) {
-            width: 400px;
-            height: 400px;
-            top: 50%;
-            right: -200px;
-            animation-delay: -10s;
-        }
-        
-        .gradient-orb:nth-child(3) {
-            width: 300px;
-            height: 300px;
-            bottom: -150px;
-            left: 30%;
-            animation-delay: -5s;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(30px, -30px) rotate(90deg); }
-            50% { transform: translate(-20px, 20px) rotate(180deg); }
-            75% { transform: translate(-30px, -10px) rotate(270deg); }
-        }
-        
-        .floating-particles {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--primary-yellow);
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: particle-float 15s linear infinite;
-        }
-        
-        @keyframes particle-float {
-            0% {
-                transform: translateY(100vh) translateX(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.3;
-            }
-            90% {
-                opacity: 0.3;
-            }
-            100% {
-                transform: translateY(-100px) translateX(100px);
-                opacity: 0;
-            }
-        }
-        
-        .dev-notice {
-            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--secondary-yellow) 100%);
-            color: var(--medium-black);
-            padding: 12px 20px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: 600;
-            position: relative;
-            overflow: hidden;
-            border-bottom: 2px solid var(--light-yellow);
-        }
-        
-        .dev-notice::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shimmer 4s infinite;
+        @keyframes scaleIn {
+          from { transform: scale(0.9); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
         }
         
         @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 80px 20px;
-            position: relative;
-        }
-        
-        .hero-section {
-            text-align: center;
-            color: white;
-            margin-bottom: 120px;
-            position: relative;
-            padding: 60px 0;
-            overflow: hidden;
-        }
-        
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: -150px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(255,215,0,0.06) 0%, rgba(255,215,0,0.02) 50%, transparent 70%);
-            z-index: -1;
-            animation: hero-ambient 12s ease-in-out infinite;
-        }
-        
-        @keyframes hero-ambient {
-            0%, 100% { 
-                transform: translateX(-50%) scale(1) rotate(0deg);
-                opacity: 0.6;
-            }
-            50% { 
-                transform: translateX(-50%) scale(1.1) rotate(180deg);
-                opacity: 1;
-            }
-        }
-        
-        .hero-section::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(255,215,0,0.03) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255,215,0,0.03) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(255,255,255,0.02) 0%, transparent 50%);
-            z-index: -1;
-            animation: ambient-shift 20s ease-in-out infinite;
-        }
-        
-        @keyframes ambient-shift {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
-        }
-        
-        .hero-badge {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 32px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-        }
-        
-        .hero-badge::before {
-            content: '🏠';
-            margin-right: 8px;
-        }
-        
-        .hero-section h1 {
-            font-size: clamp(2.4rem, 5.5vw, 4rem);
-            font-weight: 900;
-            margin-bottom: 40px;
-            background: linear-gradient(135deg, 
-                #ffffff 0%, 
-                #f8f9fa 20%,
-                #ffffff 40%,
-                #ffffff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1.15;
-            letter-spacing: -0.025em;
-            text-align: center;
-            position: relative;
-            padding: 0 20px;
-            animation: headline-fade-in 1.2s ease-out;
-            max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        .hero-section h1::before {
-            content: '';
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(90deg, 
-                transparent, 
-                var(--primary-yellow), 
-                transparent);
-            border-radius: 2px;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
-        }
-        
-        .hero-section h1 .highlight {
-            background: linear-gradient(135deg, 
-                var(--primary-yellow) 0%,
-                #ffed4e 25%,
-                #fff176 50%,
-                #ffed4e 75%,
-                var(--primary-yellow) 100%);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 900;
-            position: relative;
-            display: inline-block;
-            animation: highlight-glow 3s ease-in-out infinite alternate;
-        }
-        
-        @keyframes highlight-glow {
-            0% { 
-                background-position: 0% 50%;
-                filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.3));
-            }
-            100% { 
-                background-position: 100% 50%;
-                filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
-            }
-        }
-        
-        .hero-section h1 .highlight::after {
-            content: '';
-            position: absolute;
-            bottom: -3px;
-            left: -5px;
-            right: -5px;
-            height: 3px;
-            background: linear-gradient(90deg, 
-                transparent,
-                var(--primary-yellow),
-                var(--secondary-yellow),
-                var(--primary-yellow),
-                transparent);
-            border-radius: 2px;
-            opacity: 0.8;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-            animation: underline-pulse 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes underline-pulse {
-            0% { 
-                opacity: 0.6;
-                transform: scaleX(0.95);
-            }
-            100% { 
-                opacity: 1;
-                transform: scaleX(1);
-            }
-        }
-        
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-            color: white;
-            padding: 12px 28px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin-bottom: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(20px);
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            position: relative;
-            overflow: hidden;
-            animation: badge-fade-in 1.2s ease-out 0.3s both;
-        }
-        
-        @keyframes badge-fade-in {
-            0% {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .hero-badge::before {
-            content: '🏠';
-            margin-right: 10px;
-            font-size: 1.1em;
-            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.3));
-        }
-        
-        .hero-badge::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            animation: badge-shimmer 3s ease-in-out infinite;
-        }
-        
-        @keyframes badge-shimmer {
-            0% { left: -100%; }
-            50% { left: -100%; }
-            100% { left: 100%; }
-        }
-        
-        .hero-section .subtitle {
-            font-size: 1.25rem;
-            margin-bottom: 48px;
-            color: rgba(255, 255, 255, 0.9);
-            max-width: 750px;
-            margin-left: auto;
-            margin-right: auto;
-            font-weight: 400;
-            line-height: 1.6;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-            padding: 0 20px;
-            animation: subtitle-fade-in 1.2s ease-out 0.6s both;
-        }
-        
-        .hero-section .subtitle .emphasis {
-            color: var(--secondary-yellow);
-            font-weight: 600;
-            text-shadow: 0 0 10px rgba(255, 237, 78, 0.5);
-        }
-        
-        .exclusive-badge {
-            animation: badge-bounce-in 1s ease-out 1.2s both;
-        }
-        
-        @keyframes badge-bounce-in {
-            0% {
-                opacity: 0;
-                transform: translateY(30px) scale(0.9);
-            }
-            60% {
-                opacity: 1;
-                transform: translateY(-5px) scale(1.02);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        .hero-section .subtitle {
-            font-size: 1.3rem;
-            margin-bottom: 48px;
-            opacity: 0.95;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            font-weight: 400;
-            line-height: 1.6;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            padding: 0 20px;
-        }
-        
-        .hero-section .subtitle strong {
-            color: var(--primary-yellow);
-            font-weight: 600;
-        }
-        
-        @keyframes fade-in-up {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 0.95;
-                transform: translateY(0);
-            }
-        }
-        
-        .exclusive-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            background: linear-gradient(135deg, 
-                var(--primary-yellow) 0%, 
-                var(--secondary-yellow) 50%,
-                var(--primary-yellow) 100%);
-            background-size: 200% 200%;
-            color: var(--medium-black);
-            padding: 18px 32px;
-            border-radius: 35px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            box-shadow: 
-                0 12px 32px rgba(255, 215, 0, 0.35),
-                0 6px 16px rgba(255, 215, 0, 0.25),
-                inset 0 2px 0 rgba(255, 255, 255, 0.3),
-                inset 0 -2px 0 rgba(0, 0, 0, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.25);
-            position: relative;
-            overflow: hidden;
-            animation: 
-                badge-bounce-in 1.2s ease-out 1.4s both,
-                badge-bg-flow 6s ease-in-out infinite;
-        }
-        
-        @keyframes badge-bg-flow {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        
-        .exclusive-badge::before {
-            content: '⭐';
-            font-size: 1.1em;
-            animation: star-twinkle 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes star-twinkle {
-            0% { 
-                transform: scale(1) rotate(0deg);
-                filter: brightness(1);
-            }
-            100% { 
-                transform: scale(1.1) rotate(5deg);
-                filter: brightness(1.2);
-            }
-        }
-        
-        .exclusive-badge::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.4), 
-                transparent);
-            animation: badge-shine 4s ease-in-out infinite;
-        }
-        
-        @keyframes badge-shine {
-            0% { left: -100%; }
-            20% { left: -100%; }
-            100% { left: 100%; }
-        }
-        
-        @keyframes badge-glow {
-            from { 
-                box-shadow: 
-                    0 8px 24px rgba(255, 215, 0, 0.3),
-                    0 4px 12px rgba(255, 215, 0, 0.2);
-            }
-            to { 
-                box-shadow: 
-                    0 12px 32px rgba(255, 215, 0, 0.4),
-                    0 6px 16px rgba(255, 215, 0, 0.3);
-            }
-        }
-        
-        @keyframes badge-shimmer {
-            0% { left: -100%; }
-            50% { left: -100%; }
-            100% { left: 100%; }
-        }
-        
-        @keyframes fire-dance {
-            0% { transform: rotate(-2deg) scale(1); }
-            100% { transform: rotate(2deg) scale(1.05); }
-        }
-        
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 100px;
-            align-items: start;
-        }
-        
-        .content-left {
-            color: white;
-        }
-        
-        .content-left h2 {
-            font-size: 2.5rem;
-            margin-bottom: 32px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 50%, var(--primary-yellow) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.02em;
-        }
-        
-        .content-left p {
-            font-size: 1.2rem;
-            margin-bottom: 48px;
-            opacity: 0.9;
-            line-height: 1.8;
-            font-weight: 400;
-        }
-        
-        .benefits-list {
-            list-style: none;
-        }
-        
-        .benefits-list li {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 32px;
-            padding: 32px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 24px;
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-light);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-        
-        .benefits-list li::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
-            opacity: 0;
-            transition: all 0.4s ease;
-        }
-        
-        .benefits-list li::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
-            transition: left 0.6s ease;
-        }
-        
-        .benefits-list li:hover::before {
-            opacity: 1;
-        }
-        
-        .benefits-list li:hover::after {
-            left: 100%;
-        }
-        
-        .benefits-list li:hover {
-            transform: translateY(-8px) translateX(4px);
-            border-color: rgba(255, 215, 0, 0.4);
-            box-shadow: 
-                0 32px 64px rgba(0, 0, 0, 0.4),
-                0 16px 32px rgba(255, 215, 0, 0.2);
-            background: rgba(255, 255, 255, 0.08);
-        }
-        
-        .check-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--secondary-yellow) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 24px;
-            flex-shrink: 0;
-            margin-top: 4px;
-            box-shadow: 
-                0 8px 24px rgba(255, 215, 0, 0.4),
-                0 4px 12px rgba(255, 215, 0, 0.3);
-            position: relative;
-            z-index: 1;
-            transition: all 0.3s ease;
-        }
-        
-        .benefits-list li:hover .check-icon {
-            transform: scale(1.1) rotate(360deg);
-            box-shadow: 
-                0 12px 32px rgba(255, 215, 0, 0.6),
-                0 6px 16px rgba(255, 215, 0, 0.4);
-        }
-        
-        .check-icon::after {
-            content: '✓';
-            color: var(--medium-black);
-            font-weight: 900;
-            font-size: 18px;
-        }
-        
-        .benefit-content h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: #fff;
-            transition: color 0.3s ease;
-        }
-        
-        .benefits-list li:hover .benefit-content h3 {
-            color: var(--primary-yellow);
-        }
-        
-        .benefit-content p {
-            font-size: 1.05rem;
-            opacity: 0.8;
-            margin: 0;
-            line-height: 1.7;
-            transition: opacity 0.3s ease;
-        }
-        
-        .benefits-list li:hover .benefit-content p {
-            opacity: 1;
-        }
-        
-        .form-container {
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: 24px;
-            padding: 48px;
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.15),
-                0 10px 20px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 1);
-            position: sticky;
-            top: 40px;
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .form-container:hover {
-            transform: translateY(-4px);
-            box-shadow: 
-                0 32px 64px rgba(0, 0, 0, 0.2),
-                0 16px 32px rgba(0, 0, 0, 0.15),
-                0 0 40px rgba(255, 215, 0, 0.1);
-            border-color: rgba(255, 215, 0, 0.3);
-        }
-        
-        .form-header {
-            text-align: center;
-            margin-bottom: 56px;
-            position: relative;
-        }
-        
-        .form-header::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
-            animation: header-glow 6s ease-in-out infinite alternate;
-            z-index: -1;
-        }
-        
-        @keyframes header-glow {
-            0% { transform: translateX(-50%) scale(1); opacity: 0.3; }
-            100% { transform: translateX(-50%) scale(1.2); opacity: 0.6; }
-        }
-        
-        .lock-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--secondary-yellow) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px;
-            color: var(--medium-black);
-            font-size: 32px;
-            font-weight: 900;
-            box-shadow: 
-                0 8px 24px rgba(255, 215, 0, 0.3),
-                0 4px 12px rgba(255, 215, 0, 0.2);
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
-        .lock-icon:hover {
-            transform: scale(1.05);
-            box-shadow: 
-                0 12px 32px rgba(255, 215, 0, 0.4),
-                0 6px 16px rgba(255, 215, 0, 0.3);
-        }
-        
-        .form-header h3 {
-            font-size: 2rem;
-            color: var(--medium-black);
-            margin-bottom: 16px;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-        }
-        
-        .form-header p {
-            color: #666;
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-        
-        .form-step {
-            opacity: 0;
-            transform: translateY(30px) scale(0.95);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 0;
-        }
-        
-        .form-step.active {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            margin-bottom: 32px;
-        }
-        
-        .form-group {
-            position: relative;
-            margin-bottom: 8px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 20px;
-            font-weight: 800;
-            color: var(--medium-black);
-            font-size: 0.9rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            opacity: 0.7;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .form-group label::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-yellow), var(--secondary-yellow));
-            transition: width 0.4s ease;
-        }
-        
-        .form-group:focus-within label::after {
-            width: 40px;
-        }
-        
-        .modern-input {
-            width: 100%;
-            padding: 20px 24px;
-            border: 2px solid #e0e0e0;
-            border-radius: 16px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            background: #fafafa;
-            font-family: inherit;
-            font-weight: 500;
-            color: var(--medium-black);
-        }
-        
-        .modern-input::placeholder {
-            color: #999;
-            font-weight: 400;
-        }
-        
-        .modern-input:focus {
-            outline: none;
-            border-color: var(--primary-yellow);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
-            transform: translateY(-1px);
-        }
-        
-        .modern-input.valid {
-            border-color: #4ade80;
-            background: #f0fdf4;
-        }
-        
-        .input-wrapper {
-            position: relative;
-            margin-bottom: 32px;
-        }
-        
-        .input-wrapper::before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            background: linear-gradient(135deg, 
-                var(--primary-yellow) 0%, 
-                transparent 25%, 
-                transparent 75%, 
-                var(--secondary-yellow) 100%);
-            border-radius: 26px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 0;
-        }
-        
-        .input-wrapper:focus-within::before {
-            opacity: 0.3;
-            animation: input-border-glow 2s ease infinite;
-        }
-        
-        @keyframes input-border-glow {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 0.4; }
-        }
-        
-        .input-icon {
-            position: absolute;
-            right: 28px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-            font-weight: 900;
-            opacity: 0;
-            scale: 0;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 
-                0 8px 16px rgba(74, 222, 128, 0.4),
-                0 4px 8px rgba(74, 222, 128, 0.3),
-                inset 0 2px 4px rgba(255, 255, 255, 0.3);
-            z-index: 2;
-        }
-        
-        .input-icon::before {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            background: linear-gradient(135deg, #4ade80, #22c55e);
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: success-pulse 2s ease infinite;
-            z-index: -1;
-        }
-        
-        @keyframes success-pulse {
-            0%, 100% { transform: scale(1); opacity: 0.3; }
-            50% { transform: scale(1.2); opacity: 0.1; }
-        }
-        
-        .input-wrapper.validated .input-icon {
-            opacity: 1;
-            scale: 1;
-            animation: success-pop 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        @keyframes success-pop {
-            0% { scale: 0; opacity: 0; }
-            50% { scale: 1.3; opacity: 0.8; }
-            100% { scale: 1; opacity: 1; }
-        }
-        
-        .checkbox-group {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 40px;
-            font-size: 0.95rem;
-            color: #666;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .checkbox-group.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .custom-checkbox {
-            position: relative;
-            margin-right: 16px;
-            margin-top: 2px;
-        }
-        
-        .custom-checkbox input[type="checkbox"] {
-            opacity: 0;
-            position: absolute;
-        }
-        
-        .checkmark {
-            width: 24px;
-            height: 24px;
-            border: 3px solid #ddd;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            background: white;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
-        }
-        
-        .custom-checkbox input[type="checkbox"]:checked + .checkmark {
-            background: linear-gradient(135deg, var(--primary-yellow), var(--secondary-yellow));
-            border-color: var(--primary-yellow);
-            transform: scale(1.1);
-            box-shadow: 
-                0 4px 12px rgba(255, 215, 0, 0.4),
-                inset 0 2px 4px rgba(255, 255, 255, 0.2);
-        }
-        
-        .custom-checkbox input[type="checkbox"]:checked + .checkmark::after {
-            content: '✓';
-            color: var(--medium-black);
-            font-size: 14px;
-            font-weight: 900;
-            animation: check-bounce 0.4s ease;
-        }
-        
-        @keyframes check-bounce {
-            0% { transform: scale(0); }
-            50% { transform: scale(1.3); }
-            100% { transform: scale(1); }
-        }
-        
-        .checkbox-group a {
-            color: var(--primary-yellow);
-            text-decoration: none;
-            font-weight: 600;
-            position: relative;
-        }
-        
-        .checkbox-group a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--primary-yellow);
-            transition: width 0.3s ease;
-        }
-        
-        .checkbox-group a:hover::after {
-            width: 100%;
-        }
-        
-        .submit-btn {
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--secondary-yellow) 100%);
-            color: var(--medium-black);
-            border: none;
-            padding: 20px 24px;
-            border-radius: 16px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 
-                0 8px 24px rgba(255, 215, 0, 0.3),
-                0 4px 12px rgba(255, 215, 0, 0.2);
-            position: relative;
-            opacity: 0;
-            transform: translateY(20px);
-            font-family: inherit;
-        }
-        
-        .submit-btn.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 
-                0 12px 32px rgba(255, 215, 0, 0.4),
-                0 6px 16px rgba(255, 215, 0, 0.3);
-        }
-        
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-        
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-            background: linear-gradient(135deg, #ccc, #999);
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        
+        .hero-background {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .floating-particles {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+        }
+        
+        .particle {
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          background: #ffd700;
+          border-radius: 50%;
+          animation: particleFloat 6s ease-in-out infinite;
+        }
+        
+        .particle:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { top: 20%; left: 80%; animation-delay: 1s; }
+        .particle:nth-child(3) { top: 60%; left: 20%; animation-delay: 2s; }
+        .particle:nth-child(4) { top: 80%; left: 70%; animation-delay: 3s; }
+        .particle:nth-child(5) { top: 40%; left: 90%; animation-delay: 4s; }
+        
+        .gradient-text {
+          background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+          background-size: 200% 200%;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: gradientShift 3s ease-in-out infinite;
+        }
+        
+        .golden-gradient {
+          background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+          background-size: 200% 200%;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: gradientShift 2s ease-in-out infinite;
+        }
+        
+        .glow-line {
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #ffd700, transparent);
+          margin: 1rem auto 2rem;
+          animation: glowPulse 2s ease-in-out infinite;
+        }
+        
+        .premium-form {
+          background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+          border-radius: 24px;
+          box-shadow: 
+            0 20px 40px rgba(0, 0, 0, 0.1),
+            0 10px 20px rgba(0, 0, 0, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: sticky;
+          top: 40px;
+        }
+        
+        .premium-form:hover {
+          transform: translateY(-4px);
+          box-shadow: 
+            0 30px 60px rgba(0, 0, 0, 0.15),
+            0 15px 30px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+        
+        .neumorphic-input {
+          background: #f0f0f0;
+          border: none;
+          box-shadow: 
+            inset 8px 8px 16px rgba(0, 0, 0, 0.1),
+            inset -8px -8px 16px rgba(255, 255, 255, 0.8);
+          border-radius: 16px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .neumorphic-input:focus {
+          box-shadow: 
+            inset 8px 8px 16px rgba(0, 0, 0, 0.1),
+            inset -8px -8px 16px rgba(255, 255, 255, 0.8),
+            0 0 0 3px rgba(255, 215, 0, 0.3);
+          transform: translateY(-2px);
+        }
+        
+        .neumorphic-input.valid {
+          background: linear-gradient(145deg, #e8f5e8, #f0fff0);
+          box-shadow: 
+            inset 8px 8px 16px rgba(0, 0, 0, 0.05),
+            inset -8px -8px 16px rgba(255, 255, 255, 0.9),
+            0 0 0 2px rgba(34, 197, 94, 0.3);
         }
         
         .progress-dots {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 40px;
-            position: relative;
+          display: flex;
+          justify-content: center;
+          gap: 12px;
+          margin-bottom: 2rem;
         }
         
         .progress-dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #e0e0e0;
-            transition: all 0.3s ease;
-            position: relative;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: #e5e7eb;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .progress-dot.active {
-            background: linear-gradient(135deg, var(--primary-yellow), var(--secondary-yellow));
-            transform: scale(1.2);
-            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+          background: #ffd700;
+          box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+          transform: scale(1.2);
         }
         
         .progress-dot.completed {
-            background: linear-gradient(135deg, #4ade80, #22c55e);
-            transform: scale(1.1);
+          background: #22c55e;
+          box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
         }
         
-        .privacy-note {
-            text-align: center;
-            margin-top: 32px;
-            font-size: 0.9rem;
-            color: #888;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        .golden-button {
+          background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+          background-size: 200% 200%;
+          border: none;
+          color: #1a1a1a;
+          font-weight: 700;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          animation: gradientShift 3s ease-in-out infinite;
         }
         
-        .privacy-note.show {
-            opacity: 1;
-            transform: translateY(0);
+        .golden-button:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 
+            0 10px 30px rgba(255, 215, 0, 0.4),
+            0 5px 15px rgba(255, 215, 0, 0.2);
         }
         
-        .privacy-note a {
-            color: var(--primary-yellow);
-            text-decoration: none;
-            font-weight: 600;
+        .golden-button:disabled {
+          opacity: 0.6;
+          transform: none;
+          animation: none;
         }
         
-        .security-badges {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 32px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        .benefit-card {
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 16px;
+          padding: 1.5rem;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
         }
         
-        .security-badges.show {
-            opacity: 1;
-            transform: translateY(0);
+        .benefit-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .benefit-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+          transition: left 0.5s;
+        }
+        
+        .benefit-card:hover::before {
+          left: 100%;
         }
         
         .security-badge {
-            display: flex;
-            align-items: center;
-            font-size: 0.85rem;
-            color: #999;
-            padding: 12px 16px;
-            background: rgba(0, 0, 0, 0.03);
-            border-radius: 25px;
-            border: 2px solid rgba(0, 0, 0, 0.06);
-            font-weight: 600;
-            transition: all 0.3s ease;
+          background: #f8f9fa;
+          border: 1px solid #e9ecef;
+          border-radius: 12px;
+          padding: 0.75rem 1rem;
+          box-shadow: 
+            inset 4px 4px 8px rgba(0, 0, 0, 0.05),
+            inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .security-badge:hover {
-            background: rgba(255, 215, 0, 0.05);
-            border-color: rgba(255, 215, 0, 0.2);
-            color: #666;
+          border-color: #ffd700;
+          color: #1a1a1a;
         }
         
-        .security-badge::before {
-            content: '🔒';
-            margin-right: 8px;
-            font-size: 1em;
+        .step-transition {
+          animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .social-proof {
-            text-align: center;
-            margin-top: 48px;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 32px;
-            color: white;
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-light);
-            transition: all 0.4s ease;
+        .hero-badge {
+          animation: slideInFromTop 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
         }
         
-        .social-proof:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 215, 0, 0.3);
-            transform: translateY(-4px);
+        .hero-title {
+          animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s both;
         }
         
-        .social-proof .stat {
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--secondary-yellow) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 12px;
-            animation: stat-glow 2s ease-in-out infinite alternate;
+        .hero-subtitle {
+          animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.8s both;
         }
         
-        @keyframes stat-glow {
-            from { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)); }
-            to { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)); }
+        .cta-badge {
+          animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) 1.2s both;
         }
         
-        .social-proof p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            font-weight: 600;
-            line-height: 1.6;
+        .success-animation {
+          animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 80px;
-            }
-            
-            .form-container {
-                padding: 40px 32px;
-                transform: none;
-            }
-            
-            .container {
-                padding: 60px 20px;
-            }
-            
-            .hero-section {
-                margin-bottom: 80px;
-                padding: 40px 0;
-            }
-            
-            .hero-section h1 {
-                font-size: clamp(2rem, 7vw, 3rem);
-                padding: 0 15px;
-                line-height: 1.2;
-                margin-bottom: 32px;
-                letter-spacing: -0.02em;
-            }
-            
-            .hero-section h1::before {
-                width: 60px;
-                height: 3px;
-                top: -12px;
-            }
-            
-            .hero-section .subtitle {
-                font-size: 1.1rem;
-                padding: 0 15px;
-                line-height: 1.5;
-                margin-bottom: 40px;
-            }
-            
-            .hero-badge {
-                font-size: 0.75rem;
-                padding: 10px 20px;
-                margin-bottom: 28px;
-                letter-spacing: 1px;
-            }
-            
-            .exclusive-badge {
-                font-size: 0.8rem;
-                padding: 14px 24px;
-                letter-spacing: 1px;
-            }
-            
-            .lock-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 24px;
-            }
-            
-            .floating-element {
-                display: none;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .hero-section h1 {
-                font-size: clamp(1.7rem, 8vw, 2.4rem);
-                padding: 0 10px;
-            }
-            
-            .hero-section .subtitle {
-                font-size: 1rem;
-                padding: 0 10px;
-            }
-            
-            .hero-badge {
-                font-size: 0.7rem;
-                padding: 8px 16px;
-            }
-            
-            .exclusive-badge {
-                font-size: 0.75rem;
-                padding: 12px 20px;
-            }
-        }
-        
-        .loading-spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(26, 26, 26, 0.3);
-            border-top: 3px solid var(--medium-black);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-left: 12px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Professional Animations for Home Service Company */
-        @keyframes fade-in-up {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 0.95;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes success-pop {
-            0% { scale: 0; opacity: 0; }
-            50% { scale: 1.1; opacity: 0.8; }
-            100% { scale: 1; opacity: 1; }
-        }
-        
-        /* Advanced Success State */
-        .success-container {
-            text-align: center;
-            padding: 60px 0;
-            animation: success-fade-in 0.8s ease-out;
-        }
-        
-        @keyframes success-fade-in {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        .success-icon {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, #4ade80, #22c55e);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 32px;
-            font-size: 60px;
-            color: white;
-            box-shadow: 
-                0 24px 48px rgba(74, 222, 128, 0.4),
-                0 12px 24px rgba(74, 222, 128, 0.3);
-            animation: success-bounce 1s ease-out;
-        }
-        
-        @keyframes success-bounce {
-            0% { transform: scale(0); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-        
-        .success-title {
-            color: var(--medium-black);
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #4ade80, #22c55e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .success-message {
-            color: #666;
-            font-size: 1.2rem;
-            margin-bottom: 32px;
-            font-weight: 500;
-        }
-        
-        .success-note {
-            font-size: 1rem;
-            color: #888;
-            font-weight: 400;
-        }
-    </style>
-</head>
-<body>
-    <div class="background-effects">
-        <div class="gradient-orb"></div>
-        <div class="gradient-orb"></div>
-        <div class="gradient-orb"></div>
-        <div class="floating-particles" id="particles"></div>
-    </div>
-    
-    <div class="dev-notice">
-        Development Mode: You can navigate freely using the navigation above, or fill out the form below to unlock content.
-    </div>
-    
-    <div class="container">
-        <div class="hero-section">
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-            <div class="hero-badge">Columbus Homeowner Protection Guide</div>
-            <h1>Don't Get Burned by <span class="highlight">Bad Waterproofing Contractors</span>:<br>Get the 12 Questions That <span class="highlight">Expose Red Flags</span></h1>
-            <p class="subtitle">Columbus homeowners use these <span class="emphasis">insider questions</span> to avoid costly mistakes, shoddy work, and contractors who <span class="emphasis">disappear after taking your money</span>.</p>
-            <div class="exclusive-badge">Exclusive Access - Limited Time Resource</div>
+      `}</style>
+
+      <div className="min-h-screen hero-background flex items-center justify-center p-4">
+        {/* Floating Particles */}
+        <div className="floating-particles">
+          <div className="particle"></div>
+          <div className="particle"></div>
+          <div className="particle"></div>
+          <div className="particle"></div>
+          <div className="particle"></div>
         </div>
-        
-        <div class="main-content">
-            <div class="content-left">
-                <h2>Why This Matters For Your Home</h2>
-                <p>Hiring a basement waterproofing contractor can feel overwhelming. Without the right questions, you risk overpaying, shoddy workmanship, and even costly repairs down the line. Our exclusive script levels the playing field, empowering you with the exact insights professionals use to ensure your home's long-term protection.</p>
-                
-                <h2>What's Inside</h2>
-                <ul class="benefits-list">
-                    <li>
-                        <div class="check-icon"></div>
-                        <div class="benefit-content">
-                            <h3>Expose Hidden Contractor Red Flags</h3>
-                            <p>Instantly identify unreliable contractors before you hire them, saving you countless headaches and wasted money.</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="check-icon"></div>
-                        <div class="benefit-content">
-                            <h3>Slash Unexpected Costs & Delays</h3>
-                            <p>Prevent surprise charges, unfinished work, and costly code violations by asking the right questions upfront.</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="check-icon"></div>
-                        <div class="benefit-content">
-                            <h3>Comprehensive for Any Basement</h3>
-                            <p>Whether your basement is finished or unfinished, these questions are universally applicable to secure expert waterproofing.</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="check-icon"></div>
-                        <div class="benefit-content">
-                            <h3>Gain Absolute Peace of Mind</h3>
-                            <p>Confidently select a reliable contractor knowing you've asked every crucial question to ensure a successful, lasting job.</p>
-                        </div>
-                    </li>
-                </ul>
-                
-                <div class="social-proof">
-                    <div class="stat">1,247+</div>
-                    <p>Columbus homeowners have already used this script to find trusted waterproofing contractors</p>
-                </div>
+
+        <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center relative z-10">
+          {/* Left Column - Benefits */}
+          <div className="space-y-8">
+            {/* Development mode notice */}
+            {isDevelopment && (
+              <div className="mb-4 p-3 bg-blue-100 border border-blue-300 rounded-lg text-center">
+                <p className="text-sm text-blue-800">
+                  <strong>Development Mode:</strong> You can navigate freely using the navigation above, or fill out the form below to unlock content.
+                </p>
+              </div>
+            )}
+
+            {/* Hero Badge */}
+            <div className="text-center lg:text-left hero-badge">
+              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black rounded-full text-sm font-bold mb-6">
+                <span className="text-lg mr-2">🚨</span>
+                EXCLUSIVE ACCESS: Limited-Time Resource – FREE for Columbus Homeowners!
+              </div>
             </div>
-            
-            <div class="form-container">
-                <div class="form-header">
-                    <div class="lock-icon">🔓</div>
-                    <h3>Get Instant Access</h3>
-                    <p>Download the complete 12-question contractor vetting script</p>
+
+            {/* Headlines */}
+            <div className="text-center lg:text-left hero-title">
+              <div className="glow-line w-16"></div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-6">
+                <span className="gradient-text">Protect Your Home: Unlock the </span>
+                <span className="golden-gradient">12 Questions</span>
+                <br />
+                <span className="gradient-text">Columbus Insiders Use to Vet </span>
+                <span className="golden-gradient">Waterproofing Pros</span>
+              </h1>
+            </div>
+
+            <div className="text-center lg:text-left hero-subtitle">
+              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+                Discover the <em className="golden-gradient font-semibold">proven</em> 12-question script Columbus waterproofing experts use to 
+                <span className="golden-gradient font-semibold"> expose hidden flaws</span> and secure reliable contractors.
+              </p>
+            </div>
+
+            {/* Benefits Grid */}
+            <div className="grid gap-4 cta-badge">
+              {[
+                {
+                  title: 'Expose Hidden Contractor Red Flags',
+                  description: 'Instantly identify unreliable contractors before you hire them, saving you countless headaches and wasted money.'
+                },
+                {
+                  title: 'Slash Unexpected Costs & Delays', 
+                  description: 'Prevent surprise charges, unfinished work, and costly code violations by asking the right questions upfront.'
+                },
+                {
+                  title: 'Comprehensive for Any Basement',
+                  description: 'Whether your basement is finished or unfinished, these questions are universally applicable to secure expert waterproofing.'
+                },
+                {
+                  title: 'Gain Absolute Peace of Mind',
+                  description: 'Confidently select a reliable contractor knowing you\'ve asked every crucial question to ensure a successful, lasting job.'
+                }
+              ].map((benefit, index) => (
+                <div key={index} className="benefit-card">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500 flex items-center justify-center mt-1 flex-shrink-0">
+                      <Check className="w-4 h-4 text-black" strokeWidth={3} />
+                    </div>
+                    <div>
+                      <div className="font-bold text-gray-900 mb-2">{benefit.title}:</div>
+                      <span className="text-gray-700 leading-relaxed text-sm">{benefit.description}</span>
+                    </div>
+                  </div>
                 </div>
-                
-                <div class="progress-dots">
-                    <div class="progress-dot active" data-step="1"></div>
-                    <div class="progress-dot" data-step="2"></div>
-                    <div class="progress-dot" data-step="3"></div>
+              ))}
+            </div>
+
+            {/* Why This Matters Section */}
+            <div className="benefit-card">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Why This Matters For Your Home</h3>
+              <p className="text-gray-700 leading-relaxed">
+                Hiring a basement waterproofing contractor can feel overwhelming. Without the right questions, you risk overpaying, shoddy workmanship, and even costly repairs down the line. Our exclusive script levels the playing field, empowering you with the exact insights professionals use to ensure your home's long-term protection.
+              </p>
+            </div>
+          </div>
+
+          {/* Right Column - Form */}
+          <div className="premium-form p-8">
+            {showSuccess ? (
+              <div className="text-center success-animation">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r from-green-400 to-green-500 flex items-center justify-center">
+                  <CheckCircle className="w-12 h-12 text-white" />
                 </div>
-                
-                <form id="progressiveForm">
-                    <!-- Step 1: Email -->
-                    <div class="form-step active" data-step="1">
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <div class="input-wrapper">
-                                <input type="email" id="email" name="email" class="modern-input" 
-                                       placeholder="Enter your email address" required>
-                                <div class="input-icon">✓</div>
-                            </div>
-                        </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">Success!</h3>
+                <p className="text-gray-600 mb-6">Your 12-Question Script is being prepared. Redirecting you now...</p>
+                <div className="animate-spin w-8 h-8 border-4 border-yellow-400 border-t-transparent rounded-full mx-auto"></div>
+              </div>
+            ) : (
+              <>
+                {/* Progress Dots */}
+                <div className="progress-dots">
+                  <div className={`progress-dot ${currentStep >= 1 ? 'active' : ''} ${currentStep > 1 ? 'completed' : ''}`}></div>
+                  <div className={`progress-dot ${currentStep >= 2 ? 'active' : ''} ${currentStep > 2 ? 'completed' : ''}`}></div>
+                  <div className={`progress-dot ${currentStep >= 3 ? 'active' : ''}`}></div>
+                </div>
+
+                {/* Locked Preview */}
+                <div className="mb-8 relative group">
+                  <div className="relative overflow-hidden rounded-xl border-2 border-gray-200 bg-gradient-to-br from-blue-50 to-purple-50 transition-all duration-300 group-hover:shadow-lg group-hover:border-yellow-300">
+                    <div className="relative h-48 w-full">
+                      <img 
+                        src="/lovable-uploads/673e2590-5b67-45cc-a3d3-993323344ba4.png"
+                        alt="Preview of Elite 12 Questions guide"
+                        className="w-full h-full object-cover opacity-95 transition-all duration-300 group-hover:opacity-80"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-blue-500/10 via-transparent to-purple-500/5 transition-all duration-300 group-hover:from-blue-500/20 group-hover:to-purple-500/10"></div>
                     </div>
                     
-                    <!-- Step 2: Name -->
-                    <div class="form-step" data-step="2">
-                        <div class="form-group">
-                            <label for="firstName">First Name</label>
-                            <div class="input-wrapper">
-                                <input type="text" id="firstName" name="firstName" class="modern-input" 
-                                       placeholder="Enter your first name" required>
-                                <div class="input-icon">✓</div>
-                            </div>
-                        </div>
+                    <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-white/70">
+                      <div className="text-center transform transition-all duration-300 group-hover:scale-105">
+                        <Lock className="w-8 h-8 text-gray-600 mb-3 transition-colors duration-300 group-hover:text-yellow-600" />
+                        <p className="text-gray-700 font-bold mb-2">
+                          Unlock Instant Access to the Full 12-Question Contractor Vetting Script
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          See How to Avoid Costly Basement Mistakes!
+                        </p>
+                      </div>
                     </div>
-                    
-                    <!-- Step 3: Consent -->
-                    <div class="checkbox-group" data-step="3">
-                        <div class="custom-checkbox">
-                            <input type="checkbox" id="terms" name="terms" required>
-                            <div class="checkmark"></div>
-                        </div>
-                        <label for="terms">I accept the <a href="#" target="_blank">terms and conditions</a> and <a href="#" target="_blank">privacy policy</a></label>
+                  </div>
+                </div>
+
+                {/* Progressive Form */}
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Step 1: Email */}
+                  {currentStep >= 1 && (
+                    <div className="step-transition">
+                      <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                        Email Address
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="email"
+                          type="email"
+                          inputMode="email"
+                          value={email}
+                          onChange={handleEmailChange}
+                          required
+                          disabled={isSubmitting}
+                          className={`neumorphic-input w-full h-14 text-lg px-6 ${emailValid ? 'valid' : ''}`}
+                          placeholder="Enter your email address"
+                        />
+                        {emailValid && (
+                          <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                            <CheckCircle className="w-6 h-6 text-green-500" />
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    
-                    <button type="submit" class="submit-btn" id="submitBtn">
-                        <span class="btn-text">Get My Free 12-Question Script Now!</span>
-                    </button>
+                  )}
+
+                  {/* Step 2: Name */}
+                  {currentStep >= 2 && (
+                    <div className="step-transition">
+                      <Label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                        First Name
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="name"
+                          type="text"
+                          value={name}
+                          onChange={handleNameChange}
+                          required
+                          disabled={isSubmitting}
+                          className={`neumorphic-input w-full h-14 text-lg px-6 ${nameValid ? 'valid' : ''}`}
+                          placeholder="Enter your first name"
+                        />
+                        {nameValid && (
+                          <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                            <CheckCircle className="w-6 h-6 text-green-500" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 3: Terms & Submit */}
+                  {currentStep >= 3 && (
+                    <div className="step-transition space-y-6">
+                      <div className="flex items-start space-x-3">
+                        <Checkbox
+                          id="terms"
+                          checked={acceptedTerms}
+                          onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
+                          disabled={isSubmitting}
+                          className="mt-1"
+                        />
+                        <Label 
+                          htmlFor="terms" 
+                          className="text-sm text-gray-600 leading-5 cursor-pointer"
+                        >
+                          I accept the{' '}
+                          <a href="#" className="text-yellow-600 hover:text-yellow-700 underline">
+                            terms and conditions
+                          </a>
+                          {' '}and{' '}
+                          <a href="#" className="text-yellow-600 hover:text-yellow-700 underline">
+                            privacy policy
+                          </a>
+                        </Label>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        disabled={!isFormValid}
+                        className="golden-button w-full h-16 text-lg font-bold tracking-wide rounded-xl"
+                      >
+                        {isSubmitting ? (
+                          <div className="flex items-center justify-center">
+                            <div className="animate-spin w-6 h-6 border-3 border-current border-t-transparent rounded-full mr-3"></div>
+                            PROCESSING...
+                          </div>
+                        ) : (
+                          "GET MY FREE 12-QUESTION SCRIPT NOW!"
+                        )}
+                      </Button>
+                    </div>
+                  )}
                 </form>
-                
-                <div class="privacy-note">
-                    🔒 Your information is 100% secure. We will never share your email. <a href="#">Privacy Policy</a>
+
+                {/* Security Badges */}
+                <div className="grid grid-cols-3 gap-3 mt-8">
+                  <div className="security-badge text-center">
+                    <Shield className="w-5 h-5 mx-auto mb-1 text-gray-600" />
+                    <span className="text-xs font-medium">SSL Secure</span>
+                  </div>
+                  <div className="security-badge text-center">
+                    <span className="text-lg mb-1 block">🚫</span>
+                    <span className="text-xs font-medium">No Spam</span>
+                  </div>
+                  <div className="security-badge text-center">
+                    <span className="text-lg mb-1 block">🛡️</span>
+                    <span className="text-xs font-medium">GDPR Safe</span>
+                  </div>
                 </div>
-                
-                <div class="security-badges">
-                    <div class="security-badge">
-                        <span class="badge-icon">🔒</span>
-                        SSL Secured
-                    </div>
-                    <div class="security-badge">
-                        <span class="badge-icon">🚫</span>
-                        Spam Free
-                    </div>
-                    <div class="security-badge">
-                        <span class="badge-icon">🛡️</span>
-                        GDPR Compliant
-                    </div>
+
+                {/* Privacy Notice */}
+                <div className="text-center mt-6">
+                  <p className="text-sm text-gray-500">
+                    Your information is 100% secure. We will never share your email.{' '}
+                    <a href="#" className="text-yellow-600 hover:text-yellow-700 underline">
+                      Privacy Policy
+                    </a>
+                  </p>
                 </div>
-            </div>
+              </>
+            )}
+          </div>
         </div>
-    </div>
-    
-    <script>
-        // Floating Particles System
-        class ParticleSystem {
-            constructor() {
-                this.container = document.getElementById('particles');
-                this.particles = [];
-                this.init();
-            }
-            
-            init() {
-                this.createParticles();
-                setInterval(() => this.createParticle(), 2000);
-            }
-            
-            createParticles() {
-                for (let i = 0; i < 15; i++) {
-                    setTimeout(() => this.createParticle(), i * 200);
-                }
-            }
-            
-            createParticle() {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                particle.style.animationDelay = Math.random() * 2 + 's';
-                
-                this.container.appendChild(particle);
-                
-                setTimeout(() => {
-                    if (particle.parentNode) {
-                        particle.remove();
-                    }
-                }, 15000);
-            }
-        }
-        
-        // Enhanced Progressive Form
-        class EnhancedProgressiveForm {
-            constructor() {
-                this.currentStep = 1;
-                this.maxStep = 3;
-                this.form = document.getElementById('progressiveForm');
-                this.emailInput = document.getElementById('email');
-                this.nameInput = document.getElementById('firstName');
-                this.termsCheckbox = document.getElementById('terms');
-                this.submitBtn = document.getElementById('submitBtn');
-                this.progressLine = document.querySelector('.progress-dots');
-                
-                this.init();
-            }
-            
-            init() {
-                this.emailInput.addEventListener('input', this.handleEmailInput.bind(this));
-                this.nameInput.addEventListener('input', this.handleNameInput.bind(this));
-                this.termsCheckbox.addEventListener('change', this.handleTermsChange.bind(this));
-                this.form.addEventListener('submit', this.handleSubmit.bind(this));
-                
-                // Add advanced input effects
-                this.addInputEffects();
-                this.addProgressInteractivity();
-                
-                // Show initial elements with enhanced animation
-                setTimeout(() => {
-                    this.showElementsForStep(1);
-                }, 1000);
-            }
-            
-            addInputEffects() {
-                [this.emailInput, this.nameInput].forEach(input => {
-                    input.addEventListener('focus', (e) => {
-                        e.target.style.transform = 'translateY(-1px)';
-                    });
-                    
-                    input.addEventListener('blur', (e) => {
-                        if (!e.target.matches(':focus')) {
-                            e.target.style.transform = '';
-                        }
-                    });
-                });
-            }
-            
-            addProgressInteractivity() {
-                // Make progress dots interactive
-                document.querySelectorAll('.progress-dot').forEach((dot, index) => {
-                    dot.addEventListener('mouseenter', () => {
-                        if (index + 1 <= this.currentStep) {
-                            dot.style.transform = 'scale(1.6)';
-                            dot.style.zIndex = '10';
-                        }
-                    });
-                    
-                    dot.addEventListener('mouseleave', () => {
-                        const isActive = dot.classList.contains('active');
-                        const isCompleted = dot.classList.contains('completed');
-                        if (isActive) {
-                            dot.style.transform = 'scale(1.4)';
-                        } else if (isCompleted) {
-                            dot.style.transform = 'scale(1.2)';
-                        } else {
-                            dot.style.transform = 'scale(1)';
-                        }
-                        dot.style.zIndex = '1';
-                    });
-                });
-            }
-            
-            handleEmailInput(e) {
-                const email = e.target.value;
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                const isValid = emailRegex.test(email);
-                
-                if (isValid) {
-                    this.markInputAsValid(e.target);
-                    if (this.currentStep === 1) {
-                        setTimeout(() => {
-                            this.nextStep();
-                        }, 1200);
-                    }
-                } else {
-                    this.markInputAsInvalid(e.target);
-                }
-            }
-            
-            handleNameInput(e) {
-                const name = e.target.value.trim();
-                const isValid = name.length >= 2;
-                
-                if (isValid) {
-                    this.markInputAsValid(e.target);
-                    if (this.currentStep === 2) {
-                        setTimeout(() => {
-                            this.nextStep();
-                        }, 1200);
-                    }
-                } else {
-                    this.markInputAsInvalid(e.target);
-                }
-            }
-            
-            handleTermsChange(e) {
-                if (e.target.checked && this.currentStep === 3) {
-                    setTimeout(() => {
-                        this.showSubmitButton();
-                    }, 500);
-                }
-            }
-            
-            markInputAsValid(input) {
-                input.classList.add('valid');
-                input.parentElement.classList.add('validated');
-                
-                // Enhanced success animation
-                setTimeout(() => {
-                    input.style.transform = 'translateY(-3px) scale(1.02)';
-                    input.style.animation = 'success-bounce 0.6s ease';
-                    setTimeout(() => {
-                        input.style.transform = '';
-                        input.style.animation = '';
-                    }, 600);
-                }, 200);
-            }
-            
-            markInputAsInvalid(input) {
-                input.classList.remove('valid');
-                input.parentElement.classList.remove('validated');
-            }
-            
-            nextStep() {
-                if (this.currentStep < this.maxStep) {
-                    // Mark current step as completed
-                    const currentDot = document.querySelector(`[data-step="${this.currentStep}"]`);
-                    currentDot.classList.add('completed');
-                    currentDot.classList.remove('active');
-                    
-                    this.currentStep++;
-                    this.updateProgressDots();
-                    this.showElementsForStep(this.currentStep);
-                }
-            }
-            
-            updateProgressDots() {
-                // Update progress line
-                const progressPercentage = ((this.currentStep - 1) / (this.maxStep - 1)) * 100;
-                this.progressLine.style.setProperty('--progress', `${progressPercentage}%`);
-                
-                document.querySelectorAll('.progress-dot').forEach((dot, index) => {
-                    if (index + 1 < this.currentStep) {
-                        dot.classList.add('completed');
-                        dot.classList.remove('active');
-                    } else if (index + 1 === this.currentStep) {
-                        dot.classList.add('active');
-                        dot.classList.remove('completed');
-                    } else {
-                        dot.classList.remove('active', 'completed');
-                    }
-                });
-            }
-            
-            showElementsForStep(step) {
-                // Show form step with enhanced animation
-                const stepElement = document.querySelector(`[data-step="${step}"].form-step`);
-                if (stepElement) {
-                    stepElement.classList.add('active');
-                    
-                    // Enhanced focus with delay and effect
-                    setTimeout(() => {
-                        const input = stepElement.querySelector('input');
-                        if (input) {
-                            input.focus();
-                            input.style.transform = 'translateY(-3px) scale(1.02)';
-                            input.style.animation = 'input-appear 0.6s ease';
-                            setTimeout(() => {
-                                input.style.transform = '';
-                                input.style.animation = '';
-                            }, 600);
-                        }
-                    }, 400);
-                }
-                
-                // Show additional elements for step 3 with staggered animation
-                if (step === 3) {
-                    setTimeout(() => {
-                        document.querySelector('.checkbox-group').classList.add('show');
-                    }, 500);
-                    
-                    setTimeout(() => {
-                        document.querySelector('.privacy-note').classList.add('show');
-                    }, 800);
-                    
-                    setTimeout(() => {
-                        document.querySelector('.security-badges').classList.add('show');
-                    }, 1100);
-                }
-            }
-            
-            showSubmitButton() {
-                this.submitBtn.classList.add('show');
-                
-                // Enhanced entrance animation
-                setTimeout(() => {
-                    this.submitBtn.style.animation = 'btn-entrance 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-                }, 200);
-            }
-            
-            async handleSubmit(e) {
-                e.preventDefault();
-                
-                // Enhanced validation
-                const email = this.emailInput.value;
-                const name = this.nameInput.value;
-                const terms = this.termsCheckbox.checked;
-                
-                if (!email || !name || !terms) {
-                    this.showError('Please complete all fields and accept the terms.');
-                    return;
-                }
-                
-                // Show enhanced loading state
-                this.setLoadingState(true);
-                
-                // Simulate API call with realistic timing
-                try {
-                    await this.simulateFormSubmission({ email, name, terms });
-                    this.showSuccess();
-                } catch (error) {
-                    this.showError('Something went wrong. Please try again.');
-                } finally {
-                    this.setLoadingState(false);
-                }
-            }
-            
-            setLoadingState(loading) {
-                if (loading) {
-                    this.submitBtn.disabled = true;
-                    this.submitBtn.innerHTML = `
-                        <span class="btn-text">Processing Your Request...</span>
-                        <div class="loading-spinner"></div>
-                    `;
-                    this.submitBtn.style.animation = 'none';
-                    this.submitBtn.style.transform = 'translateY(-2px) scale(0.98)';
-                } else {
-                    this.submitBtn.disabled = false;
-                    this.submitBtn.innerHTML = '<span class="btn-text">Get My Free 12-Question Script Now!</span>';
-                    this.submitBtn.style.transform = '';
-                }
-            }
-            
-            async simulateFormSubmission(data) {
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        console.log('Form submitted with enhanced data:', data);
-                        resolve();
-                    }, 3000);
-                });
-            }
-            
-            showSuccess() {
-                // Enhanced success animation
-                this.form.innerHTML = `
-                    <div class="success-container">
-                        <div class="success-icon">✓</div>
-                        <h3 class="success-title">Perfect! You're All Set!</h3>
-                        <p class="success-message">Your exclusive 12-question contractor vetting script is on its way to your inbox.</p>
-                        <p class="success-note">Check your email (including spam folder) within the next 2 minutes.</p>
-                    </div>
-                `;
-                
-                // Hide all form elements with staggered animation
-                setTimeout(() => {
-                    document.querySelector('.progress-dots').style.opacity = '0';
-                    document.querySelector('.progress-dots').style.transform = 'translateY(-20px)';
-                }, 100);
-                
-                setTimeout(() => {
-                    document.querySelector('.privacy-note').style.opacity = '0';
-                    document.querySelector('.security-badges').style.opacity = '0';
-                }, 300);
-            }
-            
-            showError(message) {
-                // Enhanced error notification with better styling
-                const errorDiv = document.createElement('div');
-                errorDiv.style.cssText = `
-                    position: fixed;
-                    top: 30px;
-                    right: 30px;
-                    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-                    color: white;
-                    padding: 20px 28px;
-                    border-radius: 16px;
-                    font-weight: 700;
-                    font-size: 0.95rem;
-                    box-shadow: 
-                        0 20px 40px rgba(239, 68, 68, 0.4),
-                        0 10px 20px rgba(239, 68, 68, 0.3);
-                    z-index: 10000;
-                    animation: error-slide-in 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-                    border: 2px solid rgba(255, 255, 255, 0.2);
-                    backdrop-filter: blur(10px);
-                `;
-                errorDiv.textContent = `⚠️ ${message}`;
-                document.body.appendChild(errorDiv);
-                
-                // Enhanced removal with animation
-                setTimeout(() => {
-                    errorDiv.style.animation = 'error-slide-out 0.4s ease forwards';
-                    setTimeout(() => {
-                        errorDiv.remove();
-                    }, 400);
-                }, 4000);
-            }
-        }
-        
-        // Enhanced Scroll Animations
-        class ScrollAnimations {
-            constructor() {
-                this.init();
-            }
-            
-            init() {
-                const observerOptions = {
-                    threshold: 0.1,
-                    rootMargin: '0px 0px -100px 0px'
-                };
-                
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach((entry, index) => {
-                        if (entry.isIntersecting) {
-                            setTimeout(() => {
-                                entry.target.style.opacity = '1';
-                                entry.target.style.transform = 'translateY(0) scale(1)';
-                            }, index * 150);
-                        }
-                    });
-                }, observerOptions);
-                
-                document.querySelectorAll('.benefits-list li').forEach((li, index) => {
-                    li.style.opacity = '0';
-                    li.style.transform = 'translateY(40px) scale(0.95)';
-                    li.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-                    observer.observe(li);
-                });
-            }
-        }
-        
-        // Initialize all systems
-        document.addEventListener('DOMContentLoaded', () => {
-            new ParticleSystem();
-            new EnhancedProgressiveForm();
-            new ScrollAnimations();
-        });
-    </script>
-</body>
-</html>
+
+        {/* Footer */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center">
+          <div className="w-12 h-px bg-yellow-400 mx-auto mb-4 opacity-60"></div>
+          <p className="text-sm text-gray-400">
+            K-Sump Solutions • Waterproofing Authority • Columbus, OH
+          </p>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Home;
