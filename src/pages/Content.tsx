@@ -5,7 +5,6 @@ import { Elite12Questions } from '@/components/Elite12Questions';
 import PremiumCheatSheet from '@/components/PremiumCheatSheet';
 import { PrepChecklist } from '@/components/PrepChecklist';
 import { Glossary } from '@/components/Glossary';
-import { DownloadSection } from '@/components/DownloadSection';
 import { ProgressBar } from '@/components/ProgressBar';
 import { useContentAccess } from '@/hooks/useContentAccess';
 
@@ -41,7 +40,6 @@ const Content = () => {
           
           <PrepChecklist isUnlocked={true} onUnlockClick={scrollToTop} />
           <Glossary isUnlocked={true} onUnlockClick={scrollToTop} />
-          <DownloadSection isUnlocked={true} onUnlockClick={scrollToTop} />
         </main>
       </div>
     </div>
