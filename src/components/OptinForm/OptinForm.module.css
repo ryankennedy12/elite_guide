@@ -77,23 +77,12 @@
 }
 
 .mainContent {
-  max-width: 1400px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 0 40px 100px 40px;
-  display: grid;
-  grid-template-columns: 1fr 500px;
-  gap: 100px;
-  align-items: start;
   position: relative;
   z-index: 2;
-}
-
-@media (max-width: 1024px) {
-  .mainContent {
-    grid-template-columns: 1fr;
-    gap: 60px;
-    padding: 0 20px 60px 20px;
-  }
+  text-align: center;
 }
 
 @media (max-width: 768px) {
@@ -102,7 +91,7 @@
   }
   
   .mainContent {
-    gap: 40px;
+    padding: 0 20px 60px 20px;
   }
   
   .floatingParticles {
