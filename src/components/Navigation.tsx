@@ -14,6 +14,7 @@ const Navigation: React.FC = () => {
     { label: 'Prep Checklist', href: '/prep-checklist', id: 'prep-checklist' },
     { label: 'Glossary', href: '/glossary', id: 'glossary' },
     { label: 'Question Maker', href: '/question-maker', id: 'question-maker' },
+    { label: 'Compare Contractors', href: '/contractor-comparison', id: 'contractor-comparison' },
     { label: 'My Notes', href: '/my-notes', id: 'my-notes' },
   ];
 

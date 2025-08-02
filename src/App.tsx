@@ -11,6 +11,7 @@ import PrepChecklist from "./pages/PrepChecklist";
 import Glossary from "./pages/Glossary";
 import QuestionMaker from "./pages/QuestionMaker";
 import MyNotes from "./pages/MyNotes";
+import ContractorComparison from "./pages/ContractorComparison";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/glossary" element={<Glossary />} />
           <Route path="/question-maker" element={<QuestionMaker />} />
           <Route path="/my-notes" element={<MyNotes />} />
+          <Route path="/contractor-comparison" element={<ContractorComparison />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
