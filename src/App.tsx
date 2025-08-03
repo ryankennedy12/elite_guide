@@ -12,6 +12,7 @@ import Glossary from "./pages/Glossary";
 import QuestionMaker from "./pages/QuestionMaker";
 import MyNotes from "./pages/MyNotes";
 import ContractorComparison from "./pages/ContractorComparison";
+import ProjectTracker from "./pages/ProjectTracker";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/question-maker" element={<QuestionMaker />} />
           <Route path="/my-notes" element={<MyNotes />} />
           <Route path="/contractor-comparison" element={<ContractorComparison />} />
+          <Route path="/project-tracker" element={<ProjectTracker />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
