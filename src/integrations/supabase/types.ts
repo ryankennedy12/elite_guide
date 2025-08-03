@@ -14,7 +14,345 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      contractor_comparisons: {
+        Row: {
+          contractors: Json
+          created_at: string
+          criteria: Json
+          id: string
+          notes: string | null
+          recommendation: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contractors?: Json
+          created_at?: string
+          criteria?: Json
+          id?: string
+          notes?: string | null
+          recommendation?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contractors?: Json
+          created_at?: string
+          criteria?: Json
+          id?: string
+          notes?: string | null
+          recommendation?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      contractors: {
+        Row: {
+          business_info: Json | null
+          contact_info: Json | null
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_info?: Json | null
+          contact_info?: Json | null
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_info?: Json | null
+          contact_info?: Json | null
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      feedback: {
+        Row: {
+          created_at: string
+          feedback_text: string | null
+          id: string
+          rating: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          feedback_text?: string | null
+          id?: string
+          rating: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          feedback_text?: string | null
+          id?: string
+          rating?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      milestones: {
+        Row: {
+          category: string
+          completed_date: string | null
+          created_at: string
+          description: string | null
+          due_date: string
+          id: string
+          is_payment_milestone: boolean | null
+          notes: string | null
+          payment_amount: number | null
+          project_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          completed_date?: string | null
+          created_at?: string
+          description?: string | null
+          due_date: string
+          id?: string
+          is_payment_milestone?: boolean | null
+          notes?: string | null
+          payment_amount?: number | null
+          project_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          completed_date?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string
+          id?: string
+          is_payment_milestone?: boolean | null
+          notes?: string | null
+          payment_amount?: number | null
+          project_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notes: {
+        Row: {
+          content: string
+          contractor_name: string | null
+          created_at: string
+          follow_up_notes: string[] | null
+          id: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          contractor_name?: string | null
+          created_at?: string
+          follow_up_notes?: string[] | null
+          id?: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          contractor_name?: string | null
+          created_at?: string
+          follow_up_notes?: string[] | null
+          id?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          phone: string | null
+          preferences: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          phone?: string | null
+          preferences?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          phone?: string | null
+          preferences?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      project_media: {
+        Row: {
+          caption: string | null
+          category: string | null
+          created_at: string
+          id: string
+          project_id: string
+          type: string
+          url: string
+        }
+        Insert: {
+          caption?: string | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          project_id: string
+          type: string
+          url: string
+        }
+        Update: {
+          caption?: string | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          project_id?: string
+          type?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_media_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          contractor_contact: string | null
+          contractor_id: string | null
+          contractor_name: string | null
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          name: string
+          notes: string | null
+          paid_amount: number | null
+          project_type: string
+          start_date: string | null
+          status: string
+          total_cost: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contractor_contact?: string | null
+          contractor_id?: string | null
+          contractor_name?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          paid_amount?: number | null
+          project_type: string
+          start_date?: string | null
+          status?: string
+          total_cost?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contractor_contact?: string | null
+          contractor_id?: string | null
+          contractor_name?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          paid_amount?: number | null
+          project_type?: string
+          start_date?: string | null
+          status?: string
+          total_cost?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      survey_responses: {
+        Row: {
+          answer: string
+          created_at: string
+          id: string
+          question: string
+          user_id: string | null
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          id?: string
+          question: string
+          user_id?: string | null
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          id?: string
+          question?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
