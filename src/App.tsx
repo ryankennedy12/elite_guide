@@ -16,6 +16,8 @@ import ContractorComparison from "./pages/ContractorComparison";
 import ProjectTracker from "./pages/ProjectTracker";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import Home from "./pages/Home";
+import EnhancedAuth from "./pages/EnhancedAuth";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +29,7 @@ const App = () => (
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Elite12Questions />} />
+            <Route path="/" element={<Home />} />
             <Route path="/elite-12" element={<Elite12Questions />} />
             <Route path="/cheat-sheet" element={<CheatSheet />} />
             <Route path="/prep-checklist" element={<PrepChecklist />} />
@@ -36,7 +38,7 @@ const App = () => (
             <Route path="/my-notes" element={<MyNotes />} />
             <Route path="/contractor-comparison" element={<ContractorComparison />} />
             <Route path="/project-tracker" element={<ProjectTracker />} />
-            <Route path="/auth" element={<Auth />} />
+            <Route path="/auth" element={<EnhancedAuth />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
