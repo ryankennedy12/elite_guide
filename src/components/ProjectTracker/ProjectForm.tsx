@@ -78,6 +78,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   };
 
   const handleContractorChange = (contractorId: string) => {
+    if (contractorId === 'none') {
+      updateFormData('contractorId', '');
+      updateFormData('contractorName', '');
+      return;
+    }
+    
     const selectedContractor = contractors.find(c => c.id === contractorId);
     updateFormData('contractorId', contractorId);
     updateFormData('contractorName', selectedContractor?.name || '');
@@ -204,14 +210,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
               <div>
                 <Label htmlFor="contractor">Contractor</Label>
                 <Select
-                  value={formData.contractorId || ''}
+                  value={formData.contractorId || 'none'}
                   onValueChange={handleContractorChange}
                 >
                   <SelectTrigger className="mt-1">
                     <SelectValue placeholder="Select a contractor" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No contractor selected</SelectItem>
+                    <SelectItem value="none">No contractor selected</SelectItem>
                     {contractors.map(contractor => (
                       <SelectItem key={contractor.id} value={contractor.id}>
                         {contractor.name}
