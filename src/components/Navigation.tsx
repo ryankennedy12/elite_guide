@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 const Navigation: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   const navItems = [
     { label: 'Elite 12 Questions', href: '/elite-12', id: 'elite-12' },
@@ -36,20 +38,52 @@ const Navigation: React.FC = () => {
           <Link to="/" className="text-sm font-medium text-gray-300 hover:text-white">
             Home
           </Link>
-          <div className="flex space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.id}
-                to={item.href}
-                className={`relative px-3 py-2 text-sm font-medium transition-colors duration-200 hover:text-gray-300 ${
-                  isActive(item.href) 
-                    ? 'text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-yellow-500' 
-                    : 'text-gray-300'
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+          <div className="flex items-center space-x-8">
+            <div className="flex space-x-8">
+              {navItems.map((item) => (
+                <Link
+                  key={item.id}
+                  to={item.href}
+                  className={`relative px-3 py-2 text-sm font-medium transition-colors duration-200 hover:text-gray-300 ${
+                    isActive(item.href) 
+                      ? 'text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-yellow-500' 
+                      : 'text-gray-300'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+            
+            {/* Auth Section */}
+            <div className="flex items-center gap-4 border-l border-gray-700 pl-8">
+              {user ? (
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <User size={16} className="text-gray-400" />
+                    <span className="text-sm text-gray-300">
+                      {user.email}
+                    </span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={signOut}
+                    className="text-gray-300 border-gray-600 hover:bg-gray-800 hover:text-white"
+                  >
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  asChild 
+                  size="sm"
+                  className="bg-yellow-600 hover:bg-yellow-700 text-black font-medium"
+                >
+                  <Link to="/auth">Sign In</Link>
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
