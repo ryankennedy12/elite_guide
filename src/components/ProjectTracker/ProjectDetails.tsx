@@ -16,9 +16,14 @@ import {
   AlertTriangle,
   FileText,
   Target,
-  TrendingUp
+  TrendingUp,
+  Image,
+  File,
+  Video,
+  ExternalLink,
+  Download
 } from 'lucide-react';
-import { Project, Milestone, getProjectProgress, getOverdueMilestones, getUpcomingMilestones, projectTypeLabels } from '@/types/project';
+import { Project, Milestone, MediaItem, getProjectProgress, getOverdueMilestones, getUpcomingMilestones, projectTypeLabels, mediaCategoryLabels, mediaTypeLabels } from '@/types/project';
 
 interface ProjectDetailsProps {
   project: Project;
@@ -95,6 +100,38 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
 
     onUpdateProject(updatedProject);
     setEditingMilestone(null);
+  };
+
+  const getMediaIcon = (type: MediaItem['type']) => {
+    switch (type) {
+      case 'image':
+        return <Image className="w-4 h-4" />;
+      case 'video':
+        return <Video className="w-4 h-4" />;
+      case 'pdf':
+        return <FileText className="w-4 h-4" />;
+      default:
+        return <File className="w-4 h-4" />;
+    }
+  };
+
+  const getCategoryColor = (category?: MediaItem['category']) => {
+    switch (category) {
+      case 'before':
+        return 'bg-blue-100 text-blue-800';
+      case 'during':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'after':
+        return 'bg-green-100 text-green-800';
+      case 'warranty':
+        return 'bg-purple-100 text-purple-800';
+      case 'invoice':
+        return 'bg-orange-100 text-orange-800';
+      case 'permit':
+        return 'bg-indigo-100 text-indigo-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
   };
 
   const getMilestoneStatusColor = (milestone: Milestone) => {
@@ -492,6 +529,103 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
           </div>
         </CardContent>
       </Card>
+
+      {/* Media & Documents */}
+      {project.media && project.media.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Image className="w-5 h-5" />
+              Project Media & Documents
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {project.media.map((mediaItem) => (
+                <Card key={mediaItem.id} className="overflow-hidden">
+                  <CardContent className="p-4">
+                    {/* Media Preview */}
+                    {mediaItem.type === 'image' && mediaItem.url && (
+                      <div className="mb-3">
+                        <img 
+                          src={mediaItem.url} 
+                          alt={mediaItem.caption || 'Project image'}
+                          className="w-full h-32 object-cover rounded border"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Media Info */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {getMediaIcon(mediaItem.type)}
+                          <span className="text-sm font-medium text-gray-900">
+                            {mediaTypeLabels[mediaItem.type]}
+                          </span>
+                        </div>
+                        <Badge className={`text-xs ${getCategoryColor(mediaItem.category)}`}>
+                          {mediaCategoryLabels[mediaItem.category || 'other']}
+                        </Badge>
+                      </div>
+                      
+                      {mediaItem.caption && (
+                        <p className="text-sm text-gray-700 leading-relaxed">
+                          {mediaItem.caption}
+                        </p>
+                      )}
+                      
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <span>{formatDate(mediaItem.timestamp)}</span>
+                        <a 
+                          href={mediaItem.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-blue-600 hover:text-blue-700"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          Open
+                        </a>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            
+            {/* Media Summary */}
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <div className="font-medium text-gray-800">Total Items</div>
+                  <div className="text-gray-600">{project.media.length}</div>
+                </div>
+                <div>
+                  <div className="font-medium text-gray-800">Photos</div>
+                  <div className="text-gray-600">
+                    {project.media.filter(m => m.type === 'image').length}
+                  </div>
+                </div>
+                <div>
+                  <div className="font-medium text-gray-800">Documents</div>
+                  <div className="text-gray-600">
+                    {project.media.filter(m => m.type === 'pdf' || m.type === 'document').length}
+                  </div>
+                </div>
+                <div>
+                  <div className="font-medium text-gray-800">Videos</div>
+                  <div className="text-gray-600">
+                    {project.media.filter(m => m.type === 'video').length}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Project Summary */}
       {project.status === 'completed' && (

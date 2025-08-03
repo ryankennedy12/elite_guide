@@ -13,7 +13,9 @@ import {
   Clock,
   Eye,
   Edit,
-  Trash2
+  Trash2,
+  Image,
+  FileText
 } from 'lucide-react';
 import { Project, getProjectProgress, getOverdueMilestones, projectTypeLabels } from '@/types/project';
 
@@ -127,6 +129,20 @@ const ProjectList: React.FC<ProjectListProps> = ({
                     </div>
                   </div>
                 </CardHeader>
+                  {/* Media Count */}
+                  {project.media && project.media.length > 0 && (
+                    <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
+                      <div className="flex items-center gap-1">
+                        <Image className="w-3 h-3" />
+                        <span>{project.media.filter(m => m.type === 'image').length} photos</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <FileText className="w-3 h-3" />
+                        <span>{project.media.filter(m => m.type === 'pdf' || m.type === 'document').length} docs</span>
+                      </div>
+                    </div>
+                  )}
+
 
                 <CardContent className="space-y-4">
                   {/* Progress */}

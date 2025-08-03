@@ -31,6 +31,10 @@ const ProjectTracker = () => {
           actualEndDate: p.actualEndDate ? new Date(p.actualEndDate) : undefined,
           createdAt: new Date(p.createdAt),
           updatedAt: new Date(p.updatedAt),
+          media: (p.media || []).map((m: any) => ({
+            ...m,
+            timestamp: new Date(m.timestamp)
+          })),
           milestones: p.milestones.map((m: any) => ({
             ...m,
             dueDate: new Date(m.dueDate),

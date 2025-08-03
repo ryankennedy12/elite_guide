@@ -26,11 +26,55 @@ export interface Project {
   paidAmount?: number;
   projectType: 'interior-waterproofing' | 'exterior-waterproofing' | 'sump-pump' | 'foundation-repair' | 'drainage' | 'other';
   notes?: string;
-  documents?: string[]; // File names or URLs
-  photos?: string[]; // File names or URLs
+  media?: MediaItem[]; // Photos, documents, and other files
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface MediaItem {
+  id: string;
+  url: string;
+  type: 'image' | 'pdf' | 'document' | 'video';
+  caption: string;
+  timestamp: Date;
+  category?: 'before' | 'during' | 'after' | 'warranty' | 'invoice' | 'permit' | 'other';
+  tags?: string[];
+  projectPhase?: string; // Links to milestone or project phase
+}
+
+export const mediaTypes = [
+  'image',
+  'pdf', 
+  'document',
+  'video'
+] as const;
+
+export const mediaCategories = [
+  'before',
+  'during',
+  'after',
+  'warranty',
+  'invoice',
+  'permit',
+  'other'
+] as const;
+
+export const mediaCategoryLabels = {
+  'before': 'Before Work',
+  'during': 'During Work',
+  'after': 'After Completion',
+  'warranty': 'Warranty Documents',
+  'invoice': 'Invoices & Receipts',
+  'permit': 'Permits & Approvals',
+  'other': 'Other'
+};
+
+export const mediaTypeLabels = {
+  'image': 'Photo/Image',
+  'pdf': 'PDF Document',
+  'document': 'Document',
+  'video': 'Video'
+};
 
 export const milestoneCategories = [
   'preparation',

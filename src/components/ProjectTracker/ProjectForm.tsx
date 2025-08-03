@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Save, X, Plus, Minus } from 'lucide-react';
-import { Project, Milestone, projectTypes, projectTypeLabels, milestoneCategories, milestoneTemplates } from '@/types/project';
+import { Project, Milestone, MediaItem, projectTypes, projectTypeLabels, milestoneCategories, milestoneTemplates, mediaTypes, mediaCategories, mediaTypeLabels, mediaCategoryLabels } from '@/types/project';
 import { Contractor } from '@/types/contractor';
 
 interface ProjectFormProps {
@@ -39,6 +39,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       totalCost: 0,
       paidAmount: 0,
       notes: '',
+      media: [],
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -140,6 +141,30 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const removeMilestone = (index: number) => {
     const newMilestones = formData.milestones.filter((_, i) => i !== index);
     updateFormData('milestones', newMilestones);
+  };
+
+  const addMediaItem = () => {
+    const newMediaItem: MediaItem = {
+      id: `media-${Date.now()}`,
+      url: '',
+      type: 'image',
+      caption: '',
+      timestamp: new Date(),
+      category: 'other'
+    };
+    
+    updateFormData('media', [...(formData.media || []), newMediaItem]);
+  };
+
+  const updateMediaItem = (index: number, updates: Partial<MediaItem>) => {
+    const newMedia = [...(formData.media || [])];
+    newMedia[index] = { ...newMedia[index], ...updates };
+    updateFormData('media', newMedia);
+  };
+
+  const removeMediaItem = (index: number) => {
+    const newMedia = (formData.media || []).filter((_, i) => i !== index);
+    updateFormData('media', newMedia);
   };
 
   const handleSave = () => {
@@ -464,6 +489,131 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
               className="mt-1"
               rows={4}
             />
+          </div>
+
+          {/* Media & Documents Section */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <Label className="text-lg font-semibold">Project Media & Documents</Label>
+              <Button
+                onClick={addMediaItem}
+                variant="outline"
+                size="sm"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Add Media
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              {(formData.media || []).map((mediaItem, index) => (
+                <Card key={mediaItem.id} className="p-4 bg-gray-50">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label className="text-sm">URL/Link</Label>
+                      <Input
+                        value={mediaItem.url}
+                        onChange={(e) => updateMediaItem(index, { url: e.target.value })}
+                        placeholder="https://example.com/photo.jpg"
+                        className="mt-1"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label className="text-sm">Type</Label>
+                      <Select
+                        value={mediaItem.type}
+                        onValueChange={(value) => updateMediaItem(index, { type: value as MediaItem['type'] })}
+                      >
+                        <SelectTrigger className="mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mediaTypes.map(type => (
+                            <SelectItem key={type} value={type}>
+                              {mediaTypeLabels[type]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div>
+                      <Label className="text-sm">Category</Label>
+                      <Select
+                        value={mediaItem.category || 'other'}
+                        onValueChange={(value) => updateMediaItem(index, { category: value as MediaItem['category'] })}
+                      >
+                        <SelectTrigger className="mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mediaCategories.map(category => (
+                            <SelectItem key={category} value={category}>
+                              {mediaCategoryLabels[category]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-3 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div className="md:col-span-3">
+                      <Label className="text-sm">Caption/Description</Label>
+                      <Input
+                        value={mediaItem.caption}
+                        onChange={(e) => updateMediaItem(index, { caption: e.target.value })}
+                        placeholder="Describe what this shows..."
+                        className="mt-1"
+                      />
+                    </div>
+                    
+                    <div className="flex justify-end">
+                      <Button
+                        onClick={() => removeMediaItem(index)}
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {/* Preview */}
+                  {mediaItem.url && mediaItem.type === 'image' && (
+                    <div className="mt-3">
+                      <Label className="text-sm text-gray-600">Preview:</Label>
+                      <div className="mt-1">
+                        <img 
+                          src={mediaItem.url} 
+                          alt={mediaItem.caption || 'Project image'}
+                          className="max-w-xs max-h-32 object-cover rounded border"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </Card>
+              ))}
+              
+              {(!formData.media || formData.media.length === 0) && (
+                <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+                  <p className="text-gray-500 mb-4">No media or documents added yet</p>
+                  <Button
+                    onClick={addMediaItem}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Plus className="w-4 h-4 mr-1" />
+                    Add Your First Media Item
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
