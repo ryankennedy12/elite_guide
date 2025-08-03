@@ -96,7 +96,7 @@ const Navigation: React.FC = () => {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             variant="ghost"
             size="sm"
-            className="text-white hover:bg-gray-800 focus:ring-0 focus:outline-none"
+            className="text-white hover:bg-gray-800 focus:ring-0 focus:outline-none p-3 touch-target"
           >
             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </Button>
@@ -105,7 +105,7 @@ const Navigation: React.FC = () => {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-95 z-50 md:hidden">
+        <div className="fixed inset-0 bg-black bg-opacity-95 z-50 md:hidden animate-fade-in">
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between p-4 border-b border-gray-800">
               <span className="text-lg font-semibold">Navigation</span>
@@ -113,7 +113,7 @@ const Navigation: React.FC = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-gray-800 focus:ring-0 focus:outline-none"
+                className="text-white hover:bg-gray-800 focus:ring-0 focus:outline-none p-3 touch-target touch-feedback"
               >
                 <X size={20} />
               </Button>
@@ -124,7 +124,7 @@ const Navigation: React.FC = () => {
                 <Link
                   to="/"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors duration-200 ${
+                  className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors duration-200 touch-target touch-feedback ${
                     location.pathname === '/'
                       ? 'bg-gray-800 text-white'
                       : 'text-gray-300 hover:bg-gray-800 hover:text-white'
@@ -137,7 +137,7 @@ const Navigation: React.FC = () => {
                     key={item.id}
                     to={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors duration-200 ${
+                    className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors duration-200 touch-target touch-feedback ${
                       isActive(item.href)
                         ? 'bg-gray-800 text-white'
                         : 'text-gray-300 hover:bg-gray-800 hover:text-white'
@@ -146,6 +146,38 @@ const Navigation: React.FC = () => {
                     {item.label}
                   </Link>
                 ))}
+              </div>
+              
+              {/* Mobile Auth Section */}
+              <div className="border-t border-gray-800 mt-6 pt-6">
+                {user ? (
+                  <div className="space-y-3">
+                    <div className="px-4 py-2 bg-gray-800 rounded-lg">
+                      <div className="flex items-center gap-2 text-sm text-gray-300">
+                        <User size={16} />
+                        {user.email}
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => {
+                        signOut();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      variant="outline"
+                      className="w-full text-gray-300 border-gray-600 hover:bg-gray-800 hover:text-white touch-target"
+                    >
+                      Sign Out
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    asChild
+                    className="w-full bg-yellow-600 hover:bg-yellow-700 text-black font-medium touch-target"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Link to="/auth">Sign In</Link>
+                  </Button>
+                )}
               </div>
             </div>
           </div>

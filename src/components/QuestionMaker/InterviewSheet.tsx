@@ -53,9 +53,9 @@ const InterviewSheet: React.FC<InterviewSheetProps> = ({ wizardState, onReorder 
   const mustAskCount = questions.filter(q => q.isMustAsk).length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mobile-padding">
       {/* Header */}
-      <div className="text-center border-b pb-6">
+      <div className="text-center border-b pb-6 mobile-stack">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
           Contractor Interview Checklist
         </h1>
@@ -79,9 +79,9 @@ const InterviewSheet: React.FC<InterviewSheetProps> = ({ wizardState, onReorder 
           </div>
         ) : (
           questions.map((question, index) => (
-            <Card key={question.id} className={`border ${question.isMustAsk ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200'}`}>
-              <CardContent className="p-4">
-                <div className="flex items-start gap-4">
+            <Card key={question.id} className={`border mobile-card ${question.isMustAsk ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200'}`}>
+              <CardContent className="p-4 mobile-padding">
+                <div className="flex items-start gap-4 mobile-gap">
                   {/* Drag Handle & Number */}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <GripVertical className="w-4 h-4 text-gray-400 cursor-grab" />
@@ -118,9 +118,9 @@ const InterviewSheet: React.FC<InterviewSheetProps> = ({ wizardState, onReorder 
                       onClick={() => toggleMustAsk(index)}
                       size="sm"
                       variant="ghost"
-                      className={`p-1 h-6 w-6 ${question.isMustAsk ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'}`}
+                      className={`p-2 h-8 w-8 touch-target ${question.isMustAsk ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'}`}
                     >
-                      <Star className={`w-3 h-3 ${question.isMustAsk ? 'fill-current' : ''}`} />
+                      <Star className={`w-4 h-4 ${question.isMustAsk ? 'fill-current' : ''}`} />
                     </Button>
                     
                     {/* Move Controls */}
@@ -129,18 +129,18 @@ const InterviewSheet: React.FC<InterviewSheetProps> = ({ wizardState, onReorder 
                       disabled={index === 0}
                       size="sm"
                       variant="ghost"
-                      className="p-1 h-6 w-6 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                      className="p-2 h-8 w-8 text-gray-400 hover:text-gray-600 disabled:opacity-30 touch-target"
                     >
-                      <ArrowUp className="w-3 h-3" />
+                      <ArrowUp className="w-4 h-4" />
                     </Button>
                     <Button
                       onClick={() => moveQuestion(index, 'down')}
                       disabled={index === questions.length - 1}
                       size="sm"
                       variant="ghost"
-                      className="p-1 h-6 w-6 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                      className="p-2 h-8 w-8 text-gray-400 hover:text-gray-600 disabled:opacity-30 touch-target"
                     >
-                      <ArrowDown className="w-3 h-3" />
+                      <ArrowDown className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>

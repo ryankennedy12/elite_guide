@@ -32,25 +32,25 @@ export const StickyQuestionInput: React.FC<StickyQuestionInputProps> = ({
   };
 
   return (
-    <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 shadow-lg">
+    <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 shadow-lg mobile-padding">
       <div className="max-w-2xl mx-auto">
         <p className="text-sm text-gray-600 mb-3 text-center">
           Not sure where to start? Pick a suggestion above or write your own.
         </p>
         
-        <div className="flex gap-3">
+        <div className="flex gap-3 mobile-gap">
           <Input
             value={currentQuestion}
             onChange={(e) => onQuestionChange(e.target.value)}
             onKeyPress={onKeyPress}
             placeholder="What else do you want to know?"
-            className="text-base h-12 bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+            className="text-base h-12 bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500 touch-target"
           />
           <Button
             onClick={handleAddQuestion}
             disabled={!currentQuestion.trim()}
             size="lg"
-            className="bg-black text-white hover:bg-gray-800 h-12 w-12 p-0 flex-shrink-0"
+            className="bg-black text-white hover:bg-gray-800 h-12 w-12 p-0 flex-shrink-0 touch-target touch-feedback"
           >
             <Plus className="w-5 h-5" />
           </Button>

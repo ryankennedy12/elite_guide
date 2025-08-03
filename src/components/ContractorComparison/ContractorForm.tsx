@@ -138,19 +138,19 @@ const ContractorForm: React.FC<ContractorFormProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl">
+    <div className="max-w-4xl mx-auto mobile-padding">
+      <Card className="mobile-card">
+        <CardHeader className="mobile-padding">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <CardTitle className="text-xl sm:text-2xl">
               {contractor ? 'Edit Contractor' : 'Add New Contractor'}
             </CardTitle>
-            <div className="flex gap-2">
-              <Button onClick={handleSave} className="bg-black text-white hover:bg-gray-800">
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Button onClick={handleSave} className="bg-black text-white hover:bg-gray-800 touch-target flex-1 sm:flex-none">
                 <Save className="w-4 h-4 mr-2" />
                 Save
               </Button>
-              <Button onClick={onCancel} variant="outline">
+              <Button onClick={onCancel} variant="outline" className="touch-target flex-1 sm:flex-none">
                 <X className="w-4 h-4 mr-2" />
                 Cancel
               </Button>
@@ -158,20 +158,20 @@ const ContractorForm: React.FC<ContractorFormProps> = ({
           </div>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="mobile-padding mobile-form">
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="basic">Basic Info</TabsTrigger>
-              <TabsTrigger value="solution">Solution</TabsTrigger>
-              <TabsTrigger value="cost">Cost</TabsTrigger>
-              <TabsTrigger value="warranty">Warranty</TabsTrigger>
-              <TabsTrigger value="questions">Questions</TabsTrigger>
-              <TabsTrigger value="notes">Notes & Scores</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 h-auto">
+              <TabsTrigger value="basic" className="touch-target text-xs sm:text-sm">Basic</TabsTrigger>
+              <TabsTrigger value="solution" className="touch-target text-xs sm:text-sm">Solution</TabsTrigger>
+              <TabsTrigger value="cost" className="touch-target text-xs sm:text-sm">Cost</TabsTrigger>
+              <TabsTrigger value="warranty" className="touch-target text-xs sm:text-sm">Warranty</TabsTrigger>
+              <TabsTrigger value="questions" className="touch-target text-xs sm:text-sm">Questions</TabsTrigger>
+              <TabsTrigger value="notes" className="touch-target text-xs sm:text-sm">Notes</TabsTrigger>
             </TabsList>
 
             {/* Basic Information */}
-            <TabsContent value="basic" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <TabsContent value="basic" className="space-y-6 mobile-stack">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mobile-gap">
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="name">Company Name *</Label>

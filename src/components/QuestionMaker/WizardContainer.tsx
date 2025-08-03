@@ -139,7 +139,7 @@ const WizardContainer: React.FC<WizardContainerProps> = ({ onPlanComplete }) => 
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-4 sm:py-8 mobile-padding">
         {/* Development mode notice */}
         {isDevelopment && (
           <div className="mb-4 p-3 bg-blue-100 border border-blue-300 rounded-lg text-center">
@@ -158,7 +158,7 @@ const WizardContainer: React.FC<WizardContainerProps> = ({ onPlanComplete }) => 
         />
 
         {/* Current Step Content */}
-        <Card className="min-h-[500px]">
+        <Card className="min-h-[400px] sm:min-h-[500px] mobile-card">
           <WizardStepRenderer
             wizardState={wizardState}
             onUpdateState={updateWizardState}

@@ -13,6 +13,8 @@ import {
   Award
 } from 'lucide-react';
 import { Contractor } from '@/types/contractor';
+import { useIsMobile } from '@/hooks/use-mobile';
+import MobileComparisonView from './MobileComparisonView';
 
 interface ComparisonTableProps {
   contractors: Contractor[];
@@ -27,14 +29,27 @@ const ComparisonTable: React.FC<ComparisonTableProps> = ({
   onSelectWinner,
   selectedWinner
 }) => {
+  const isMobile = useIsMobile();
   if (contractors.length === 0) {
     return (
-      <Card>
+      <Card className="mobile-card">
         <CardContent className="text-center py-12">
           <p className="text-gray-500 text-lg">No contractors to compare yet.</p>
           <p className="text-gray-400 text-sm mt-2">Add contractors to see the comparison table.</p>
         </CardContent>
       </Card>
+    );
+  }
+
+  // Use mobile view on small screens
+  if (isMobile) {
+    return (
+      <MobileComparisonView
+        contractors={contractors}
+        selectedWinner={selectedWinner}
+        onEditContractor={onEditContractor}
+        onSelectWinner={onSelectWinner}
+      />
     );
   }
 

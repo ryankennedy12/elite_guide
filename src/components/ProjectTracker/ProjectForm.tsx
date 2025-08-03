@@ -178,19 +178,19 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl">
+    <div className="max-w-4xl mx-auto mobile-padding">
+      <Card className="mobile-card">
+        <CardHeader className="mobile-padding">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <CardTitle className="text-xl sm:text-2xl">
               {project ? 'Edit Project' : 'Create New Project'}
             </CardTitle>
-            <div className="flex gap-2">
-              <Button onClick={handleSave} className="bg-black text-white hover:bg-gray-800">
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Button onClick={handleSave} className="bg-black text-white hover:bg-gray-800 touch-target flex-1 sm:flex-none">
                 <Save className="w-4 h-4 mr-2" />
-                Save Project
+                Save
               </Button>
-              <Button onClick={onCancel} variant="outline">
+              <Button onClick={onCancel} variant="outline" className="touch-target flex-1 sm:flex-none">
                 <X className="w-4 h-4 mr-2" />
                 Cancel
               </Button>
@@ -198,9 +198,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 mobile-padding mobile-form">
           {/* Basic Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mobile-gap">
             <div className="space-y-4">
               <div>
                 <Label htmlFor="name">Project Name *</Label>
