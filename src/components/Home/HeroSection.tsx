@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Users, CheckCircle, ArrowRight } from 'lucide-react';
+import { BookOpen, Users, CheckCircle, ArrowRight } from 'lucide-react';
 
 export const HeroSection: React.FC = () => {
   const navigate = useNavigate();
@@ -18,24 +18,24 @@ export const HeroSection: React.FC = () => {
 
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Trust badge */}
+          {/* Educational badge */}
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in">
-            <Shield className="w-4 h-4" />
-            Trusted by 1,000+ Columbus Homeowners
+            <BookOpen className="w-4 h-4" />
+            Free Educational Resource
           </div>
 
           {/* Main headline */}
           <h1 className="font-inter-tight font-bold text-4xl md:text-6xl lg:text-7xl text-foreground mb-6 leading-tight animate-fade-in">
-            <span className="block">Never Get Scammed by</span>
+            <span className="block">Learn to Vet</span>
             <span className="block text-primary">Waterproofing Contractors</span>
-            <span className="block">Again</span>
+            <span className="block">Like a Pro</span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in">
-            The complete toolkit Columbus homeowners use to <strong className="text-foreground">vet contractors</strong>, 
-            <strong className="text-foreground"> avoid scams</strong>, and 
-            <strong className="text-foreground"> protect their biggest investment</strong>.
+            Free tools and education to help Columbus homeowners <strong className="text-foreground">ask the right questions</strong>, 
+            <strong className="text-foreground"> spot red flags</strong>, and 
+            <strong className="text-foreground"> choose quality contractors</strong>.
           </p>
 
           {/* Value proposition points */}
@@ -59,9 +59,9 @@ export const HeroSection: React.FC = () => {
             <Button 
               size="lg" 
               className="px-8 py-4 text-lg font-semibold h-auto group"
-              onClick={() => navigate('/auth')}
+              onClick={() => navigate('/elite-12')}
             >
-              Start Vetting Contractors Today
+              Get the Elite 12 Questions
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
             <Button 
@@ -72,24 +72,24 @@ export const HeroSection: React.FC = () => {
                 document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
-              See How It Works
+              Learn How to Use This Guide
             </Button>
           </div>
 
-          {/* Social proof numbers */}
+          {/* Educational stats */}
           <div className="mt-16 pt-8 border-t border-border/50">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-1">1,200+</div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wide">Homeowners Protected</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-1">$2.5M+</div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wide">Scams Prevented</div>
+                <div className="text-3xl font-bold text-primary mb-1">12</div>
+                <div className="text-sm text-muted-foreground uppercase tracking-wide">Proven Questions</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-primary mb-1">50+</div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wide">Bad Contractors Exposed</div>
+                <div className="text-sm text-muted-foreground uppercase tracking-wide">Red Flags to Spot</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary mb-1">100%</div>
+                <div className="text-sm text-muted-foreground uppercase tracking-wide">Free to Use</div>
               </div>
             </div>
           </div>

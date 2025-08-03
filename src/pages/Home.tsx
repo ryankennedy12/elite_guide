@@ -1,11 +1,13 @@
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import { HeroSection } from '@/components/Home/HeroSection';
+import { ProblemExplanation } from '@/components/Home/ProblemExplanation';
 import { HowItWorks } from '@/components/Home/HowItWorks';
-import { FeatureShowcase } from '@/components/Home/FeatureShowcase';
-import { SocialProof } from '@/components/Home/SocialProof';
+import { ToolTutorials } from '@/components/Home/ToolTutorials';
+import { RedFlagsGuide } from '@/components/Home/RedFlagsGuide';
+import { PreparationGuide } from '@/components/Home/PreparationGuide';
 import { FAQ } from '@/components/Home/FAQ';
-import { CTA } from '@/components/Home/CTA';
+import { SimpleGetStarted } from '@/components/Home/SimpleGetStarted';
 
 const Home = () => {
   return (
@@ -14,11 +16,13 @@ const Home = () => {
       
       <main>
         <HeroSection />
+        <ProblemExplanation />
         <HowItWorks />
-        <FeatureShowcase />
-        <SocialProof />
+        <ToolTutorials />
+        <RedFlagsGuide />
+        <PreparationGuide />
         <FAQ />
-        <CTA />
+        <SimpleGetStarted />
       </main>
     </div>
   );

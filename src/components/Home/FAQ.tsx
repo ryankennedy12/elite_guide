@@ -122,10 +122,10 @@ export const FAQ: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="font-inter-tight font-bold text-3xl md:text-5xl text-foreground mb-6">
-            Frequently Asked Questions
+            Your Questions Answered
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Get answers to common questions about using ContractorVET to find trustworthy waterproofing contractors.
+            Everything you need to know about vetting contractors, using our tools, and protecting yourself from scams.
           </p>
         </div>
 
