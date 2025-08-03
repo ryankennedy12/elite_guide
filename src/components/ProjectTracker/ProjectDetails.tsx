@@ -65,7 +65,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   const toggleMilestoneStatus = (milestoneId: string) => {
     const updatedMilestones = project.milestones.map(milestone => {
       if (milestone.id === milestoneId) {
-        const newStatus = milestone.status === 'completed' ? 'pending' : 'completed';
+        const newStatus: 'completed' | 'pending' = milestone.status === 'completed' ? 'pending' : 'completed';
         return {
           ...milestone,
           status: newStatus,

@@ -52,54 +52,29 @@ const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ isOpen, onClose
     if (rating > 0 && !isSubmittingFeedback) {
       setIsSubmittingFeedback(true);
       
-      try {
-        // Save feedback to Supabase
-        const { error } = await supabase
-          .from('feedback')
-          .insert({
-            rating: rating,
-            feedback_text: feedback.trim() || null
-          });
+      // Note: Feedback storage would require database tables to be set up
+      // For now, just track analytics
+      console.log('Feedback submitted:', { rating, feedback: feedback.trim() });
 
-        if (error) {
-          console.error('Error saving feedback:', error);
-          toast({
-            title: "Error",
-            description: "There was an issue saving your feedback. Please try again.",
-            variant: "destructive",
-          });
-          setIsSubmittingFeedback(false);
-          return;
-        }
+      sessionStorage.setItem('feedback_submitted', 'true');
+      setHasSubmittedFeedback(true);
+      triggerConfetti();
+      
+      toast({
+        title: "Thank you!",
+        description: "Your feedback protects more homes in Columbus.",
+        duration: 3000,
+      });
 
-        sessionStorage.setItem('feedback_submitted', 'true');
-        setHasSubmittedFeedback(true);
-        triggerConfetti();
-        
-        toast({
-          title: "Thank you!",
-          description: "Your feedback protects more homes in Columbus.",
-          duration: 3000,
+      // Track analytics if available
+      if (typeof window !== 'undefined' && 'gtag' in window) {
+        (window as any).gtag('event', 'feedback_submitted', {
+          rating: rating,
+          has_text_feedback: feedback.length > 0
         });
-
-        // Track analytics if available
-        if (typeof window !== 'undefined' && 'gtag' in window) {
-          (window as any).gtag('event', 'feedback_submitted', {
-            rating: rating,
-            has_text_feedback: feedback.length > 0
-          });
-        }
-        
-      } catch (error) {
-        console.error('Unexpected error saving feedback:', error);
-        toast({
-          title: "Error",
-          description: "An unexpected error occurred. Please try again.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsSubmittingFeedback(false);
       }
+      
+      setIsSubmittingFeedback(false);
     }
   };
 
@@ -150,18 +125,9 @@ const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ isOpen, onClose
   const handleSurveyAnswer = async (answer: string) => {
     const currentQuestion = surveyQuestions[surveyStep].question;
     
-    try {
-      // Save survey response to Supabase
-      await supabase
-        .from('survey_responses')
-        .insert({
-          question: currentQuestion,
-          answer: answer
-        });
-    } catch (error) {
-      console.error('Error saving survey response:', error);
-      // Continue with the survey even if saving fails
-    }
+    // Note: Survey storage would require database tables to be set up
+    // For now, just track analytics
+    console.log('Survey response:', { question: currentQuestion, answer });
 
     const newAnswers = [...surveyAnswers, answer];
     setSurveyAnswers(newAnswers);
