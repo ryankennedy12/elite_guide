@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Users, CheckCircle, ArrowRight } from 'lucide-react';
+import { LogoAnimated } from '@/components/LogoAnimated';
 
 export const HeroSection: React.FC = () => {
   const navigate = useNavigate();
@@ -18,6 +19,15 @@ export const HeroSection: React.FC = () => {
 
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
+          {/* Animated Logo */}
+          <div className="mb-8 flex justify-center">
+            <LogoAnimated 
+              maxWidth="320px"
+              className="md:max-w-[320px] max-w-[220px]"
+              onClick={() => navigate('/')}
+            />
+          </div>
+
           {/* Educational badge */}
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in">
             <BookOpen className="w-4 h-4" />

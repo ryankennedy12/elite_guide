@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Eye, EyeOff, Shield, Users, Star, ArrowRight, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { LogoAnimated } from '@/components/LogoAnimated';
 
 const EnhancedAuth = () => {
   const navigate = useNavigate();
@@ -226,13 +227,23 @@ const EnhancedAuth = () => {
       </div>
 
       {/* Right side - Auth form */}
-      <div className="flex-1 flex items-center justify-center p-8 lg:max-w-md xl:max-w-lg">
+      <div className="flex-1 flex flex-col items-center justify-center p-8 lg:max-w-md xl:max-w-lg">
+        {/* Animated Logo for desktop */}
+        <div className="hidden lg:block mb-8">
+          <LogoAnimated 
+            maxWidth="280px"
+            onClick={() => navigate('/')}
+          />
+        </div>
+
         <div className="w-full max-w-md">
-          {/* Mobile header */}
+          {/* Mobile header with logo */}
           <div className="lg:hidden text-center mb-8">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Shield className="w-8 h-8 text-primary" />
-              <span className="text-2xl font-bold text-foreground">ContractorVET</span>
+            <div className="mb-6">
+              <LogoAnimated 
+                maxWidth="220px"
+                onClick={() => navigate('/')}
+              />
             </div>
             <p className="text-muted-foreground">
               Find trustworthy waterproofing contractors
