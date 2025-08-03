@@ -229,7 +229,7 @@ const EnhancedAuth = () => {
       {/* Right side - Auth form */}
       <div className="flex-1 flex flex-col items-center justify-center p-8 lg:max-w-md xl:max-w-lg">
         {/* Animated Logo for desktop */}
-        <div className="hidden lg:block mb-8">
+        <div className="hidden lg:flex justify-center mb-8">
           <LogoAnimated 
             maxWidth="280px"
             onClick={() => navigate('/')}
@@ -239,7 +239,7 @@ const EnhancedAuth = () => {
         <div className="w-full max-w-md">
           {/* Mobile header with logo */}
           <div className="lg:hidden text-center mb-8">
-            <div className="mb-6">
+            <div className="mb-6 flex justify-center">
               <LogoAnimated 
                 maxWidth="220px"
                 onClick={() => navigate('/')}

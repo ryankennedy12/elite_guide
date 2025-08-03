@@ -68,29 +68,34 @@ export const LogoAnimated: React.FC<LogoAnimatedProps> = ({
 
         {/* Animated Text */}
         <div className="flex items-baseline">
-          <span 
-            className={`text-2xl md:text-3xl font-bold text-foreground transition-all duration-500 ${
-              shouldAnimate ? 'animate-logo-contractor' : ''
-            }`}
-            style={{
-              animation: shouldAnimate ? 'slideInLeft 0.5s ease-out 1.0s forwards' : 'none',
-              opacity: shouldAnimate ? '0' : '1',
-              transform: shouldAnimate ? 'translateX(-20px)' : 'translateX(0)'
-            }}
-          >
-            Contractor
+          <span className="text-2xl md:text-3xl font-bold text-foreground">
+            {'Contractor'.split('').map((letter, index) => (
+              <span
+                key={index}
+                className="inline-block"
+                style={{
+                  animation: shouldAnimate ? `letterFadeIn 0.1s ease-out ${1.0 + index * 0.05}s forwards` : 'none',
+                  opacity: shouldAnimate ? '0' : '1'
+                }}
+              >
+                {letter}
+              </span>
+            ))}
           </span>
-          <span 
-            className={`text-2xl md:text-3xl font-bold text-primary ml-1 transition-all duration-500 ${
-              shouldAnimate ? 'animate-logo-vet' : ''
-            }`}
-            style={{
-              animation: shouldAnimate ? 'typeInVet 0.6s ease-out 1.4s forwards' : 'none',
-              opacity: shouldAnimate ? '0' : '1'
-            }}
-            onAnimationEnd={handleAnimationComplete}
-          >
-            VET
+          <span className="text-2xl md:text-3xl font-bold text-primary ml-1">
+            {'VET'.split('').map((letter, index) => (
+              <span
+                key={index}
+                className="inline-block"
+                style={{
+                  animation: shouldAnimate ? `letterFadeIn 0.1s ease-out ${1.5 + index * 0.1}s forwards` : 'none',
+                  opacity: shouldAnimate ? '0' : '1'
+                }}
+                onAnimationEnd={index === 2 ? handleAnimationComplete : undefined}
+              >
+                {letter}
+              </span>
+            ))}
           </span>
         </div>
       </div>
@@ -127,23 +132,14 @@ export const LogoAnimated: React.FC<LogoAnimatedProps> = ({
           }
         }
 
-        @keyframes slideInLeft {
+        @keyframes letterFadeIn {
           from {
             opacity: 0;
-            transform: translateX(-20px);
+            transform: translateY(10px);
           }
           to {
             opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes typeInVet {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
+            transform: translateY(0);
           }
         }
 
