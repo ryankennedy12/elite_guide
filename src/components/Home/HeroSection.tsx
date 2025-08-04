@@ -49,7 +49,18 @@ export const HeroSection: React.FC = () => {
           </p>
 
           {/* Account Benefits Prompt */}
-          <div className="bg-yellow-400 border-4 border-yellow-500 rounded-2xl p-6 md:p-8 mb-12 max-w-5xl mx-auto shadow-2xl animate-fade-in">
+          <div className="relative bg-gradient-to-br from-yellow-200/80 via-yellow-300/70 to-yellow-400/80 backdrop-blur-sm border border-yellow-300/30 rounded-2xl p-6 md:p-8 mb-12 max-w-5xl mx-auto shadow-2xl animate-fade-in overflow-hidden">
+            {/* Animated light border */}
+            <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent opacity-60">
+              <div className="absolute inset-0 rounded-2xl animate-[spin_3s_linear_infinite] bg-gradient-to-r from-transparent via-white/60 to-transparent" 
+                   style={{
+                     background: 'conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.8) 90deg, transparent 180deg, transparent 360deg)',
+                   }} />
+              <div className="w-full h-full bg-gradient-to-br from-yellow-200/80 via-yellow-300/70 to-yellow-400/80 backdrop-blur-sm rounded-2xl" />
+            </div>
+            
+            {/* Content wrapper */}
+            <div className="relative z-10">
             <div className="flex items-center justify-center gap-2 mb-4">
               <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">FREE</span>
               <span className="text-black font-bold text-lg">UNLOCK PREMIUM TOOLS</span>
@@ -123,6 +134,7 @@ export const HeroSection: React.FC = () => {
             >
               Create Free Account - Unlock Everything
             </button>
+            </div>
           </div>
 
           {/* Value proposition points */}
