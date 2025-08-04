@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import Navigation from '@/components/Navigation';
+import { ComingSoonBanner } from '@/components/Home/ComingSoonBanner';
 import { HeroSection } from '@/components/Home/HeroSection';
 import { ProblemExplanation } from '@/components/Home/ProblemExplanation';
 import { HowItWorks } from '@/components/Home/HowItWorks';
@@ -37,6 +38,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <Navigation />
+      <ComingSoonBanner />
       
       <main>
         <HeroSection />
