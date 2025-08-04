@@ -17,7 +17,9 @@ import ProjectTracker from "./pages/ProjectTracker";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 import EnhancedAuth from "./pages/EnhancedAuth";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -30,14 +32,51 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/elite-12" element={<Elite12Questions />} />
-            <Route path="/cheat-sheet" element={<CheatSheet />} />
-            <Route path="/prep-checklist" element={<PrepChecklist />} />
-            <Route path="/glossary" element={<Glossary />} />
-            <Route path="/question-maker" element={<QuestionMaker />} />
-            <Route path="/my-notes" element={<MyNotes />} />
-            <Route path="/contractor-comparison" element={<ContractorComparison />} />
-            <Route path="/project-tracker" element={<ProjectTracker />} />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/elite-12" element={
+              <ProtectedRoute>
+                <Elite12Questions />
+              </ProtectedRoute>
+            } />
+            <Route path="/cheat-sheet" element={
+              <ProtectedRoute>
+                <CheatSheet />
+              </ProtectedRoute>
+            } />
+            <Route path="/prep-checklist" element={
+              <ProtectedRoute>
+                <PrepChecklist />
+              </ProtectedRoute>
+            } />
+            <Route path="/glossary" element={
+              <ProtectedRoute>
+                <Glossary />
+              </ProtectedRoute>
+            } />
+            <Route path="/question-maker" element={
+              <ProtectedRoute>
+                <QuestionMaker />
+              </ProtectedRoute>
+            } />
+            <Route path="/my-notes" element={
+              <ProtectedRoute>
+                <MyNotes />
+              </ProtectedRoute>
+            } />
+            <Route path="/contractor-comparison" element={
+              <ProtectedRoute>
+                <ContractorComparison />
+              </ProtectedRoute>
+            } />
+            <Route path="/project-tracker" element={
+              <ProtectedRoute>
+                <ProjectTracker />
+              </ProtectedRoute>
+            } />
             <Route path="/auth" element={<EnhancedAuth />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
