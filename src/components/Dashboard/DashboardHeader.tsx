@@ -1,10 +1,13 @@
 import React from 'react';
 import { User } from '@supabase/supabase-js';
-import { Bell, Search, Heart, Star } from 'lucide-react';
+import { Bell, Search, Heart, Star, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
+import { useTradeSelection } from '@/hooks/useTradeSelection';
+import { tradeDefinitions } from '@/types/trade';
 
 interface DashboardHeaderProps {
   user: User | null;
@@ -12,6 +15,7 @@ interface DashboardHeaderProps {
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ user }) => {
   const navigate = useNavigate();
+  const { selectedTrade } = useTradeSelection();
   
   const getInitials = (email: string) => {
     return email.split('@')[0].slice(0, 2).toUpperCase();
@@ -21,11 +25,26 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ user }) => {
     <header className="bg-card border-b px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex-1 max-w-md">
-          <h1 className="text-2xl font-bold text-foreground mb-1">
-            Welcome back!
-          </h1>
+          <div className="flex items-center gap-3 mb-1">
+            <h1 className="text-2xl font-bold text-foreground">
+              Welcome back!
+            </h1>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs">
+                {tradeDefinitions[selectedTrade]?.name || 'Waterproofing'}
+              </Badge>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => navigate('/trade-selection')}
+                className="h-6 w-6 p-0"
+              >
+                <Settings className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
           <p className="text-sm text-muted-foreground">
-            Here's what's happening with your projects today.
+            Here's what's happening with your {tradeDefinitions[selectedTrade]?.name.toLowerCase() || 'waterproofing'} projects today.
           </p>
         </div>
 
