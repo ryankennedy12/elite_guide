@@ -1,43 +1,72 @@
 import React from 'react';
 import { Briefcase, DollarSign, Users, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-const stats = [
-  {
-    title: 'Active Projects',
-    value: '3',
-    change: '+2 this month',
-    icon: Briefcase,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100',
-  },
-  {
-    title: 'Total Investment',
-    value: '$24,500',
-    change: '+12% from last month',
-    icon: DollarSign,
-    color: 'text-green-600',
-    bgColor: 'bg-green-100',
-  },
-  {
-    title: 'Contractors',
-    value: '5',
-    change: '2 new evaluations',
-    icon: Users,
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-100',
-  },
-  {
-    title: 'Next Milestone',
-    value: '3 days',
-    change: 'Foundation inspection',
-    icon: Calendar,
-    color: 'text-orange-600',
-    bgColor: 'bg-orange-100',
-  },
-];
+import { Skeleton } from '@/components/ui/skeleton';
+import { useDashboardData } from '@/hooks/useDashboardData';
 
 export const StatsOverviewWidget: React.FC = () => {
+  const { data, loading } = useDashboardData();
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Overview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex items-center space-x-3">
+                <Skeleton className="h-10 w-10 rounded-lg" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-5 w-16" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!data) return null;
+
+  const stats = [
+    {
+      title: 'Active Projects',
+      value: data.stats.activeProjects.toString(),
+      change: `${data.stats.completedProjects} completed`,
+      icon: Briefcase,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100',
+    },
+    {
+      title: 'Total Investment',
+      value: `$${data.stats.totalInvestment.toLocaleString()}`,
+      change: `$${data.stats.totalSpent.toLocaleString()} spent`,
+      icon: DollarSign,
+      color: 'text-green-600',
+      bgColor: 'bg-green-100',
+    },
+    {
+      title: 'Reviews Written',
+      value: data.stats.reviewsWritten.toString(),
+      change: `${data.stats.successfulReferrals} referrals`,
+      icon: Users,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100',
+    },
+    {
+      title: 'Next Milestone',
+      value: data.stats.nextMilestone ? `${data.stats.nextMilestone.daysUntil} days` : 'None',
+      change: data.stats.nextMilestone?.title || 'No upcoming milestones',
+      icon: Calendar,
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-100',
+    },
+  ];
   return (
     <Card>
       <CardHeader>

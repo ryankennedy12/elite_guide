@@ -4,44 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
-
-// Mock data - this would come from your project management system
-const projects = [
-  {
-    id: '1',
-    name: 'Basement Waterproofing',
-    contractor: 'AquaGuard Solutions',
-    status: 'in-progress',
-    progress: 65,
-    budget: 15000,
-    spent: 9750,
-    nextMilestone: 'Interior sealant application',
-    dueDate: '2024-01-15',
-  },
-  {
-    id: '2',
-    name: 'Foundation Repair',
-    contractor: 'SolidBase Corp',
-    status: 'planning',
-    progress: 25,
-    budget: 8500,
-    spent: 2125,
-    nextMilestone: 'Site preparation',
-    dueDate: '2024-01-20',
-  },
-  {
-    id: '3',
-    name: 'Sump Pump Installation',
-    contractor: 'FlowGuard Systems',
-    status: 'completed',
-    progress: 100,
-    budget: 3200,
-    spent: 3200,
-    nextMilestone: 'Project completed',
-    dueDate: '2024-01-10',
-  },
-];
+import { useDashboardData } from '@/hooks/useDashboardData';
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -58,6 +23,48 @@ const getStatusColor = (status: string) => {
 
 export const ProjectOverviewWidget: React.FC = () => {
   const navigate = useNavigate();
+  const { data, loading } = useDashboardData();
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Active Projects</CardTitle>
+          <Skeleton className="h-9 w-20" />
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="border rounded-lg p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-5 w-40" />
+                <Skeleton className="h-6 w-16" />
+              </div>
+              <Skeleton className="h-4 w-32" />
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-4 w-8" />
+                </div>
+                <Skeleton className="h-2 w-full" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+              <div className="pt-2 border-t space-y-1">
+                <Skeleton className="h-3 w-20" />
+                <Skeleton className="h-4 w-32" />
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!data) return null;
+
+  const projects = data.projects.overview;
 
   return (
     <Card>
@@ -104,13 +111,17 @@ export const ProjectOverviewWidget: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <span className="text-muted-foreground">Due:</span>
-                <span className="font-medium">{project.dueDate}</span>
+                <span className="font-medium">
+                  {project.nextMilestone?.dueDate ? new Date(project.nextMilestone.dueDate).toLocaleDateString() : 'TBD'}
+                </span>
               </div>
             </div>
             
             <div className="pt-2 border-t">
               <p className="text-xs text-muted-foreground">Next milestone:</p>
-              <p className="text-sm font-medium">{project.nextMilestone}</p>
+              <p className="text-sm font-medium">
+                {project.nextMilestone?.title || 'No upcoming milestones'}
+              </p>
             </div>
           </div>
         ))}

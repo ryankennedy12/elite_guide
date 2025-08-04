@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          active: boolean | null
+          badge_color: string | null
+          created_at: string
+          description: string
+          icon: string | null
+          id: string
+          name: string
+          points: number | null
+          requirements: Json | null
+        }
+        Insert: {
+          active?: boolean | null
+          badge_color?: string | null
+          created_at?: string
+          description: string
+          icon?: string | null
+          id?: string
+          name: string
+          points?: number | null
+          requirements?: Json | null
+        }
+        Update: {
+          active?: boolean | null
+          badge_color?: string | null
+          created_at?: string
+          description?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          points?: number | null
+          requirements?: Json | null
+        }
+        Relationships: []
+      }
       contractor_comparisons: {
         Row: {
           contractors: Json
@@ -73,6 +109,36 @@ export type Database = {
           id?: string
           name?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      dashboard_analytics: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          metadata: Json | null
+          metric_name: string
+          metric_value: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          id?: string
+          metadata?: Json | null
+          metric_name: string
+          metric_value?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          metadata?: Json | null
+          metric_name?: string
+          metric_value?: number | null
           user_id?: string
         }
         Relationships: []
@@ -186,6 +252,48 @@ export type Database = {
           id?: string
           type?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          message: string
+          metadata: Json | null
+          priority: string | null
+          read: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          message: string
+          metadata?: Json | null
+          priority?: string | null
+          read?: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          message?: string
+          metadata?: Json | null
+          priority?: string | null
+          read?: boolean | null
+          title?: string
+          type?: string
           user_id?: string
         }
         Relationships: []
@@ -329,6 +437,164 @@ export type Database = {
           },
         ]
       }
+      referrals: {
+        Row: {
+          conversion_date: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          metadata: Json | null
+          referee_email: string
+          referee_id: string | null
+          referrer_id: string
+          reward_amount: number | null
+          reward_type: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          conversion_date?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          metadata?: Json | null
+          referee_email: string
+          referee_id?: string | null
+          referrer_id: string
+          reward_amount?: number | null
+          reward_type?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          conversion_date?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          metadata?: Json | null
+          referee_email?: string
+          referee_id?: string | null
+          referrer_id?: string
+          reward_amount?: number | null
+          reward_type?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      review_media: {
+        Row: {
+          caption: string | null
+          created_at: string
+          id: string
+          order_index: number | null
+          review_id: string
+          type: string
+          url: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          order_index?: number | null
+          review_id: string
+          type: string
+          url: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          order_index?: number | null
+          review_id?: string
+          type?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_media_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          cons: string[] | null
+          content: string
+          contractor_id: string | null
+          created_at: string
+          helpful_count: number | null
+          id: string
+          metadata: Json | null
+          project_id: string | null
+          pros: string[] | null
+          rating: number
+          response_from_contractor: string | null
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          verification_date: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          cons?: string[] | null
+          content: string
+          contractor_id?: string | null
+          created_at?: string
+          helpful_count?: number | null
+          id?: string
+          metadata?: Json | null
+          project_id?: string | null
+          pros?: string[] | null
+          rating: number
+          response_from_contractor?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          verification_date?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          cons?: string[] | null
+          content?: string
+          contractor_id?: string | null
+          created_at?: string
+          helpful_count?: number | null
+          id?: string
+          metadata?: Json | null
+          project_id?: string | null
+          pros?: string[] | null
+          rating?: number
+          response_from_contractor?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          verification_date?: string | null
+          verified?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       survey_responses: {
         Row: {
           answer: string
@@ -350,6 +616,74 @@ export type Database = {
           id?: string
           question?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          earned_at: string
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          earned_at?: string
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          earned_at?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_activities: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          resource_id: string | null
+          resource_type: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+          user_id?: string
         }
         Relationships: []
       }

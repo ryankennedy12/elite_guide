@@ -1,1 +1,10 @@
 project_id = "zfxvqvvtlujoxahqfrcm"
+
+[functions.analytics-processor]
+verify_jwt = true
+
+[functions.referral-processor]
+verify_jwt = true
+
+[functions.dashboard-data]
+verify_jwt = true
