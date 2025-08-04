@@ -74,25 +74,35 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     return null
   }
 
-  return (
-    <style
-      dangerouslySetInnerHTML={{
-        __html: Object.entries(THEMES)
-          .map(
-            ([theme, prefix]) => `
-${prefix} [data-chart=${id}] {
+  // Sanitize CSS content to prevent XSS
+  const sanitizedCSS = Object.entries(THEMES)
+    .map(([theme, prefix]) => {
+      const sanitizedPrefix = prefix.replace(/[<>'"&]/g, ''); // Remove potentially dangerous chars
+      return `
+${sanitizedPrefix} [data-chart=${id}] {
 ${colorConfig
   .map(([key, itemConfig]) => {
     const color =
       itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
       itemConfig.color
-    return color ? `  --color-${key}: ${color};` : null
+    // Sanitize color values - only allow safe CSS color formats
+    const sanitizedColor = color && typeof color === 'string' && 
+      /^(#[0-9a-fA-F]{3,6}|rgb\([0-9,\s]+\)|rgba\([0-9,\s.]+\)|hsl\([0-9,\s%]+\)|hsla\([0-9,\s%.]+\)|[a-zA-Z]+)$/.test(color) 
+      ? color : null;
+    const sanitizedKey = key.replace(/[^a-zA-Z0-9-_]/g, ''); // Only allow alphanumeric, dash, underscore
+    return sanitizedColor ? `  --color-${sanitizedKey}: ${sanitizedColor};` : null
   })
+  .filter(Boolean)
   .join("\n")}
 }
 `
-          )
-          .join("\n"),
+    })
+    .join("\n");
+
+  return (
+    <style
+      dangerouslySetInnerHTML={{
+        __html: sanitizedCSS,
       }}
     />
   )

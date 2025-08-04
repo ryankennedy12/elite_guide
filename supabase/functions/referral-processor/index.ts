@@ -13,12 +13,29 @@ interface ReferralRequest {
   referralId?: string;
 }
 
+// Input validation functions
+function validateEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return typeof email === 'string' && email.length <= 254 && emailRegex.test(email);
+}
+
+function validateUUID(uuid: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return typeof uuid === 'string' && uuidRegex.test(uuid);
+}
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Create service role client for system operations
+    const supabaseServiceRole = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -29,7 +46,38 @@ const handler = async (req: Request): Promise<Response> => {
       }
     );
 
-    const { action, refereeEmail, refereeId, referralId }: ReferralRequest = await req.json();
+    const body = await req.json();
+    
+    if (!body || typeof body !== 'object') {
+      return new Response(
+        JSON.stringify({ error: 'Invalid request body' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { action, refereeEmail, refereeId, referralId }: ReferralRequest = body;
+
+    // Validate inputs based on action
+    if (action === 'send' && (!refereeEmail || !validateEmail(refereeEmail))) {
+      return new Response(
+        JSON.stringify({ error: 'Valid email is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if ((action === 'track_signup' || action === 'track_conversion') && refereeId && !validateUUID(refereeId)) {
+      return new Response(
+        JSON.stringify({ error: 'Valid user ID is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (action === 'track_conversion' && (!referralId || !validateUUID(referralId))) {
+      return new Response(
+        JSON.stringify({ error: 'Valid referral ID is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Get user from auth
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
@@ -45,19 +93,22 @@ const handler = async (req: Request): Promise<Response> => {
 
     switch (action) {
       case 'send':
-        result = await sendReferral(supabaseClient, user.id, refereeEmail!);
+        result = await sendReferral(supabaseServiceRole, supabaseClient, user.id, refereeEmail!);
         break;
       
       case 'track_signup':
-        result = await trackSignup(supabaseClient, refereeId!, refereeEmail!);
+        result = await trackSignup(supabaseServiceRole, refereeId!, refereeEmail!);
         break;
       
       case 'track_conversion':
-        result = await trackConversion(supabaseClient, referralId!);
+        result = await trackConversion(supabaseServiceRole, referralId!);
         break;
       
       default:
-        throw new Error('Invalid action');
+        return new Response(
+          JSON.stringify({ error: 'Invalid action' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
     }
 
     return new Response(JSON.stringify(result), {
@@ -67,18 +118,19 @@ const handler = async (req: Request): Promise<Response> => {
 
   } catch (error: any) {
     console.error('Error in referral processor:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    // Don't leak internal error details
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 };
 
-async function sendReferral(supabase: any, referrerId: string, refereeEmail: string) {
+async function sendReferral(supabaseServiceRole: any, supabaseClient: any, referrerId: string, refereeEmail: string) {
   console.log(`Sending referral from ${referrerId} to ${refereeEmail}`);
 
   // Check if referral already exists
-  const { data: existing } = await supabase
+  const { data: existing } = await supabaseClient
     .from('referrals')
     .select('id')
     .eq('referrer_id', referrerId)
@@ -90,8 +142,8 @@ async function sendReferral(supabase: any, referrerId: string, refereeEmail: str
     throw new Error('Referral already sent to this email');
   }
 
-  // Create referral record
-  const { data: referral, error } = await supabase
+  // Create referral record using service role
+  const { data: referral, error } = await supabaseServiceRole
     .from('referrals')
     .insert({
       referrer_id: referrerId,
@@ -112,14 +164,14 @@ async function sendReferral(supabase: any, referrerId: string, refereeEmail: str
   }
 
   // Get referrer info for personalized email
-  const { data: referrer } = await supabase
+  const { data: referrer } = await supabaseClient
     .from('profiles')
     .select('display_name, email')
     .eq('user_id', referrerId)
     .single();
 
   // Track analytics
-  await supabase.functions.invoke('analytics-processor', {
+  await supabaseClient.functions.invoke('analytics-processor', {
     body: {
       action: 'referral_sent',
       resource_type: 'referral',
@@ -128,8 +180,8 @@ async function sendReferral(supabase: any, referrerId: string, refereeEmail: str
     }
   });
 
-  // Create notification for referrer
-  await supabase
+  // Create notification for referrer using service role
+  await supabaseServiceRole
     .from('notifications')
     .insert({
       user_id: referrerId,
@@ -147,11 +199,11 @@ async function sendReferral(supabase: any, referrerId: string, refereeEmail: str
   };
 }
 
-async function trackSignup(supabase: any, refereeId: string, refereeEmail: string) {
+async function trackSignup(supabaseServiceRole: any, refereeId: string, refereeEmail: string) {
   console.log(`Tracking signup for ${refereeEmail} (${refereeId})`);
 
-  // Find pending referral
-  const { data: referral, error } = await supabase
+  // Find pending referral and update using service role
+  const { data: referral, error } = await supabaseServiceRole
     .from('referrals')
     .update({
       referee_id: refereeId,
@@ -168,10 +220,10 @@ async function trackSignup(supabase: any, refereeId: string, refereeEmail: strin
     return { success: false, message: 'No pending referral found' };
   }
 
-  // Create notifications
+  // Create notifications using service role
   await Promise.all([
     // Notify referrer
-    supabase
+    supabaseServiceRole
       .from('notifications')
       .insert({
         user_id: referral.referrer_id,
@@ -182,7 +234,7 @@ async function trackSignup(supabase: any, refereeId: string, refereeEmail: strin
       }),
     
     // Notify referee
-    supabase
+    supabaseServiceRole
       .from('notifications')
       .insert({
         user_id: refereeId,
@@ -200,11 +252,11 @@ async function trackSignup(supabase: any, refereeId: string, refereeEmail: strin
   };
 }
 
-async function trackConversion(supabase: any, referralId: string) {
+async function trackConversion(supabaseServiceRole: any, referralId: string) {
   console.log(`Tracking conversion for referral ${referralId}`);
 
-  // Update referral status
-  const { data: referral, error } = await supabase
+  // Update referral status using service role
+  const { data: referral, error } = await supabaseServiceRole
     .from('referrals')
     .update({
       status: 'completed',
@@ -219,20 +271,10 @@ async function trackConversion(supabase: any, referralId: string) {
     throw new Error('Referral not found or already completed');
   }
 
-  // Award achievement to referrer
-  await supabase.functions.invoke('analytics-processor', {
-    body: {
-      action: 'referral_completed',
-      resource_type: 'referral',
-      resource_id: referralId,
-      metadata: { reward_amount: referral.reward_amount }
-    }
-  });
-
-  // Create success notifications
+  // Create success notifications using service role
   await Promise.all([
     // Notify referrer
-    supabase
+    supabaseServiceRole
       .from('notifications')
       .insert({
         user_id: referral.referrer_id,
@@ -243,7 +285,7 @@ async function trackConversion(supabase: any, referralId: string) {
       }),
     
     // Notify referee
-    supabase
+    supabaseServiceRole
       .from('notifications')
       .insert({
         user_id: referral.referee_id,

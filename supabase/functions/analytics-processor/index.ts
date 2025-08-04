@@ -13,12 +13,47 @@ interface AnalyticsRequest {
   metadata?: Record<string, any>;
 }
 
+// Input validation functions
+function validateAction(action: string): boolean {
+  const validActions = [
+    'project_created', 'project_updated', 'project_completed',
+    'review_created', 'referral_sent', 'referral_completed',
+    'note_created', 'question_generated', 'comparison_created',
+    'page_view', 'budget_saved'
+  ];
+  return typeof action === 'string' && action.length <= 50 && validActions.includes(action);
+}
+
+function sanitizeMetadata(metadata: any): Record<string, any> {
+  if (!metadata || typeof metadata !== 'object') return {};
+  
+  const sanitized: Record<string, any> = {};
+  for (const [key, value] of Object.entries(metadata)) {
+    if (typeof key === 'string' && key.length <= 50) {
+      if (typeof value === 'string' && value.length <= 1000) {
+        sanitized[key] = value;
+      } else if (typeof value === 'number' && Number.isFinite(value)) {
+        sanitized[key] = value;
+      } else if (typeof value === 'boolean') {
+        sanitized[key] = value;
+      }
+    }
+  }
+  return sanitized;
+}
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Create service role client for system operations
+    const supabaseServiceRole = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -29,7 +64,27 @@ const handler = async (req: Request): Promise<Response> => {
       }
     );
 
-    const { action, resource_type, resource_id, metadata }: AnalyticsRequest = await req.json();
+    const body = await req.json();
+    
+    if (!body || typeof body !== 'object') {
+      return new Response(
+        JSON.stringify({ error: 'Invalid request body' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { action, resource_type, resource_id, metadata }: AnalyticsRequest = body;
+
+    // Validate action
+    if (!validateAction(action)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid action' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Sanitize metadata
+    const sanitizedMetadata = sanitizeMetadata(metadata);
 
     // Get user from auth
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
@@ -44,28 +99,32 @@ const handler = async (req: Request): Promise<Response> => {
     const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
     const userAgent = req.headers.get('user-agent') || 'unknown';
 
-    // Track user activity
-    const { error: activityError } = await supabaseClient
+    // Track user activity using service role
+    const { error: activityError } = await supabaseServiceRole
       .from('user_activities')
       .insert({
         user_id: user.id,
         action,
         resource_type,
         resource_id,
-        metadata: metadata || {},
+        metadata: sanitizedMetadata,
         ip_address: clientIP,
         user_agent: userAgent,
       });
 
     if (activityError) {
       console.error('Error tracking activity:', activityError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to log activity' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    // Process analytics based on action type
-    await processAnalytics(supabaseClient, user.id, action, metadata || {});
+    // Process analytics based on action type using service role
+    await processAnalytics(supabaseServiceRole, user.id, action, sanitizedMetadata);
 
-    // Check for achievement triggers
-    await checkAchievements(supabaseClient, user.id, action, resource_type);
+    // Check for achievement triggers using service role
+    await checkAchievements(supabaseServiceRole, user.id, action, resource_type);
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
@@ -74,7 +133,8 @@ const handler = async (req: Request): Promise<Response> => {
 
   } catch (error: any) {
     console.error('Error in analytics processor:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    // Don't leak internal error details to prevent information disclosure
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
