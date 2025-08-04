@@ -1,23 +1,28 @@
 
 import { useState, useCallback, useMemo } from 'react';
-import { wizardQuestionBank, WizardQuestionItem, WizardQuestionCategory } from '@/data/wizard';
+import { WizardQuestionItem, WizardQuestionCategory } from '@/data/wizard/types';
+import { useTradeQuestions } from './useTradeQuestions';
+import { TradeType } from '@/types/trade';
 
 interface UseQuestionPoolProps {
   selectedCategories: WizardQuestionCategory[];
   userConcern: string;
   starredQuestionIds: Set<string>;
+  trade: TradeType;
 }
 
 export const useQuestionPool = ({
   selectedCategories,
   userConcern,
-  starredQuestionIds
+  starredQuestionIds,
+  trade
 }: UseQuestionPoolProps) => {
   const [excludedQuestionIds, setExcludedQuestionIds] = useState<Set<string>>(new Set());
+  const { questions: tradeQuestions, loading } = useTradeQuestions(trade);
 
   // Filter questions by selected categories and user concern
   const relevantQuestions = useMemo(() => {
-    let filtered = wizardQuestionBank;
+    let filtered = tradeQuestions;
 
     // Filter by categories if any are selected
     if (selectedCategories.length > 0) {
@@ -40,7 +45,7 @@ export const useQuestionPool = ({
     }
 
     return filtered;
-  }, [selectedCategories, userConcern]);
+  }, [selectedCategories, userConcern, tradeQuestions]);
 
   // Get available questions (not starred, not excluded)
   const availableQuestions = useMemo(() => {
@@ -78,6 +83,7 @@ export const useQuestionPool = ({
     getRandomQuestion,
     excludeQuestion,
     resetExcluded,
-    totalAvailable: availableQuestions.length
+    totalAvailable: availableQuestions.length,
+    loading
   };
 };

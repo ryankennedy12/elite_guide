@@ -7,6 +7,7 @@ import { Plus, RefreshCw } from 'lucide-react';
 import { useQuestionPool } from '@/hooks/useQuestionPool';
 import { WizardQuestionItem, WizardQuestionCategory } from '@/data/wizard';
 import { useToast } from '@/hooks/use-toast';
+import { useTradeSelection } from '@/hooks/useTradeSelection';
 
 interface Step3QuestionReviewProps {
   userConcern: string;
@@ -30,13 +31,15 @@ const Step3QuestionReview: React.FC<Step3QuestionReviewProps> = ({
   onBack
 }) => {
   const { toast } = useToast();
+  const { selectedTrade } = useTradeSelection();
   const [displayedQuestions, setDisplayedQuestions] = useState<WizardQuestionItem[]>([]);
   const [editedQuestions, setEditedQuestions] = useState<Map<string, WizardQuestionItem>>(new Map());
 
   const questionPool = useQuestionPool({
     selectedCategories,
     userConcern,
-    starredQuestionIds: starredQuestions
+    starredQuestionIds: starredQuestions,
+    trade: selectedTrade
   });
 
   // Initialize displayed questions

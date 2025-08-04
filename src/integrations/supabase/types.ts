@@ -631,6 +631,90 @@ export type Database = {
         }
         Relationships: []
       }
+      trade_content: {
+        Row: {
+          content_key: string
+          content_type: string
+          content_value: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          trade: Database["public"]["Enums"]["trade_type"]
+          updated_at: string
+        }
+        Insert: {
+          content_key: string
+          content_type: string
+          content_value: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          trade: Database["public"]["Enums"]["trade_type"]
+          updated_at?: string
+        }
+        Update: {
+          content_key?: string
+          content_type?: string
+          content_value?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          trade?: Database["public"]["Enums"]["trade_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trade_questions: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          order_index: number | null
+          pro_tip: string
+          question: string
+          red_flag: string
+          trade: Database["public"]["Enums"]["trade_type"]
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          order_index?: number | null
+          pro_tip: string
+          question: string
+          red_flag: string
+          trade: Database["public"]["Enums"]["trade_type"]
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          order_index?: number | null
+          pro_tip?: string
+          question?: string
+          red_flag?: string
+          trade?: Database["public"]["Enums"]["trade_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_achievements: {
         Row: {
           achievement_id: string
