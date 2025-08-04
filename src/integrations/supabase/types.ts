@@ -90,6 +90,7 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          trade_specialties: Database["public"]["Enums"]["trade_type"][] | null
           updated_at: string
           user_id: string
         }
@@ -99,6 +100,7 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
+          trade_specialties?: Database["public"]["Enums"]["trade_type"][] | null
           updated_at?: string
           user_id: string
         }
@@ -108,6 +110,7 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          trade_specialties?: Database["public"]["Enums"]["trade_type"][] | null
           updated_at?: string
           user_id?: string
         }
@@ -305,8 +308,10 @@ export type Database = {
           display_name: string | null
           email: string | null
           id: string
+          interested_trades: Database["public"]["Enums"]["trade_type"][] | null
           phone: string | null
           preferences: Json | null
+          primary_trade: Database["public"]["Enums"]["trade_type"] | null
           updated_at: string
           user_id: string
         }
@@ -316,8 +321,10 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          interested_trades?: Database["public"]["Enums"]["trade_type"][] | null
           phone?: string | null
           preferences?: Json | null
+          primary_trade?: Database["public"]["Enums"]["trade_type"] | null
           updated_at?: string
           user_id: string
         }
@@ -327,8 +334,10 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          interested_trades?: Database["public"]["Enums"]["trade_type"][] | null
           phone?: string | null
           preferences?: Json | null
+          primary_trade?: Database["public"]["Enums"]["trade_type"] | null
           updated_at?: string
           user_id?: string
         }
@@ -388,6 +397,7 @@ export type Database = {
           start_date: string | null
           status: string
           total_cost: number | null
+          trade: Database["public"]["Enums"]["trade_type"] | null
           updated_at: string
           user_id: string
         }
@@ -406,6 +416,7 @@ export type Database = {
           start_date?: string | null
           status?: string
           total_cost?: number | null
+          trade?: Database["public"]["Enums"]["trade_type"] | null
           updated_at?: string
           user_id: string
         }
@@ -424,6 +435,7 @@ export type Database = {
           start_date?: string | null
           status?: string
           total_cost?: number | null
+          trade?: Database["public"]["Enums"]["trade_type"] | null
           updated_at?: string
           user_id?: string
         }
@@ -706,7 +718,17 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      trade_type:
+        | "waterproofing"
+        | "hvac"
+        | "roofing"
+        | "electrical"
+        | "plumbing"
+        | "general_contractor"
+        | "flooring"
+        | "painting"
+        | "landscaping"
+        | "windows_doors"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -833,6 +855,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      trade_type: [
+        "waterproofing",
+        "hvac",
+        "roofing",
+        "electrical",
+        "plumbing",
+        "general_contractor",
+        "flooring",
+        "painting",
+        "landscaping",
+        "windows_doors",
+      ],
+    },
   },
 } as const

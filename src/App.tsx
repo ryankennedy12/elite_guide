@@ -20,6 +20,7 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import EnhancedAuth from "./pages/EnhancedAuth";
 import ReviewsReferrals from "./pages/ReviewsReferrals";
+import { TradeSelection } from "./pages/TradeSelection";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -81,6 +82,11 @@ const App = () => (
             <Route path="/reviews-referrals" element={
               <ProtectedRoute>
                 <ReviewsReferrals />
+              </ProtectedRoute>
+            } />
+            <Route path="/trade-selection" element={
+              <ProtectedRoute>
+                <TradeSelection />
               </ProtectedRoute>
             } />
             <Route path="/auth" element={<EnhancedAuth />} />
