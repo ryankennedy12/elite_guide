@@ -49,15 +49,16 @@ export const HeroSection: React.FC = () => {
           </p>
 
           {/* Account Benefits Prompt */}
-          <div className="relative bg-gradient-to-br from-yellow-200/80 via-yellow-300/70 to-yellow-400/80 backdrop-blur-sm border border-yellow-300/30 rounded-2xl p-6 md:p-8 mb-12 max-w-5xl mx-auto shadow-2xl animate-fade-in overflow-hidden">
-            {/* Animated light border */}
-            <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent opacity-60">
-              <div className="absolute inset-0 rounded-2xl animate-[spin_3s_linear_infinite] bg-gradient-to-r from-transparent via-white/60 to-transparent" 
+          <div className="relative bg-gradient-to-br from-yellow-200/80 via-yellow-300/70 to-yellow-400/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 mb-12 max-w-5xl mx-auto shadow-2xl animate-fade-in overflow-hidden">
+            {/* Animated glowing border */}
+            <div className="absolute inset-0 rounded-2xl p-[3px] bg-transparent">
+              <div className="absolute inset-0 rounded-2xl animate-[spin_3s_linear_infinite]" 
                    style={{
-                     background: 'conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.8) 90deg, transparent 180deg, transparent 360deg)',
+                     background: 'conic-gradient(from 0deg, transparent, #fbbf24, #f59e0b, #d97706, transparent)',
                    }} />
-              <div className="w-full h-full bg-gradient-to-br from-yellow-200/80 via-yellow-300/70 to-yellow-400/80 backdrop-blur-sm rounded-2xl" />
             </div>
+            {/* Card background */}
+            <div className="absolute inset-[3px] bg-gradient-to-br from-yellow-200/80 via-yellow-300/70 to-yellow-400/80 backdrop-blur-sm rounded-2xl" />
             
             {/* Content wrapper */}
             <div className="relative z-10">
