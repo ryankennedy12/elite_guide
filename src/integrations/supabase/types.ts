@@ -692,7 +692,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      log_security_event: {
+        Args: { event_type: string; event_data?: Json }
+        Returns: undefined
+      }
+      validate_user_ownership: {
+        Args: {
+          table_name: string
+          record_id: string
+          user_id_to_check?: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
