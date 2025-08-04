@@ -19,6 +19,7 @@ import Auth from "./pages/Auth";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import EnhancedAuth from "./pages/EnhancedAuth";
+import ReviewsReferrals from "./pages/ReviewsReferrals";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -75,6 +76,11 @@ const App = () => (
             <Route path="/project-tracker" element={
               <ProtectedRoute>
                 <ProjectTracker />
+              </ProtectedRoute>
+            } />
+            <Route path="/reviews-referrals" element={
+              <ProtectedRoute>
+                <ReviewsReferrals />
               </ProtectedRoute>
             } />
             <Route path="/auth" element={<EnhancedAuth />} />
