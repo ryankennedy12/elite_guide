@@ -42,11 +42,88 @@ export const HeroSection: React.FC = () => {
           </h1>
 
           {/* Subheadline */}
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in">
+          <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in">
             Free tools and education to help Columbus homeowners <strong className="text-foreground">ask the right questions</strong>, 
             <strong className="text-foreground"> spot red flags</strong>, and 
             <strong className="text-foreground"> choose quality contractors</strong>.
           </p>
+
+          {/* Account Benefits Prompt */}
+          <div className="bg-yellow-400 border-4 border-yellow-500 rounded-2xl p-6 md:p-8 mb-12 max-w-5xl mx-auto shadow-2xl animate-fade-in">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">FREE</span>
+              <span className="text-black font-bold text-lg">UNLOCK PREMIUM TOOLS</span>
+            </div>
+            
+            <h2 className="text-2xl md:text-3xl font-bold text-black mb-6">
+              Get Your Personal Contractor Vetting Command Center
+            </h2>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
+              <div className="bg-white rounded-lg p-3 md:p-4 text-center">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <span className="text-white text-xs md:text-sm">📋</span>
+                </div>
+                <span className="text-black font-semibold text-xs md:text-sm">Project Tracker</span>
+              </div>
+              
+              <div className="bg-white rounded-lg p-3 md:p-4 text-center">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <span className="text-white text-xs md:text-sm">👥</span>
+                </div>
+                <span className="text-black font-semibold text-xs md:text-sm">Compare Contractors</span>
+              </div>
+              
+              <div className="bg-white rounded-lg p-3 md:p-4 text-center">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <span className="text-white text-xs md:text-sm">🧠</span>
+                </div>
+                <span className="text-black font-semibold text-xs md:text-sm">AI Questions</span>
+              </div>
+              
+              <div className="bg-white rounded-lg p-3 md:p-4 text-center">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <span className="text-white text-xs md:text-sm">📊</span>
+                </div>
+                <span className="text-black font-semibold text-xs md:text-sm">Analytics</span>
+              </div>
+              
+              <div className="bg-white rounded-lg p-3 md:p-4 text-center">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <span className="text-white text-xs md:text-sm">📝</span>
+                </div>
+                <span className="text-black font-semibold text-xs md:text-sm">Personal Notes</span>
+              </div>
+              
+              <div className="bg-white rounded-lg p-3 md:p-4 text-center">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-yellow-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <span className="text-white text-xs md:text-sm">⭐</span>
+                </div>
+                <span className="text-black font-semibold text-xs md:text-sm">Reviews Hub</span>
+              </div>
+              
+              <div className="bg-white rounded-lg p-3 md:p-4 text-center">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-indigo-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <span className="text-white text-xs md:text-sm">🏆</span>
+                </div>
+                <span className="text-black font-semibold text-xs md:text-sm">Achievements</span>
+              </div>
+              
+              <div className="bg-white rounded-lg p-3 md:p-4 text-center">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-teal-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <span className="text-white text-xs md:text-sm">📁</span>
+                </div>
+                <span className="text-black font-semibold text-xs md:text-sm">Documents</span>
+              </div>
+            </div>
+            
+            <button 
+              onClick={() => navigate('/auth')}
+              className="bg-black text-yellow-400 px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold text-base md:text-lg hover:bg-gray-800 transition-colors border-2 border-black hover:border-gray-800 w-full sm:w-auto"
+            >
+              Create Free Account - Unlock Everything
+            </button>
+          </div>
 
           {/* Value proposition points */}
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-10 animate-fade-in">

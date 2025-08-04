@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import Navigation from '@/components/Navigation';
 import { HeroSection } from '@/components/Home/HeroSection';
-import { AccountPromptSection } from '@/components/Home/AccountPromptSection';
 import { ProblemExplanation } from '@/components/Home/ProblemExplanation';
 import { HowItWorks } from '@/components/Home/HowItWorks';
 import { ToolTutorials } from '@/components/Home/ToolTutorials';
@@ -40,7 +39,6 @@ const Home = () => {
       <Navigation />
       
       <main>
-        <AccountPromptSection />
         <HeroSection />
         <ProblemExplanation />
         <HowItWorks />
