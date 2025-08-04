@@ -16,27 +16,11 @@ export const LogoAnimated: React.FC<LogoAnimatedProps> = ({
   const [shouldAnimate, setShouldAnimate] = useState(false);
 
   useEffect(() => {
-    // Check if we've already animated in this session for this specific page
-    const currentPath = window.location.pathname;
-    const sessionKey = `logo-animated-${currentPath}`;
-    const hasAnimatedInSession = sessionStorage.getItem(sessionKey);
+    // Force animation to trigger every time for testing - remove session storage temporarily
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
-    console.log('LogoAnimated useEffect:', { currentPath, sessionKey, hasAnimatedInSession });
-    
-    if (!hasAnimatedInSession) {
-      // Check user's motion preference
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      
-      console.log('Setting up animation:', { prefersReducedMotion });
-      
-      if (!prefersReducedMotion) {
-        setShouldAnimate(true);
-        // Mark as animated for this session
-        sessionStorage.setItem(sessionKey, 'true');
-        console.log('Animation triggered for path:', currentPath);
-      }
-    } else {
-      console.log('Animation already shown for this session on path:', currentPath);
+    if (!prefersReducedMotion) {
+      setShouldAnimate(true);
     }
   }, []);
 
@@ -75,7 +59,7 @@ export const LogoAnimated: React.FC<LogoAnimatedProps> = ({
         </div>
 
         {/* Animated Text */}
-        <div className="flex items-baseline">
+        <div className="flex items-baseline whitespace-nowrap">
           <span className="text-2xl md:text-3xl font-bold text-foreground">
             {'Contractor'.split('').map((letter, index) => (
               <span
