@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, FileText, Users, Calculator } from 'lucide-react';
+import { Plus, FileText, Users, Calculator, Heart, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +25,13 @@ const quickActions = [
     icon: Users,
     action: '/contractor-comparison',
     color: 'bg-accent text-accent-foreground hover:bg-accent/90',
+  },
+  {
+    title: 'Help Community',
+    description: 'Share reviews & refer friends',
+    icon: Heart,
+    action: '/reviews-referrals',
+    color: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600',
   },
   {
     title: 'Prep Checklist',

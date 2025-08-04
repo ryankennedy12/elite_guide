@@ -19,6 +19,7 @@ const Navigation: React.FC = () => {
     { label: 'Compare Contractors', href: '/contractor-comparison', id: 'contractor-comparison' },
     { label: 'Project Tracker', href: '/project-tracker', id: 'project-tracker' },
     { label: 'My Notes', href: '/my-notes', id: 'my-notes' },
+    { label: 'Reviews & Referrals', href: '/reviews-referrals', id: 'reviews-referrals' },
   ];
 
   const isActive = (href: string) => location.pathname === href;

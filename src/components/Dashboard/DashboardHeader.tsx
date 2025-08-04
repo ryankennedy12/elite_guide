@@ -1,15 +1,18 @@
 import React from 'react';
 import { User } from '@supabase/supabase-js';
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, Heart, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useNavigate } from 'react-router-dom';
 
 interface DashboardHeaderProps {
   user: User | null;
 }
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ user }) => {
+  const navigate = useNavigate();
+  
   const getInitials = (email: string) => {
     return email.split('@')[0].slice(0, 2).toUpperCase();
   };
@@ -27,6 +30,16 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ user }) => {
         </div>
 
         <div className="flex items-center space-x-4">
+          {/* Help Community CTA */}
+          <Button 
+            onClick={() => navigate('/reviews-referrals')}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium"
+            size="sm"
+          >
+            <Heart className="h-4 w-4 mr-2" />
+            Help Community
+          </Button>
+
           {/* Search */}
           <div className="relative hidden md:block">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
