@@ -16,19 +16,27 @@ export const LogoAnimated: React.FC<LogoAnimatedProps> = ({
   const [shouldAnimate, setShouldAnimate] = useState(false);
 
   useEffect(() => {
-    // Check if we've already animated in this session
-    const sessionKey = `logo-animated-${window.location.pathname}`;
+    // Check if we've already animated in this session for this specific page
+    const currentPath = window.location.pathname;
+    const sessionKey = `logo-animated-${currentPath}`;
     const hasAnimatedInSession = sessionStorage.getItem(sessionKey);
+    
+    console.log('LogoAnimated useEffect:', { currentPath, sessionKey, hasAnimatedInSession });
     
     if (!hasAnimatedInSession) {
       // Check user's motion preference
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       
+      console.log('Setting up animation:', { prefersReducedMotion });
+      
       if (!prefersReducedMotion) {
         setShouldAnimate(true);
         // Mark as animated for this session
         sessionStorage.setItem(sessionKey, 'true');
+        console.log('Animation triggered for path:', currentPath);
       }
+    } else {
+      console.log('Animation already shown for this session on path:', currentPath);
     }
   }, []);
 
