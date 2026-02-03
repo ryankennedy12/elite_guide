@@ -1,20 +1,35 @@
 import { supabase } from '@/integrations/supabase/client';
 import { TradeType } from '@/types/trade';
-import { wizardQuestionBank } from '@/data/wizard';
+import { questionBank } from '@/data/questionBank';
 import { enhancedCheatSheetData } from '@/data/enhancedCheatSheetData';
 import { elite12Data } from '@/data/elite12Data';
+import { WizardQuestionCategory } from '@/data/wizard/types';
+
+// Map old categories to new wizard categories
+const categoryMapping: Record<string, WizardQuestionCategory> = {
+  'Diagnostics': 'Diagnostic / Investigation',
+  'Process/Solution': 'System Selection',
+  'Proof': 'Risk / Failure / Proof',
+  'Red Flag/Insider': 'Risk / Failure / Proof',
+  'Cost/Warranty/Risk': 'Cost & Value',
+  'Legal/Compliance': 'Compliance / Code',
+  'Value/Future-Proofing': 'Cost & Value',
+  'Health/Air Quality': 'Health / Safety / Air Quality',
+  'Community/External': 'Customer Experience',
+  'Empowerment': 'Customer Experience'
+};
 
 export const migrateWaterproofingQuestions = async () => {
   try {
-    const waterproofingQuestions = wizardQuestionBank.map((question, index) => ({
+    const waterproofingQuestions = questionBank.map((question, index) => ({
       trade: 'waterproofing' as TradeType,
-      category: question.category,
+      category: categoryMapping[question.category] || 'Diagnostic / Investigation',
       question: question.question,
-      pro_tip: question.proTip,
-      red_flag: question.redFlag,
+      pro_tip: question.proTip || '',
+      red_flag: '',
       order_index: index,
       is_active: true,
-      metadata: {}
+      metadata: { originalCategory: question.category }
     }));
 
     const { error } = await supabase
@@ -25,6 +40,21 @@ export const migrateWaterproofingQuestions = async () => {
     return { success: true, count: waterproofingQuestions.length };
   } catch (error) {
     console.error('Error migrating questions:', error);
+    return { success: false, error };
+  }
+};
+
+export const deleteAllWaterproofingQuestions = async () => {
+  try {
+    const { error } = await supabase
+      .from('trade_questions')
+      .delete()
+      .eq('trade', 'waterproofing');
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting questions:', error);
     return { success: false, error };
   }
 };

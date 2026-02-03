@@ -11,12 +11,29 @@ import {
   migrateWaterproofingQuestions, 
   migrateCheatSheetContent, 
   migrateElite12Content,
-  createHVACQuestionTemplate 
+  createHVACQuestionTemplate,
+  deleteAllWaterproofingQuestions
 } from '@/utils/contentMigration';
 
 const Admin = () => {
   const [selectedTrade, setSelectedTrade] = useState<TradeType>('waterproofing');
   const { toast } = useToast();
+
+  const handleDeleteQuestions = async () => {
+    const result = await deleteAllWaterproofingQuestions();
+    if (result.success) {
+      toast({
+        title: "Success",
+        description: "Deleted all waterproofing questions",
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to delete questions",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleMigrateQuestions = async () => {
     const result = await migrateWaterproofingQuestions();
@@ -100,13 +117,27 @@ const Admin = () => {
 
           <TabsContent value="seeding">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <Card>
+              <Card className="border-destructive">
                 <CardHeader>
-                  <CardTitle>Migrate Questions</CardTitle>
+                  <CardTitle className="text-destructive">Delete Questions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-sm text-gray-600">
-                    Import existing waterproofing questions from static data.
+                    Delete all waterproofing questions before re-migrating.
+                  </p>
+                  <Button variant="destructive" onClick={handleDeleteQuestions}>
+                    Delete All Questions
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Migrate Questions (220)</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-gray-600">
+                    Import original 220 waterproofing questions from questionBank.
                   </p>
                   <Button onClick={handleMigrateQuestions}>
                     Migrate Waterproofing Questions
